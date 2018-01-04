@@ -1,7 +1,16 @@
-'use strict';
-
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
+
+let fillables = [
+    "title",
+    "description",
+    "start_date",
+    "end_date",
+    "status",
+    "situation",
+    "priority",
+    "conclusion",
+];
 /**
  * Create Schema of the table 'Task'
  */
@@ -40,6 +49,10 @@ var TaskSchema = new Schema({
         type: Date,
         default: null
     },
+    platform_origin: {
+        type: Number, // 1 - web | 2 - mobile
+        required: "A origem é obrigatória!",
+    },
     sync_date: {
         type: Date,
         default: null
@@ -53,5 +66,15 @@ var TaskSchema = new Schema({
         default: Date.now
     }
 });
+
+/** 
+| ---------------------------------------------------------------
+| Fill the fields of the model
+| ---------------------------------------------------------------
+* @param {Object} post
+*/
+TaskSchema.methods.setFillables = function(post) {
+    fillables.map(item => this[item] = post[item] );
+};
 
 mongoose.model('Task',TaskSchema);

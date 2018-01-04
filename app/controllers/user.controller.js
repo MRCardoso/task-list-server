@@ -1,45 +1,143 @@
 var User = require('mongoose').model('User'), 
-    help = require('../helpers');
+    help = require('../helpers'),
+    credentials = require('../../config/credentials');
 
-exports.list = function(req, res){
-    User.find({}, (err, users) => {
+/**
+ * Method to list all users
+ * @param {Object} req the object with request information(input)
+ * @param {Object} res the object with response information(output)
+ */
+exports.list = function(req, res)
+{
+    User.find(( credentials.isSuperUser(req.user) ? {} : {_id: req.user._id} ))   
+    .exec((err, users) => {
         if (err){
-            return res.status(500).send({
-                message: err
-            });
+            return res.status(500).send({message: help.getErrorMessage(err)});
         }
 
         res.json(users);
     });
 };
 
-exports.create = function(req, res, next)
+/**
+ * Method to create a new user with validation of unique username
+ * @param {Object} req the object with request information(input)
+ * @param {Object} res the object with response information(output)
+ */
+exports.create = function(req, res)
 {
-    User.findUniqueUsername(req.body.username, (err, user) =>
-    {
-        if(err){
-            return res.status(500).send({
+    var user = new User({
+        name: req.body.name,
+        email: req.body.email,
+        status: req.body.status,
+        username: req.body.username,
+        password: req.body.password
+    });
+    user.save((err, u) => {
+        if (err){
+            return res.status(400).send({
                 message: help.getErrorMessage(err)
             });
-        } 
-
-        var user = new User({
-            name: req.body.name,
-            email: req.body.email,
-            status: req.body.status,
-            username: req.body.username,
-            password: req.body.password
+        }
+        res.json({
+            message: `Usuário ${u.username} criado com sucesso!`, 
+            module: u
         });
-        user.save(err => {
-            if (err){
+    });
+};
+
+/**
+ * Method to update a user loaded in middleware byPk
+ * update a user with mongoose method save
+ * @param {Object} req the object with request information(input)
+ * @param {Object} res the object with response information(output)
+ */
+exports.update = function(req,res)
+{
+    
+    var user = req.userData,
+        s3Helper = require('uploader-go-bucket').s3Helper({ bucket: credentials.s3Bucket });
+
+        console.log(req.body);
+    user.setFillables(req.body);
+    if( req.session.image != null )
+        user.image = req.session.image;
+
+    s3Helper
+    .manageObject(`${credentials.s3ImagePath}/${user._id}`, user.image, req.body.image, req.session.image)
+    .then(values => {
+        if( req.body.image == null && req.session.image == null)
+            user.image = null;
+        
+        req.session.image = null;
+
+        user.save((err,u)=> {
+            if(err){
                 return res.status(400).send({
                     message: help.getErrorMessage(err)
                 });
             }
-            res.json({
-                message: `User ${user.name} created with successfull`, 
-                data: user
+
+            return res.json({
+                output: `O Usuário ${u.username} foi atualizado com sucesso!`,
+                module: u
             });
         });
+    }, err => {
+        var messages = err.map(e => (e.message || 'erro manage bucket'));
+        return res.status(400).send({
+            message: messages.join('<br>')
+        });
     });
+};
+/**
+ * Method to delete a user of model User
+ * @param {Object} req the object with request information(input)
+ * @param {Object} res the object with response information(output)
+ */
+exports.delete = function(req,res)
+{
+    var extra = [];
+    req.userData.remove(function (err)
+    {
+        if(err)
+        {
+            return res.status(400).send({
+                message: help.getErrorMessage(err)
+            });
+        }
+        else
+        {
+            res.json({
+                output: `Usuário ${req.userData.username} removido com sucesso!`,
+                module: req.userData
+            });
+        }
+    });
+};
+/**
+ * Method to return the user loaded in middleware byId
+ * @param {Object} req the object with request information(input)
+ * @param {Object} res the object with response information(output)
+ */
+exports.read = function (req,res)
+{
+    res.json(req.userData);
+};
+
+/**
+ * Validate of the auth user is the same of the load user
+ * @param {Object} req the object with request information(input)
+ * @param {Object} res the object with response information(output)
+ * @param {*} next 
+ */
+exports.isOwner = function(req, res, next)
+{
+    if (req.userData.id !== req.user.id)
+    {
+        return res.status(403).send({
+            message: 'Usuário não autorizado!'
+        });
+    }
+    next();
 };

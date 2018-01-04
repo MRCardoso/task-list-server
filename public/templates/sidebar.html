@@ -1,0 +1,121 @@
+<nav class="navbar navbar-blue">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" ng-href="/#!/">
+                <img src="/images/icon.png" class="image-sidebar" alt="Task-List App" title="Task-List App">
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" ng-if="auth">
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="/#!/">Home</a></li>
+                <li ng-if="auth.isSuperUser">
+                    <a ng-href="/#!/users">
+                        <i ng-if="item.ico_class!= null" class="fa-task"></i>
+                        Usuário
+                    </a>
+                </li>
+                <li>
+                    <a ng-href="/#!/tasks">
+                        <i ng-if="item.ico_class!= null" class="fa-task"></i>
+                        Tarefa
+                    </a>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle profile-container" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <image-s3  ng-if="auth" model="auth" class="image-radius"></image-s3>
+                        {{auth.username}}
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a ng-href="/#!/myData/{{auth.id}}">
+                                <i class="fa fa-user"></i>
+                                Meus Dados
+                            </a>
+                        </li>
+                        <li>
+                            <a role="button" data-toggle="modal" data-target="#changePassword">
+                                <i class="fa fa-key"></i>
+                                Alterar Senha
+                            </a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+                            <a ng-href="/signout">
+                                <i class="fa fa-sign-out"></i>
+                                Sair
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div><!-- /.navbar-collapse -->
+        <div class="sign-in-up" ng-if="!auth">
+            <a ng-href="/signup" accesskey="U">
+                Criar Conta
+                <span class="fa fa-sign-up"></span>
+            </a>
+            <span>ou</span>
+            <a href="/signin" accesskey="I">
+                Acessar
+                <span class="fa fa-sign-in"></span>
+            </a>
+        </div>
+    </div><!-- /.container-fluid -->
+</nav>
+
+<!-- Modal -->
+<div class="modal fade" id="changePassword" tabindex="-1" role="dialog" aria-labelledby="changePasswordLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form data-ng-submit="modifyPassword()" class="form-horizontal">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Change Password</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="control-label col-md-4">
+                            Senha
+                        </label>
+                        <div class="col-md-6">
+                            <input type="password" class="form-control" data-ng-model="password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-4">
+                            Nova senha
+                        </label>
+                        <div class="col-md-6">
+                            <input type="password" class="form-control" data-ng-model="new_password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-4">
+                            Confirmação
+                        </label>
+                        <div class="col-md-6">
+                            <input type="password" class="form-control" data-ng-model="confirmation">
+                        </div>
+                    </div>                    
+                </div>
+                <div class="modal-footer">
+                    <div class="input-group-btn">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

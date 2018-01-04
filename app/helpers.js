@@ -1,49 +1,55 @@
+var credentials = require('../config/credentials'),
+    fs = require('fs');
+
 /**
  * return error use the obj err of the mongoose
  * @param err
  * @param nobr
  * @returns {string}
  */
-exports.getErrorMessage = function(err, noTags)
+exports.getErrorMessage = function(err, noTags = true, isString = true)
 {
-    var message = '';
+    var message = [];
     if( err == null || err == 'undefined')
         return "erro inesperado aconteceu!";
     if( typeof err == 'string'){
         return err;
     }
     if('code' in err)
-    {
+    {        
         switch (err.code)
         {
             case 11000:
             case 11001:
-                message = 'User already exists';
+                message.push('Usuário já existe');
                 break;
             default:                
-                message = 'Erro desconhecido!';
+                message.push('Erro desconhecido!');
         }
+        this.writeLogs(JSON.stringify(err, null, 4));
     }
     else
     {
         if ('errors' in err)
         {
             for(var errName in err.errors)
-            {
+            {                
                 if(err.errors[errName].message)
                 {
-                    let msgs = [err.errors[errName].message]; 
-                    if(noTags != true) msgs.push("\n");
-                    message += msgs.join('<br>');
+                    message.push(err.errors[errName].message);
                 }
             }
         }
         else
         {
-            message = 'server error internal!';
+            this.writeLogs(JSON.stringify(err, null, 4));
+            message.push('server error internal!');
         }
     }
-    return message;
+    if( isString )
+        return message.join(noTags?'<br>':'');
+    else
+        return message;
 };
 
 /**
@@ -73,3 +79,32 @@ exports.hashing = function(password, next)
         });
     });
 };
+
+exports.replaceCharacters = function (html, content, title)
+{
+    while( content.indexOf("{") != -1 || content.indexOf("}") != -1 )
+    {
+        content = content.replace(/\{/ig, '<').replace(/\}/ig,'>');
+    }
+    return html.replace("{title}",title)
+               .replace("{content}",content);
+};
+
+exports.writeLogs = function(message)
+{
+    let dateFormat = require('dateformat');
+    let date = new Date();
+    let pathLog = '.tls-logs';
+    let fileName = `${dateFormat(date,'yyyy-mm-dd')}.log`;
+    message = `================START - ${date}\n${message}\n================END - ${date}\n`;
+
+    if( !fs.existsSync(pathLog) ){
+        fs.mkdir(pathLog);
+    }
+    fs.writeFile(`${pathLog}/${fileName}`, message, {'flag':'a'}, (err,d) => {  
+        if (err){
+            console.log('LOG-ERR:', err);
+        }
+        console.log('LOG-SUCCESS:', d);
+    });
+}

@@ -1,0 +1,55 @@
+<div ng-init="find()" class="tab-form">
+
+    <header-grid lines="lines" save="false"></header-grid>
+    
+    <uib-tabset justified="true" class="tab-form-bg">
+        <uib-tab>
+            <uib-tab-heading>
+                Lista <i class="fa fa-table"></i>
+            </uib-tab-heading>
+            <table-grid 
+                limit="10"
+                order="order"
+                model="tasks"
+                actions="moduleActions"
+                module-name="moduleName"
+                with-search="true"
+                with-create="true"
+                show-breadcrumb="false"
+                lines="lines"
+                fields="[
+                    { label: 'Usuário', column: 'username', fk: 'userId', type:'simple'},
+                    { label: 'Titulo', column: 'title', type:'link', url: 'view'},
+                    { label: 'Inicio', column: 'start_date', type:'filter', filter: ['date', 'dd/MM/yyyy']},
+                    { label: 'Termino', column: 'end_date', type:'filter', filter: ['date', 'dd/MM/yyyy']},
+                    { label: 'Prioridade', column: 'priority', type:'template'},
+                    { label: 'Situação', column: 'situation', type:'template'},
+                    { label: 'Status', column: 'status', type:'template'},
+                ]">
+            </table-grid>
+        </uib-tab>
+        <uib-tab>
+            <uib-tab-heading>
+                Grafico
+                <i class="fa fa-pie-chart"></i>
+            </uib-tab-heading>
+            <div class="col-md-4" ng-repeat="item in charts">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        {{item.name}}
+                    </div>
+                    <canvas 
+                        id="polar-area" 
+                        class="chart chart-polar-area"
+                        chart-data="item.data" 
+                        chart-labels="item.labels" 
+                        chart-colors="item.colors" 
+                        chart-options="options">
+                    </canvas>
+                    <!--<pie-chart data="item.data" options="options" class="chart"></pie-chart>-->
+                </div>
+            </div>
+            <div class="clear"></div>
+        </uib-tab>
+    </uib-tabset>
+</div>

@@ -1,8 +1,10 @@
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+process.env.NODE_ENV = (process.env.NODE_ENV || 'development');
 var port = 8000,
     mongoose = require('./config/mongoose'),
     express = require('./config/express'),
     db = mongoose(),
+    pp = require('./config/passport'),
+    passport = pp(),
     app = express();
 app.listen(port);
 

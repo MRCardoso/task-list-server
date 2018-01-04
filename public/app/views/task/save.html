@@ -1,0 +1,91 @@
+<div class="border-side-bottom content content-large" ng-init="findOne()">
+    
+    <header-grid lines="lines" save="false"></header-grid>
+    
+    <form ng-submit="save()" class="form-horizontal tab-form">
+        <uib-tabset justified="true">
+            
+            <uib-tab heading="Dados">
+                <div class="form-group">
+                    <label class="control-label col-md-4">
+                        Status
+                    </label>
+                    <div class="col-md-6">
+                        <label class="radio-inline">
+                            <input type="radio" name="status" ng-model="task.status" ng-value="1">
+                            Ativo
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="status" ng-model="task.status" ng-value="0">
+                            Inativo
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4">
+                        Titulo
+                    </label>
+                    <div class="col-md-6">
+                        <input type="text" ng-model="task.title" class="form-control" placeholder="titulo...">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4">
+                        Prioridade
+                    </label>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <span ng-class="{'text-info': task.priority==1, 'text-warning': task.priority==2, 'text-danger': task.priority==3}">
+                                    <span uib-rating ng-model="task.priority" max="3" on-hover="ratingPriority(value)" style="cursor: pointer" aria-labelledby="custom-icons-1"></span>
+                                </span>
+                            </div>
+                            <div class="centerlize-padding-grey text-right">
+                                <span ng-bind="priorities[task.priority].name"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4">
+                        Situação
+                    </label>
+                    <div class="col-md-6">
+                        <select ng-model="task.situation" class="form-control" placeholder="select a situation for this task...">
+                            <option value="{{key}}" ng-selected="(task.situation==key?'selected':'')"
+                                    ng-repeat="(key, option) in situations">{{option.name}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-4">
+                        Periodo
+                    </label>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <input type="text" ng-model="task.start_date" class="form-control" placeholder="Inicio..."
+                                   uib-datepicker-popup="{{'dd/MM/yyyy'}}" custom-class="" is-open="openedStart"
+                                   show-button-bar="false" ng-click="openedStart = true">
+                            <span class="input-group-addon">
+                                <i class="glyphicon glyphicon-calendar"></i>
+                            </span>
+                            <input type="text" ng-model="task.end_date" class="form-control" placeholder="Termino..."
+                                   uib-datepicker-popup="{{'dd/MM/yyyy'}}" is-open="openedEnd"
+                                   show-button-bar="false" ng-click="openedEnd = true">
+                        </div>
+                    </div>
+                </div>
+            </uib-tab>
+
+            <uib-tab heading="Conteúdo">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Descrição</div>
+                    <textarea ui-tinymce="tinymceOptions" ng-model="task.description" placeholder="descrição..." class="form-control" rows="2"></textarea>
+                </div>
+            </uib-tab>
+
+        </uib-tabset>
+
+        <form-buttons render-text="icon" type="save" id="task._id" name="moduleName" actions="moduleActions"></form-buttons>
+    </form>
+</div>

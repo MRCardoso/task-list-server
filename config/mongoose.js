@@ -7,15 +7,10 @@
  * @option: $in(IN),$nin(NOT IN)
  * Model.remove({field:{option: ['value','n']}}, callback())
  */
-//load the dependencies
-var config = require('./env/'+process.env.NODE_ENV+'.js'),
-    mongoose = require('mongoose');
-
 module.exports = function () {
-    var db = mongoose.connect(config.db, { useMongoClient: true });
-    //load the models
-    require('../app/models/user.js');
-    require('../app/models/task.js');
-    //return a instance of the mongoose
-    return db;
+    let signiuof = require('signiuof');
+    signiuof.Iuof().connectMongo(require('./env/'+process.env.NODE_ENV+'.js'), function(db){
+        require('../app/models/task.js');
+        return db;
+    })
 };

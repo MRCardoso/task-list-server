@@ -2,8 +2,8 @@ var User = require('mongoose').model('User'),
     Task = require('mongoose').model('Task'), 
     jwt = require('jwt-simple'), 
     moment = require('moment'),
-    help = require('../helpers'),
-    credentials = require('../../config/credentials');
+    help = require('../../helpers'),
+    credentials = require('../../../config/credentials');
 
 /**
 | --------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ exports.signin = function(req, res)
         var token = jwt.encode({
             iss: user.id,
             exp: expires
-        }, credentials.mySecret);
+        }, credentials.secretAuthToken);
 
         user.updateToken(token, expires, (err,u) =>{
             if(err){
@@ -37,7 +37,7 @@ exports.signin = function(req, res)
                     message: help.getErrorMessage(err)
                 });
             }
-            //user.profile = `${credentials.s3_url}${credentials.s3_bucket}/${user.profileImage}`;
+            //user.profile = `${credentials.s3_url}${credentials.s3_bucket}/images/${user._id}/${user.image.path}`;
             return res.json({user: u.toJSON()});
         });
     });
@@ -58,7 +58,7 @@ exports.signout = function(req, res)
                 message: help.getErrorMessage(err)
             });
         }
-        jwt.encode(null, credentials.mySecret);
+        jwt.encode(null, credentials.secretAuthToken);
         return res.json({user: u.toJSON()});
     });
 };
@@ -73,6 +73,7 @@ exports.sync = function(req,res)
 {
     var post = req.body.task;
     var task = new Task(req.body);
+    task.platform_origin = MOBILE;
     task.sync_date = new Date();
     task.userId = req.user;
 

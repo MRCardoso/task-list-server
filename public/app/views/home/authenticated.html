@@ -1,0 +1,80 @@
+<style>
+    .btn-info{
+        background-color: #6E9FDD !important;
+        border-color: #6E9FDD !important;
+    }
+</style>
+<div class="panel panel-blue">
+    <div class="panel-heading">
+        <div class="pull-right">
+            <strong ng-bind="date|date:'fullDate'"></strong>
+        </div>
+        <strong ng-show="tasks.length>0">
+            <i class="glyphicon glyphicon-bell"><small>{{tasks.length}}</small></i>
+            <i ng-bind="(tasks.length > 1 ? 'tarefas agendadas ' : 'tarefa agendada ')"></i>
+        </strong>
+        <div class="clear"></div>
+    </div>
+    <div class="panel-body">
+        <div class="col-md-4">
+            <div uib-datepicker ng-model="date" ng-click="getDate(date)" show-weeks="true" class="well"></div>
+        </div>
+        <div class="col-md-8">
+            <div class="scroll-380">
+                <div class="alert alert-info" ng-hide="tasks.length>0">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <strong>Atenção!</strong>
+                    Não ha tarefas para esta data
+                    <strong ng-bind="date | date:'dd/MM/yyyy'"></strong>
+                </div>
+                <uib-accordion close-others="true" ng-show="tasks.length>0">
+                    <div uib-accordion-group is-open="false" class="panel-blue" ng-repeat="task in tasks">
+                        <uib-accordion-heading>
+                            {{task.title}}
+                        </uib-accordion-heading>
+                        <div class="panel-body">
+                            <div ng-show="verifyDate(task.end_date) && task.situation != 1">
+                                <div class="alert alert-warning">
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                    <strong>Atenção!</strong>
+                                    Esta tarefa excedeu seu periodo limite que é
+                                    (<small ng-bind="task.end_date|date:'dd/MM/yyyy'"></small>)
+                                    <em ng-bind="today"></em>
+                                </div>
+                                <hr>
+                            </div>
+                            <div ng-if="task.description!='' && task.description!= null" ng-bind-html="task.description | trustAsHtml"></div>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="col-md-6">
+                                <a ng-href="/#!/task/{{task._id}}/view" target="_blank" uib-tooltip="Acessar Task" class="btn btn-xs btn-blue-inverse">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+
+                                <label-item has-icon="true" item="status" index="task.status"></label-item>
+
+                                <label-item has-icon="false" item="situation" index="task.situation"></label-item>
+
+                                <label-item has-icon="false" item="priority" index="task.priority"></label-item>
+                            </div>
+                            <div class="col-md-6">
+                                <em class="text-muted">
+                                    <span>Periodo de</span>
+                                    <strong ng-bind="task.start_date | date:'dd/MM/yyyy'"></strong>
+                                    <span>à</span>
+                                    <strong ng-bind="task.end_date | date:'dd/MM/yyyy'"></strong>
+                                </em>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+                </uib-accordion>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>

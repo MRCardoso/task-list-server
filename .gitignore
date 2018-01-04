@@ -4,3 +4,8 @@ start.sh
 node_modules/
 config/env
 config/credentials.js
+public/bower_components
+.tls-logs
+package-lock.json
+app/views/partial
+app/views/mail.html
