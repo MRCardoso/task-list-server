@@ -20,25 +20,28 @@ exports.signin = function(req, res)
     User.findAndAuthenticate({username: username, password:password}, (err, user) =>
     {
         if (err){
-            return res.status(err.status || 500).send({
+            return res.status(err.sCode || 500).send({
                 message: help.getErrorMessage(err)
             });
         }
         // var expires = moment().add(7,'days').valueOf();
-        var expires = moment().add(1,'minute').valueOf();
+        let [m, s] = (credentials.authToken || [1, 'hour']);
+        var expires = moment().add(m,s).valueOf();
         var token = jwt.encode({
             iss: user.id,
             exp: expires
         }, credentials.secretAuthToken);
 
-        user.updateToken(token, expires, (err,u) =>{
+        user.updateAuthToken(token, expires, (err,u) =>{
             if(err){
-                return res.status(500).send({
+                return res.status(400).send({
                     message: help.getErrorMessage(err)
                 });
             }
-            //user.profile = `${credentials.s3_url}${credentials.s3_bucket}/images/${user._id}/${user.image.path}`;
-            return res.json({user: u.toJSON()});
+            let user = u.toJSON();
+            user.url = `${credentials.s3Url}${credentials.s3Bucket}/${credentials.s3ImagePath}/${user._id}/${user.image.path}`;
+            console.log(user)
+            return res.json({user:user});
         });
     });
 };
@@ -52,7 +55,7 @@ exports.signin = function(req, res)
 */
 exports.signout = function(req, res)
 {
-    req.user.updateToken(null, null, (err,u) =>{
+    req.user.updateAuthToken(null, null, (err,u) =>{
         if(err){
             return res.status(500).send({
                 message: help.getErrorMessage(err)
@@ -71,7 +74,6 @@ exports.signout = function(req, res)
  */
 exports.sync = function(req,res)
 {
-    var post = req.body.task;
     var task = new Task(req.body);
     task.platform_origin = MOBILE;
     task.sync_date = new Date();
@@ -86,6 +88,28 @@ exports.sync = function(req,res)
         }
 
         res.json({task: t});
-    })
-
+    });
 };
+
+/**
+ | --------------------------------------------------------------------------------
+ | Load all task that was sync with server by device id
+ | --------------------------------------------------------------------------------
+ * @param {Object} req the data of request app
+ * @param {Object} res the data of response app
+ */
+exports.list = function(req,res){
+    Task.find({
+        platform_origin: MOBILE,
+        userId: req.user.id
+    }, (err, tasks) => {
+        if (err)
+        {
+            return res.status(400).send({
+                message: help.getErrorMessage(err)
+            });
+        }
+
+        return res.json(tasks)
+    })
+}

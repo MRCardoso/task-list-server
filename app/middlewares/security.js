@@ -13,7 +13,7 @@ var mongoose = require('mongoose'),
  * @param {*} next 
  */
 exports.loadUserByToken = function(req, res, next){
-    User.findByToken(req.headers['x-access-token'], (err, user)=>{
+    User.findByAuthToken(req.headers['x-access-token'], false, (err, user)=>{
         if(err)
         {
             return res.status(err.sCode || 500).send({

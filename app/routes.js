@@ -67,6 +67,7 @@ module.exports = function (app)
     // app.post('/api/users/create',iuof.middlewares.requireAuthToken, user.create);
 
     app.post('/api/mobile/syncTask', iuof.middlewares.requireAuthToken, mobile.sync);
+    app.get('/api/mobile/list', iuof.middlewares.requireAuthToken, mobile.list);
 
     app.post('/api/mobile/signin', mobile.signin);
     app.post('/api/mobile/signout', security.loadUserByToken, mobile.signout);

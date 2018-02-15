@@ -8,7 +8,7 @@
 
     <div class="alert alert-warning" ng-if="task.sync_date!=null">
         Enviado via celular.
-        <span class="pull-right">Sincronizado em {{task.sync_date}}</span>
+        <span class="pull-right">Sincronizado em {{task.sync_date | date: "dd/MM/yyyy 'as' HH:mm:ss"}}</span>
     </div>
     <table class="table table-bordered table-hover" ng-if="task._id"> 
         <tr ng-if="task.description==''"> 

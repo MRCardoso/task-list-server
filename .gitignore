@@ -9,3 +9,7 @@ public/bower_components
 package-lock.json
 app/views/partial
 app/views/mail.html
+.DS_Store
+app/.DS_Store
+app/views/.DS_Store
+config/.DS_Store

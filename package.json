@@ -21,7 +21,7 @@
     "nodemailer": "^4.4.1",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
-    "signiuof": "^1.10.3",
+    "signiuof": "latest",
     "uploader-go-bucket": "^1.4.1"
   }
 }
