@@ -1,7 +1,7 @@
 global.MAX_SIZE_UPLOAD = 3 * 1024 * 1024; // size allow for upload
 global.MIME_TYPES = ['gif','jpg','jpeg', 'png', 'x-png', 'pjpeg']; // extension allow for upload
-global.WEBPAGE = 1;
-global.MOBILE = 2;
+global.WEBPAGE = 2;
+global.MOBILE = 1;
 global.ERR = {
     "403": "Usuário não tem permissão para acessar esta Página!"
 };

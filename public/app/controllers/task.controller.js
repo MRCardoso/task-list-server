@@ -34,7 +34,7 @@ angular
                     "status":{v:{}, name: "Status", data:[], labels:[], colors: []},
                     "priority":{v:{}, name: "Prioridade", data:[], labels:[], colors: []},
                 };
-                tasks.map(function(task)
+                tasks.map(function (task, index)
                 {
                     task.status = +task.status;
                     for( var i in values){
@@ -63,7 +63,7 @@ angular
         $scope.findOne = function()
         {
             var itens = {"path": false, "label": "Novo"};            
-            $scope.task = {start_date: Date.now(), status: 1, priority: "1", situation: "1"};
+            $scope.task = {startDate: Date.now(), status: 1, priority: "1", situation: "1"};
             
             if($routeParams.taskId)
             {
@@ -73,8 +73,8 @@ angular
                     $scope.task = task;
                     console.log($scope.task.status);
                     $scope.task.status = +$scope.task.status;
-                    $scope.task.start_date = new Date(task.start_date);
-                    $scope.task.end_date = task.end_date != null ? new Date(task.end_date) : null;
+                    $scope.task.startDate = new Date(task.startDate);
+                    $scope.task.endDate = task.endDate != null ? new Date(task.endDate) : null;
                 });
             }
             $scope.lines.push(itens);
@@ -87,15 +87,14 @@ angular
             }
             else
             {
-                console.log(this.task);
                 var task = new Task({
                     title:          this.task.title,
                     description:    this.task.description,
                     priority:       this.task.priority,
                     situation:      this.task.situation,
                     status:         this.task.status,
-                    start_date:      this.task.start_date,
-                    end_date:        this.task.end_date
+                    startDate:      this.task.startDate,
+                    endDate:        this.task.endDate
                 });
                 CoreService.save(task);
             }

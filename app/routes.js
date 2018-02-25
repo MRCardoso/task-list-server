@@ -1,6 +1,6 @@
 var passport = require('passport'),
-    index = require('./controllers/core/index.controller.js'),    
-    mobile = require('./controllers/core/mobile.controller.js'),
+    index = require('./controllers/index.controller.js'),    
+    mobile = require('./controllers/mobile.controller.js'),
     user = require('./controllers/user.controller.js'),
     task = require('./controllers/task.controller.js'),
     security = require('./middlewares/security.js');
@@ -30,7 +30,10 @@ module.exports = function (app)
     
     app.route('/api/myData/:userId')
         .get(iuof.middlewares.requireLogin, user.isOwner, user.read)
-        .put(iuof.middlewares.requireLogin, user.isOwner, user.update);    
+        .put(iuof.middlewares.requireLogin, user.isOwner, user.update);
+
+    app.route('/api/users/:userId/tokens/:apiId')
+        .delete(iuof.middlewares.requireLogin, security.isSuperUser, user.deleteApi);
     
     app.param('userId',security.byId);
 
@@ -63,12 +66,15 @@ module.exports = function (app)
     | Mobile requests
     | ------------------------------------------------------------------
     */
-    // app.get('/api/users', iuof.middlewares.requireAuthToken, user.list);
-    // app.post('/api/users/create',iuof.middlewares.requireAuthToken, user.create);
-
-    app.post('/api/mobile/syncTask', iuof.middlewares.requireAuthToken, mobile.sync);
-    app.get('/api/mobile/list', iuof.middlewares.requireAuthToken, mobile.list);
-
     app.post('/api/mobile/signin', mobile.signin);
-    app.post('/api/mobile/signout', security.loadUserByToken, mobile.signout);
+    app.post('/api/mobile/signout', iuof.middlewares.requireAuthToken, mobile.signout);
+    
+    app.route('/api/mobile/tasks')
+        .get(iuof.middlewares.requireAuthToken, mobile.list)
+        .post(iuof.middlewares.requireAuthToken, task.create);
+    
+    app.route('/api/mobile/tasks/:taskId')
+        .put(iuof.middlewares.requireAuthToken, task.update)
+        .patch(iuof.middlewares.requireAuthToken, task.inactivate);
+    app.param('taskId', security.byId);
 };

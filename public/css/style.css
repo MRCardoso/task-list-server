@@ -327,3 +327,21 @@ img{
     padding: 4px;
     border-radius: 4px;
 }
+.box-info{
+    padding: 20px;
+    margin: 10px 0;
+    color: #fff;
+    background: #6E9FDD;
+}
+.line-expired-on{
+    color: #fff;
+    padding: 0 3%;
+    border-radius: 5px;
+    background: #85C985;
+}
+.line-expired-off{
+    color: #fff;
+    padding: 0 3%;
+    border-radius: 5px;
+    background: #E25e5a;
+}

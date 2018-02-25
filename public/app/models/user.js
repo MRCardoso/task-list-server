@@ -19,10 +19,18 @@ angular.module('app.models', [])
                     method: 'PUT'
                 }
             })
-        }
+        };
+
+        var actionApi = function () {
+            return $resource('api/users/:userId/tokens/:apiId', {
+                userId: '@userId',
+                apiId: '@id'
+            });
+        };
 
         return {
             admin: actionAdmin(),
             auth: actionAuth(),
+            actionApi: actionApi()
         };
     }]);

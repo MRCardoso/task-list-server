@@ -11,6 +11,7 @@ module.exports = function () {
     let signiuof = require('signiuof');
     signiuof.Iuof().connectMongo(require('./env/'+process.env.NODE_ENV+'.js'), function(db){
         require('../app/models/task.js');
+        require('../app/models/integrationApi.js');
         return db;
     })
 };

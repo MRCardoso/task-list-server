@@ -1,8 +1,8 @@
-var credentials = require('../../../config/credentials'),
+var credentials = require('../../config/credentials'),
     fs = require('fs'),
     uploader = require('uploader-go-bucket'),
     s3Helper = uploader.s3Helper({ bucket: credentials.s3Bucket }),
-    help = require('../../helpers');
+    help = require('../helpers');
 
 exports.render = function (req,res)
 {

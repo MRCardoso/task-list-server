@@ -1,16 +1,25 @@
 <section class="border-side-bottom content content-large" ng-init="findOne();">
     <header-grid lines="lines" save="false"></header-grid>
-    
-    <div class="col-md-12" ng-if="task.description">
-        <strong ng-bind="task.title"></strong>
-        <div ng-bind-html="task.description | trustAsHtml" class="alert"></div>
+
+    <div ng-if="task.remove_app_date!=null">
+        <div class="box-info">
+            Removido via celular as {{task.remove_app_date | date: "dd/MM/yyyy HH:mm:ss"}}. Deseja remove-la?
+            <div class="pull-right">
+                <button type="button" class="btn btn-sm btn-danger" ng-click="$root.delete(task._id)">
+                    <i class="glyphicon glyphicon-remove"></i>
+                </button>
+            </div>
+        </div>
     </div>
 
-    <div class="alert alert-warning" ng-if="task.sync_date!=null">
-        Enviado via celular.
-        <span class="pull-right">Sincronizado em {{task.sync_date | date: "dd/MM/yyyy 'as' HH:mm:ss"}}</span>
-    </div>
     <table class="table table-bordered table-hover" ng-if="task._id"> 
+        <tr ng-if="task.description">
+            <td colspan="2">
+                <strong class="center" ng-bind="task.title"></strong>
+                <hr>
+                <div ng-bind-html="task.description | trustAsHtml"></div>
+            </td>
+        </tr>
         <tr ng-if="task.description==''"> 
             <th>Titulo</th>
             <td>
@@ -20,20 +29,20 @@
         <tr> 
             <th>Periodo</th>
             <td>
-                <span ng-show="task.start_date!=null">
+                <span ng-show="task.startDate!=null">
                     <strong>
                         Inicio em:
                     </strong>
                     <em class="text-muted">
-                        <span ng-bind="task.start_date | date:'dd/MM/yyyy'"></span>
+                        <span ng-bind="task.startDate | date:'dd/MM/yyyy'"></span>
                     </em>
                 </span>
-                <span ng-show="task.end_date!=null">
+                <span ng-show="task.endDate!=null">
                     <strong>
                         Termino em:
                     </strong>
                     <em class="text-muted">
-                        <span ng-bind="task.end_date | date:'dd/MM/yyyy'"></span>
+                        <span ng-bind="task.endDate | date:'dd/MM/yyyy'"></span>
                     </em>
                 </span>
             </td>
@@ -58,7 +67,37 @@
         </tr>
     </table>
     
-    <div class="clear"></div>
+    <div class="clear"><br/></div>
+    
+    <div class="panel panel-warning" ng-if="task.integrationApiId">
+        <div class="panel-heading">Enviado via celular.</div>
+        <table class="table table-bordered table-hover">
+            <tr>
+                <th>Plataforma</th>
+                <th>Descrição</th>
+                <th>Criado</th>
+                <th ng-if="task.integrationApiId.updated">editado</th>
+                <th ng-if="task.integrationApiId.removed">Removido em</th>
+            </tr>
+            <tr>
+                <td>{{task.integrationApiId.platform == 1 ? 'Mobile' : 'Outros'}}</td>
+                <td>{{task.integrationApiId.description}}</td>
+                <td class="alert alert-success">
+                    {{task.integrationApiId.created | date:'dd/MM/yyyy HH:mm:ss'}}
+                </td>
+                <td ng-if="task.integrationApiId.updated" class="alert alert-info">
+                    {{task.integrationApiId.updated | date:'dd/MM/yyyy HH:mm:ss'}}
+                </td>
+                <td ng-if="task.integrationApiId.removed" class="text-right">
+                    <a role="button" ng-click="$root.delete(task._id)" class="no-underline btn btn-danger" uib-tooltip="Deseja remove-la definitivamente?" tooltip-placement="top"
+                        tooltip-trigger="mouseenter">
+                        <span class="glyphicon glyphicon-remove"></span>
+                        {{task.integrationApiId.removed | date:'dd/MM/yyyy HH:mm:ss'}}
+                    </a>
+                </td>
+            </tr>
+        </table>
+    </div>
 
     <form-buttons render-text="icon" type="view" id="task._id" name="moduleName" actions="moduleActions" label="Criado em:" extra-data="task.created | date:'fullDate'"></form-buttons>
 </section>

@@ -7,25 +7,6 @@ var mongoose = require('mongoose'),
     credentials = require('../../config/credentials');
 
 /**
- * Middleware to load the user by token jwt
- * @param {Object} req the object with request information(input)
- * @param {Object} res the object with response information(output)
- * @param {*} next 
- */
-exports.loadUserByToken = function(req, res, next){
-    User.findByAuthToken(req.headers['x-access-token'], false, (err, user)=>{
-        if(err)
-        {
-            return res.status(err.sCode || 500).send({
-                message: help.getErrorMessage(err)
-            });
-        }
-        req.user = user;
-        return next();
-    });
-};
-
-/**
  * Validate if the auth user is super admin
  * @param {Object} req the object with request information(input)
  * @param {Object} res the object with response information(output)
@@ -56,10 +37,13 @@ exports.byId = function(req,res,next,id, pname)
     pname = pname.replace('Id','');
     switch(pname){
         case 'user': 
-            Model = User.findById(id).select('_id name username email status created image');
+            Model = User.findById(id).select('_id name username email status created image userApis');
             break;
         case 'task': 
-            Model = Task.findById(id).populate('userId', '_id name username'); break;
+            Model = Task.findById(id)
+                    .populate('userId', '_id name username')
+                    .populate('integrationApiId', '_id description created removed updated');
+            break;
         default:
             return res.status(500).send({message: `Requisição não autorizada`});
         break;

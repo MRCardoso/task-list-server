@@ -4,12 +4,11 @@ var mongoose = require('mongoose'),
 let fillables = [
     "title",
     "description",
-    "start_date",
-    "end_date",
+    "startDate",
+    "endDate",
     "status",
     "situation",
     "priority",
-    "conclusion",
 ];
 /**
  * Create Schema of the table 'Task'
@@ -41,24 +40,22 @@ var TaskSchema = new Schema({
         required: "O campo status é obrigatório!",
         default: true // 1 - active | 0 - inactive
     },
-    start_date: {
+    startDate: {
         type: Date,
         required: "O campo data inicial é obrigatório!",
     },
-    end_date: {
+    endDate: {
         type: Date,
         default: null
     },
-    platform_origin: {
-        type: Number, // 1 - web | 2 - mobile
-        required: "A origem é obrigatória!",
-    },
-    sync_date: {
-        type: Date,
+    integrationApiId: {
+        type: Schema.ObjectId,
+        ref: 'IntegrationApi',
         default: null
     },
     userId: {
         type: Schema.ObjectId,
+        required: "O usuário é obrigatório!",
         ref: 'User'
     },
     created: {

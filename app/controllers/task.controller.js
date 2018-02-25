@@ -1,16 +1,21 @@
 var Task = require('mongoose').model('Task'),
+    IntegrationApi = require('mongoose').model('IntegrationApi'), 
+    integrationModel = require('../middlewares/integrationModel'),
     help = require('../helpers'),
     credentials = require('../../config/credentials');
 
 /**
- * Method to list all tasks
+ | --------------------------------------------------------------------------------
+ | Method to list all tasks
+ | --------------------------------------------------------------------------------
  * @param {Object} req the object with request information(input)
  * @param {Object} res the object with response information(output)
  */
 exports.list = function(req, res)
 {
-    Task.find(( credentials.isSuperUser(req.user) ? {} : {userId: req.user._id} ))
+    Task.find((credentials.isSuperUser(req.user) ? {} : { userId: req.user._id }))
     .populate('userId', 'name username')
+    .populate('integrationApiId', '_id platform description created removed updated')
     .exec(function(err, tasks)
     {
         if (err)
@@ -19,40 +24,45 @@ exports.list = function(req, res)
                 message: help.getErrorMessage(err)
             });
         }
+        var result = tasks.filter(r => {
+            return (r.integrationApiId != null && r.integrationApiId.platform == MOBILE);
+        })
         res.json(tasks);
     });
 };
 
 /**
- * Method to create a new task
+ | --------------------------------------------------------------------------------
+ | Method to create a new task
+ | --------------------------------------------------------------------------------
  * @param {Object} req the object with request information(input)
  * @param {Object} res the object with response information(output)
  */
 exports.create = function(req, res)
 {
     let task = new Task(req.body);
-    task.platform_origin = WEBPAGE;
-    task.userId = req.user;
+    integrationModel.add(req).then(function(link) {
+        task.userId = req.user;
+        task.integrationApiId = link;
+        task.save(function (err) {
+            if (err) {
+                return res.status(400).send({ message: help.getErrorMessage(err) });
+            }
 
-    task.save(function(err)
-    {
-        if (err)
-        {
-            return res.status(400).send({
-                message: help.getErrorMessage(err)
+            res.json({
+                output: `A tarefa '${task.title}' foi criada com sucesso`,
+                module: task
             });
-        }
-        
-        res.json({
-            output: `A tarefa '${task.title}' foi criada com sucesso`,
-            module: task
         });
-    })
+    }, function(err1) {
+        return res.status(400).send({ message: help.getErrorMessage(err1) });
+    });
 };
 
 /**
- * Method to update a task loaded in middleware byPk
- * update a task with mongoose method save
+ | --------------------------------------------------------------------------------
+ | Method to update a task loaded in middleware byPk, update a task with mongoose method save
+ | --------------------------------------------------------------------------------
  * @param {Object} req the object with request information(input)
  * @param {Object} res the object with response information(output)
  */
@@ -60,50 +70,69 @@ exports.update = function(req, res)
 {
     let task = req.taskData;
     task.setFillables(req.body);
-    
-    task.save(function(err)
-    {
-        if (err)
-        {
-            return res.status(400).send({
-                message: help.getErrorMessage(err)
+    integrationModel.sync(req,task.integrationApiId).then(function () {
+        task.save(function (err) {
+            if (err) {
+                return res.status(400).send({ message: help.getErrorMessage(err) });
+            }
+
+            res.json({
+                output: `A tarefa '${task.title}' foi atualizada com sucesso`,
+                module: task
             });
-        }
-        
-        res.json({
-            output: `A tarefa '${task.title}' foi atualizada com sucesso`,
-            module: task
         });
+    }, function(err1) {
+        res.status(400).send({ message: help.getErrorMessage(err1) });
     });
 };
 
 /**
- * Method to delete a task of model User
+ | --------------------------------------------------------------------------------
+ | Method to delete a task of model User
+ | --------------------------------------------------------------------------------
  * @param {Object} req the object with request information(input)
  * @param {Object} res the object with response information(output)
  */
 exports.delete = function(req, res)
 {
     let task = req.taskData;
+    integrationModel.drop(req, task.integrationApiId).then(function() {
+        task.remove(function (err) {
+            if (err) {
+                return res.status(500).send({ message: help.getErrorMessage(err) });
+            }
 
-    task.remove(function(err)
-    {
-        if (err)
-        {
-            return res.status(500).send({ 
-                message: help.getErrorMessage(err) 
+            res.json({
+                output: `A tarefa '${task.title}' foi removida com sucesso`,
+                module: task
             });
-        }
-        
-        res.json({
-            output: `A tarefa '${task.title}' foi removida com sucesso`,
-            module: task
         });
+    },(err1) => {
+        return res.status(500).send({ message: help.getErrorMessage(err1) });
     });
 };
 
 /**
- * Method to return the task loaded in middleware byId
+ | --------------------------------------------------------------------------------
+ | Method to mark as removed the task, when come from other origin that not web application
+ | --------------------------------------------------------------------------------
+ * @param {Object} req the object with request information(input)
+ * @param {Object} res the object with response information(output)
+ */
+exports.inactivate = function(req, res)
+{
+    var task = req.taskData;
+    integrationModel.inactivate(req, task.integrationApiId).then(function () {
+        res.json({ task: task });
+    }, (err1) => {
+        return res.status(500).send({ message: help.getErrorMessage(err1) });
+    });
+}
+
+/**
+ | --------------------------------------------------------------------------------
+ | Method to return the task loaded in middleware byId
+ | --------------------------------------------------------------------------------
  * @param {Object} req the object with request information(input)
  * @param {Object} res the object with response information(output)
  */
@@ -113,19 +142,15 @@ exports.read = function (req,res)
 };
 
 /**
- * List all task with the period start or end between the date sent
+ | --------------------------------------------------------------------------------
+ | List all task with the period start or end between the date sent
+ | --------------------------------------------------------------------------------
  * @param {Object} req the object with request information(input)
  * @param {Object} res the object with response information(output)
  */
 exports.listToDate = function(req,res)
 {
-    Task.find({
-        "userId": req.user._id,
-        // $and: [
-        //    {"startDate" : { $lte: date }},
-        //    {$or: [{"endData": { $gte: date}}, {"endData": null}]}
-        // ]
-    }, function (err, tasks)
+    Task.find({"userId": req.user._id}, function (err, tasks)
     {
         if(err)
         {

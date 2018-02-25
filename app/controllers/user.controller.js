@@ -1,4 +1,5 @@
 var User = require('mongoose').model('User'), 
+    UserApi = require('mongoose').model('UserApi'), 
     help = require('../helpers'),
     credentials = require('../../config/credentials');
 
@@ -58,7 +59,6 @@ exports.update = function(req,res)
     var user = req.userData,
         s3Helper = require('uploader-go-bucket').s3Helper({ bucket: credentials.s3Bucket });
 
-        console.log(req.body);
     user.setFillables(req.body);
     if( req.session.image != null )
         user.image = req.session.image;
@@ -102,7 +102,7 @@ exports.delete = function(req,res)
     {
         if(err)
         {
-            return res.status(400).send({
+            return res.status(500).send({
                 message: help.getErrorMessage(err)
             });
         }
@@ -115,6 +115,34 @@ exports.delete = function(req,res)
         }
     });
 };
+
+/**
+ * Method to delete a api of the user logged
+ * @param {Object} req the object with request information(input)
+ * @param {Object} res the object with response information(output)
+ */
+exports.deleteApi = function (req, res)
+{
+    var p = (req.params || {});
+    if( !p.userId || !p.apiId){
+        return res.status(400).send({
+            message: "Não foi possivel encotrar o token a ser removido"
+        });
+    }
+    UserApi.findOneAndRemove({_id: p.apiId, userId: p.userId}, function (err) {
+        if (err) {
+            return res.status(500).send({
+                message: help.getErrorMessage(err)
+            });
+        }
+        else {
+            res.json({
+                output: `Token do usuário removido com sucesso!`,
+                module: {}
+            });
+        }
+    });
+};
 /**
  * Method to return the user loaded in middleware byId
  * @param {Object} req the object with request information(input)
@@ -122,7 +150,10 @@ exports.delete = function(req,res)
  */
 exports.read = function (req,res)
 {
-    res.json(req.userData);
+    UserApi.find({ userId: req.userData._id }, function (err, apiList) {
+        req.userData.userApis = apiList;
+        res.json(req.userData);
+    })
 };
 
 /**

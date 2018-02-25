@@ -39,7 +39,7 @@ module.exports = function()
         // Website you wish to allow to connect
         // res.header("Access-Control-Allow-Origin", "https://google.com");
         res.header('Access-Control-Allow-Origin', req.headers.origin);
-        res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE, OPTIONS');
+        res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, PATCH, DELETE');
         res.header('Access-Control-Allow-Credentials', false);
         res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, x-access-token, Content-Type, Accept');
 
