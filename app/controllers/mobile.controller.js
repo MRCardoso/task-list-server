@@ -43,7 +43,11 @@ exports.signin = function(req, res)
             let rJson = user.toJSON();
             rJson.authToken = userApi.token;
             rJson.authExpires = userApi.expires;
-            rJson.url = `http:${credentials.s3Url}${credentials.s3Bucket}/${credentials.s3ImagePath}/${user._id}/${user.image.path}`;
+            if (user.image){
+                rJson.url = `http:${credentials.s3Url}${credentials.s3Bucket}/${credentials.s3ImagePath}/${user._id}/${user.image.path}`;
+            } else{
+                rJson.url = null;
+            }
             return res.json({ user: rJson });
             // var request = require('request').defaults({ encoding: null });
             // request.get(user.url, function (err, response, buffer) {

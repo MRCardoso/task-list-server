@@ -1,5 +1,6 @@
 var credentials = require('../config/credentials'),
-    fs = require('fs');
+    fs = require('fs'),
+    notifier = require('node-notifier');
 
 /**
  * return error use the obj err of the mongoose
@@ -107,4 +108,32 @@ exports.writeLogs = function(message)
         }
         console.log('LOG-SUCCESS:', d);
     });
-}
+};
+
+/**
+* --------------------------------------------------------------------------------
+* Send Notification to the SO when a request is called in apis services
+* --------------------------------------------------------------------------------
+* @param {Object} params the params of the norifier to customize
+* @param {Object} req the object with request information(input)
+* @param {function} next the callback function called when success and fail
+*/
+exports.notify = function(params, req, next = function() {})
+{
+    if(req.query.PlatformOrigin && req.query.PlatformName){
+        var params = Object.assign({}, {
+            title: 'Title Notification',
+            message: 'content Notification',
+            icon: './public/images/icon.png',
+            sound: 'Glass',
+            wait: true,
+        }, params);
+        if (params.url!=undefined){
+            params.open = `http://${req.headers.host}/#!/${params.url}`;
+            delete params.url;
+        }
+        notifier.notify(params, next);
+    } else{
+        next();
+    }
+};

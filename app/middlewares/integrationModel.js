@@ -13,7 +13,7 @@ exports.add = function(request) {
         if (qs.PlatformOrigin && qs.PlatformName){
             let instance = new IntegrationApi({
                 description: `Criado vai ${qs.PlatformName}, ${qs.PlatformVersion || ''}`,
-                platform: (qs.PlatformOrigin || MOBILE),
+                platform: qs.PlatformOrigin,
                 created: new Date()
             });
             instance.save((err, link) => {

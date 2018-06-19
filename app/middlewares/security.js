@@ -42,7 +42,7 @@ exports.byId = function(req,res,next,id, pname)
         case 'task': 
             Model = Task.findById(id)
                     .populate('userId', '_id name username')
-                    .populate('integrationApiId', '_id description created removed updated');
+                    .populate('integrationApiId', '_id platform description created removed updated');
             break;
         default:
             return res.status(500).send({message: `Requisição não autorizada`});

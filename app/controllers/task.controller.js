@@ -1,5 +1,5 @@
 var Task = require('mongoose').model('Task'),
-    IntegrationApi = require('mongoose').model('IntegrationApi'), 
+    IntegrationApi = require('mongoose').model('IntegrationApi'),
     integrationModel = require('../middlewares/integrationModel'),
     help = require('../helpers'),
     credentials = require('../../config/credentials');
@@ -11,24 +11,21 @@ var Task = require('mongoose').model('Task'),
  * @param {Object} req the object with request information(input)
  * @param {Object} res the object with response information(output)
  */
-exports.list = function(req, res)
-{
+exports.list = function (req, res) {
     Task.find((credentials.isSuperUser(req.user) ? {} : { userId: req.user._id }))
-    .populate('userId', 'name username')
-    .populate('integrationApiId', '_id platform description created removed updated')
-    .exec(function(err, tasks)
-    {
-        if (err)
-        {
-            return res.status(500).send({
-                message: help.getErrorMessage(err)
-            });
-        }
-        var result = tasks.filter(r => {
-            return (r.integrationApiId != null && r.integrationApiId.platform == MOBILE);
-        })
-        res.json(tasks);
-    });
+        .populate('userId', 'name username')
+        .populate('integrationApiId', '_id platform description created removed updated')
+        .exec(function (err, tasks) {
+            if (err) {
+                return res.status(500).send({
+                    message: help.getErrorMessage(err)
+                });
+            }
+            var result = tasks.filter(r => {
+                return (r.integrationApiId != null && r.integrationApiId.platform == MOBILE);
+            })
+            res.json(tasks);
+        });
 };
 
 /**
@@ -38,10 +35,9 @@ exports.list = function(req, res)
  * @param {Object} req the object with request information(input)
  * @param {Object} res the object with response information(output)
  */
-exports.create = function(req, res)
-{
+exports.create = function (req, res) {
     let task = new Task(req.body);
-    integrationModel.add(req).then(function(link) {
+    integrationModel.add(req).then(function (link) {
         task.userId = req.user;
         task.integrationApiId = link;
         task.save(function (err) {
@@ -49,12 +45,14 @@ exports.create = function(req, res)
                 return res.status(400).send({ message: help.getErrorMessage(err) });
             }
 
+            templateNotification(task, 'C', req);
+
             res.json({
                 output: `A tarefa '${task.title}' foi criada com sucesso`,
                 module: task
             });
         });
-    }, function(err1) {
+    }, err1 => {
         return res.status(400).send({ message: help.getErrorMessage(err1) });
     });
 };
@@ -66,7 +64,7 @@ exports.create = function(req, res)
  * @param {Object} req the object with request information(input)
  * @param {Object} res the object with response information(output)
  */
-exports.update = function(req, res)
+exports.update = function (req, res)
 {
     let task = req.taskData;
     task.setFillables(req.body);
@@ -76,12 +74,14 @@ exports.update = function(req, res)
                 return res.status(400).send({ message: help.getErrorMessage(err) });
             }
 
+            templateNotification(task, 'U', req);
+
             res.json({
                 output: `A tarefa '${task.title}' foi atualizada com sucesso`,
                 module: task
             });
         });
-    }, function(err1) {
+    }, err1 => {
         res.status(400).send({ message: help.getErrorMessage(err1) });
     });
 };
@@ -93,21 +93,22 @@ exports.update = function(req, res)
  * @param {Object} req the object with request information(input)
  * @param {Object} res the object with response information(output)
  */
-exports.delete = function(req, res)
-{
+exports.delete = function (req, res) {
     let task = req.taskData;
-    integrationModel.drop(req, task.integrationApiId).then(function() {
+    integrationModel.drop(req, task.integrationApiId).then(function () {
         task.remove(function (err) {
             if (err) {
                 return res.status(500).send({ message: help.getErrorMessage(err) });
             }
+
+            templateNotification(task, 'D', req);
 
             res.json({
                 output: `A tarefa '${task.title}' foi removida com sucesso`,
                 module: task
             });
         });
-    },(err1) => {
+    }, err1 => {
         return res.status(500).send({ message: help.getErrorMessage(err1) });
     });
 };
@@ -119,12 +120,12 @@ exports.delete = function(req, res)
  * @param {Object} req the object with request information(input)
  * @param {Object} res the object with response information(output)
  */
-exports.inactivate = function(req, res)
-{
+exports.inactivate = function (req, res) {
     var task = req.taskData;
     integrationModel.inactivate(req, task.integrationApiId).then(function () {
+        templateNotification(task, 'I', req);
         res.json({ task: task });
-    }, (err1) => {
+    }, err1 => {
         return res.status(500).send({ message: help.getErrorMessage(err1) });
     });
 }
@@ -136,8 +137,7 @@ exports.inactivate = function(req, res)
  * @param {Object} req the object with request information(input)
  * @param {Object} res the object with response information(output)
  */
-exports.read = function (req,res)
-{
+exports.read = function (req, res) {
     res.json(req.taskData);
 };
 
@@ -148,24 +148,20 @@ exports.read = function (req,res)
  * @param {Object} req the object with request information(input)
  * @param {Object} res the object with response information(output)
  */
-exports.listToDate = function(req,res)
-{
-    Task.find({"userId": req.user._id}, function (err, tasks)
-    {
-        if(err)
-        {
+exports.listToDate = function (req, res) {
+    Task.find({ "userId": req.user._id }, function (err, tasks) {
+        if (err) {
             return res.status(500).send({
                 message: help.getErrorMessage(err)
             });
         }
         var itens = [], dateFormat = require('dateformat');
-        tasks.map(function (task)
-        {
-            var start = dateFormat(task.startDate,'yyyy-mm-dd'),
-                end = dateFormat(task.endDate,'yyyy-mm-dd'),
-                post = dateFormat(new Date(req.body.date),'yyyy-mm-dd');
+        tasks.map(function (task) {
+            var start = dateFormat(task.startDate, 'yyyy-mm-dd'),
+                end = dateFormat(task.endDate, 'yyyy-mm-dd'),
+                post = dateFormat(new Date(req.body.date), 'yyyy-mm-dd');
 
-            if( start <= post && (end >= post || end == null ) )
+            if (start <= post && (end >= post || end == null))
                 itens.push(task);
         });
         res.json(itens);
@@ -179,11 +175,9 @@ exports.listToDate = function(req,res)
  * @param {*} next 
  * @returns {*}
  */
-exports.hasAuthorization = function(req, res, next)
-{
-    if (req.taskData.userId.id !== req.user.id)
-    {
-        if(!credentials.isSuperUser(req.user)){
+exports.hasAuthorization = function (req, res, next) {
+    if (req.taskData.userId.id !== req.user.id) {
+        if (!credentials.isSuperUser(req.user)) {
             return res.status(403).send({
                 message: 'Usuário não autorizado!'
             });
@@ -191,3 +185,24 @@ exports.hasAuthorization = function(req, res, next)
     }
     next();
 };
+
+/**
+ * Method to create call of the notification
+ * @param {Object} t task object
+ * @param {Object} req the object with request information(input)
+ * @param {*} next 
+ * @returns {*}
+ */
+function templateNotification(t, action, request) {
+    switch (action) {
+        case 'C': action = 'criada'; break;
+        case 'U': action = 'atualizada'; break;
+        case 'D': action = 'removida'; break;
+        case 'I': action = 'inativada'; break;
+    }
+    help.notify({
+        title: `Tarefa ${action}`,
+        message: `A tarefa '${t.title}' foi ${action} com sucesso`,
+        url: `tasks/${t.id}/view`
+    }, request);
+}

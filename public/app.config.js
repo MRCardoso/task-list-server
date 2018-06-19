@@ -17,7 +17,8 @@ angular.module('mrc-task-list', [
     'app.controllers',
     'table.grid',
     'ui.tinymce',
-    'chart.js'
+    'chart.js',
+    'ngImgCrop'
 ])
 .config(['$locationProvider','toastrConfig','localStorageServiceProvider','tableConfig', 'ChartJsProvider','$qProvider',
     function ($locationProvider,toastrConfig,localStorageServiceProvider, tableConfig, ChartJsProvider, $qProvider) {

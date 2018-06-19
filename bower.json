@@ -24,6 +24,6 @@
     "angular-ui-tinymce": "^0.0.19",
     "angular-chart.js": "^1.1.1",
     "table-grid": "mrc-table-grid#^1.2.2",
-    "form-uploader": "mrc-form-uploader#^0.1.0"
+    "form-uploader": "mrc-form-uploader#imp-crop-image"
   }
 }

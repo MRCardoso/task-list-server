@@ -71,8 +71,9 @@ angular
                 Task.get({ taskId: $routeParams.taskId })
                 .$promise.then(function(task) {
                     $scope.task = task;
-                    console.log($scope.task.status);
+                    
                     $scope.task.status = +$scope.task.status;
+                    $scope.task.situation = String($scope.task.situation);
                     $scope.task.startDate = new Date(task.startDate);
                     $scope.task.endDate = task.endDate != null ? new Date(task.endDate) : null;
                 });

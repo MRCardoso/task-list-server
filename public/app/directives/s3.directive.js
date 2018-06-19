@@ -61,13 +61,18 @@ angular.module('app.directives')
                 $scope.renderType = angular.isDefined($scope.renderType) ? $scope.renderType : 'normal';
                 $scope.type = angular.isDefined($scope.type) ? $scope.type : 'profile';
 
-                $scope.download = function(model){
+                $scope.download = function(model)
+                {
                     var url = [$scope.$root.s3_url, $scope.$root.userImages, model._id, model.image.path].join('/');
                     var link = document.createElement("a");
-
                     link.download = model.image.name;
                     link.href = url;
+                    link.setAttribute('target', '_blank');
+                    document.body.appendChild(link);
                     link.click();
+                    document.body.removeChild(link);
+                    delete link;
+
                 };
                 $scope.deleteImage = function(){
                     $scope.model.image = null;

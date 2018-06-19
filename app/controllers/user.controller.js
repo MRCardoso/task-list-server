@@ -1,7 +1,8 @@
 var User = require('mongoose').model('User'), 
     UserApi = require('mongoose').model('UserApi'), 
     help = require('../helpers'),
-    credentials = require('../../config/credentials');
+    credentials = require('../../config/credentials'),
+    s3Helper = require('uploader-go-bucket').s3Helper({ bucket: credentials.s3Bucket });
 
 /**
  * Method to list all users
@@ -55,10 +56,7 @@ exports.create = function(req, res)
  */
 exports.update = function(req,res)
 {
-    
-    var user = req.userData,
-        s3Helper = require('uploader-go-bucket').s3Helper({ bucket: credentials.s3Bucket });
-
+    var user = req.userData;
     user.setFillables(req.body);
     if( req.session.image != null )
         user.image = req.session.image;
@@ -97,22 +95,31 @@ exports.update = function(req,res)
  */
 exports.delete = function(req,res)
 {
-    var extra = [];
-    req.userData.remove(function (err)
-    {
-        if(err)
-        {
-            return res.status(500).send({
-                message: help.getErrorMessage(err)
+    let user = req.userData;
+    s3Helper
+    .manageObject(`${credentials.s3ImagePath}/${user._id}`, user.image,null,null)
+    .then(values => {
+        UserApi.findOneAndRemove({ userId: user._id }, function (err) {
+            if (err) {
+                return res.status(500).send({ message: help.getErrorMessage(err) });
+            }
+            user.remove(function (err) {
+                if (err) {
+                    return res.status(500).send({ message: help.getErrorMessage(err) });
+                }
+                else {
+                    res.json({
+                        output: `Usuário ${user.username} removido com sucesso!`,
+                        module: user
+                    });
+                }
             });
-        }
-        else
-        {
-            res.json({
-                output: `Usuário ${req.userData.username} removido com sucesso!`,
-                module: req.userData
-            });
-        }
+        });
+    }, err => {
+        var messages = err.map(e => (e.message || 'erro manage bucket'));
+        return res.status(400).send({
+            message: messages.join('<br>')
+        });
     });
 };
 
