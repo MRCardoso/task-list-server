@@ -1,11 +1,13 @@
 angular.module('mrc-task-list')
-.run(["$location", "$rootScope","Authentication", "localStorageService", "$filter", function($location, $rootScope, Authentication, localStorageService, $filter)
+.run(["$location", "$rootScope","Authentication", "localStorageService", function($location, $rootScope, Authentication, localStorageService)
     {
+        $rootScope.imagerender = null;
         $rootScope.loading = false;
         $rootScope.withCreate = true;        
         
         $rootScope.s3_url = window.S3URL;
         $rootScope.userImages = window.s3ImagePath;
+        
         window.S3URL = null;
         window.userImages = null;
 

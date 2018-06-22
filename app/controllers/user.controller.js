@@ -32,18 +32,25 @@ exports.create = function(req, res)
         name: req.body.name,
         email: req.body.email,
         status: req.body.status,
-        username: req.body.username,
-        password: req.body.password
+        username: req.body.username
     });
-    user.save((err, u) => {
-        if (err){
+    validatePasswd(req.body, (epwd, password) => {
+        if (epwd) {
             return res.status(400).send({
-                message: help.getErrorMessage(err)
+                message: help.getErrorMessage(epwd)
             });
         }
-        res.json({
-            message: `Usuário ${u.username} criado com sucesso!`, 
-            module: u
+        user.password = password;
+        user.save((err, u) => {
+            if (err){
+                return res.status(400).send({
+                    message: help.getErrorMessage(err)
+                });
+            }
+            res.json({
+                message: `Usuário ${u.username} criado com sucesso!`, 
+                module: u
+            });
         });
     });
 };
@@ -68,17 +75,26 @@ exports.update = function(req,res)
             user.image = null;
         
         req.session.image = null;
-
-        user.save((err,u)=> {
-            if(err){
+        validatePasswd(req.body, (epwd, password) => {
+            if (epwd) {
                 return res.status(400).send({
-                    message: help.getErrorMessage(err)
+                    message: help.getErrorMessage(epwd)
                 });
             }
-
-            return res.json({
-                output: `O Usuário ${u.username} foi atualizado com sucesso!`,
-                module: u
+            if (password!=null){
+                user.password = password;
+            }
+            user.save((err,u)=> {
+                if(err){
+                    return res.status(400).send({
+                        message: help.getErrorMessage(err)
+                    });
+                }
+    
+                return res.json({
+                    output: `O Usuário ${u.username} foi atualizado com sucesso!`,
+                    module: u
+                });
             });
         });
     }, err => {
@@ -179,3 +195,28 @@ exports.isOwner = function(req, res, next)
     }
     next();
 };
+
+/**
+ * Validate of the auth user is the same of the load user
+ * @param {Object} cdts the object password credentials to be update
+ * @param {Object} user the object with the user to be updated
+ * @param {*} next 
+ */
+function validatePasswd(cdts, next)
+{
+    if (cdts.password!==undefined)
+    {
+        var validations = [];
+        if (cdts.confirmation == undefined || cdts.confirmation == null || cdts.confirmation == '')
+            validations.push({ message: 'O campo confirmação de senha é obrigatória!' });
+        if (cdts.password != cdts.confirmation)
+            validations.push({ message: "A Senha e confirmação de senha não coincidem!" });
+        
+        if (validations.length > 0) {
+            return next({ errors: validations }, null);
+        }
+        return next(false, cdts.password);
+    } else{
+        next(false,null);
+    }
+}

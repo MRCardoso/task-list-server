@@ -3,7 +3,7 @@ angular.module('app.directives')
     {
         return {
             restrict: 'E',
-            template: '<img ng-src="{{renderImage}}">',
+            template: '<img ng-src="{{renderImage}}" ng-click="preview()">',
             replace: true,
             transclude: true,
             scope: {
@@ -11,17 +11,18 @@ angular.module('app.directives')
                 renderType: '=?renderType',
                 withUserId: '=?withUserId'
             },
-            controller: ["$scope", "$sce", "Authentication","$timeout", "$http", function($scope, $sce,Authentication,$timeout, $http)
+            controller: ["$scope", "$sce", function($scope, $sce)
             {
                 if( angular.isUndefined($scope.model) )
-                {
                     return console.warn("The 'model' is required");
-                }
-                var timer = 0;
                 $scope.renderImage = '';
                 $scope.withUserId = angular.isDefined($scope.withUserId) ? $scope.withUserId : false;
                 $scope.type = angular.isDefined($scope.type) ? $scope.type : 'profile';
                 
+                $scope.preview = function () {
+                    $scope.$root.imagerender = $scope.renderImage;
+                };
+
                 $scope.render = function()
                 {
                     if( $scope.model.image != null ){
@@ -51,13 +52,10 @@ angular.module('app.directives')
                 // normal|details
                 renderType: '@renderType',
             },
-            controller: ["$scope", "$sce", "Authentication","$timeout", "$http", function($scope, $sce,Authentication,$timeout, $http)
+            controller: ["$scope", function($scope)
             {
                 if( angular.isUndefined($scope.model) )
-                {
                     return console.warn("The 'model' is required");
-                }
-                var timer = 0;
                 $scope.renderType = angular.isDefined($scope.renderType) ? $scope.renderType : 'normal';
                 $scope.type = angular.isDefined($scope.type) ? $scope.type : 'profile';
 

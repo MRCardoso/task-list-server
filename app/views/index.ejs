@@ -27,6 +27,12 @@
 
     <body>
         <div class="loading" ng-show="loading"></div>
+        <div ng-show="imagerender!=null" ng-class="{'image-preview-modal': imagerender!=null}">
+            <img ng-src="{{imagerender}}" style="width: 75%; height: 75%; position: relative; top: 12.5%; left: 12.5%">
+            <button type="button" class="close delete-abs" ng-click="imagerender=null">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
         
         <my-sidebar></my-sidebar>
 

@@ -1,8 +1,8 @@
 angular
     .module("app.controllers")
     .controller('UserController', ['$scope', '$routeParams', '$location', '$filter', 'User', 'CoreService', 'Authentication', "defaultConfig", function ($scope, $routeParams, $location, $filter, User, CoreService, Authentication, defaultConfig) {
-        $scope.lines = [{ path: 'users', label: 'Usuário' }];
         $scope.isSimple = (Authentication.isAuthenticated() && !Authentication.user.isSuperUser ? true : false);
+        $scope.lines = ($scope.isSimple ? [] : [{ path: 'users', label: 'Usuário' }]);
 
         if (/myData/.test($location.$$path)) {
             $scope.moduleName = 'users';
@@ -28,7 +28,6 @@ angular
                     model = User.admin.get({ userId: $routeParams.userId });
 
                 model.$promise.then(function (user) {
-                    console.log(user);
                     var names = user.name.split(' ');
 
                     $scope.removeUrl = defaultConfig.removeImageUrl;
@@ -57,6 +56,7 @@ angular
                     email: this.user.email,
                     username: this.user.username,
                     password: this.user.password,
+                    confirmation: (this.user.confirmation || ''),
                     image: this.user.image,
                 });
                 CoreService.save(user);
