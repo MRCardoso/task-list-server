@@ -3,90 +3,79 @@
     
     <header-grid lines="lines" save="false"></header-grid>
     
-    <form ng-submit="save()" class="form-horizontal">
+    <form ng-submit="save()" class="form-horizontal tab-form">
         <div ng-class="{'col-md-8': user.image, 'col-md-12' : !(user.image)}">
-            
-            <div class="form-group">
-                <div class="text-center">
-                    <label class="radio-inline">
-                        <input type="radio" name="status" ng-model="user.status" ng-value="true"> Ativo
-                    </label>
-                    <label class="radio-inline">
-                        <input type="radio" name="status" ng-model="user.status" ng-value="false"> Inativo
-                    </label>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <span class="input-group-addon">
-                            <i class="fa fa-user"></i>
-                        </span>
-                        <input type="text" placeholder="Nome" class="form-control" ng-model="user.firstName">
+            <uib-tabset active="active" justified="true">
+                
+                <uib-tab index="0" heading="Dados">
+                    <div class="form-group">
+                        <div class="input-custom">
+                            <label>Status</label>
+                            <label class="input-custom-radio">
+                                <input type="radio" name="status" ng-model="user.status" ng-value="true"> Ativo
+                            </label>
+                            <label class="input-custom-radio">
+                                <input type="radio" name="status" ng-model="user.status" ng-value="false"> Inativo
+                            </label>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <span class="input-group-addon">
-                            <i class="fa fa-user"></i>
-                        </span>
-                        <input type="text" placeholder="Sobrenome" class="form-control" ng-model="user.lastName">
+                    
+                    <div class="form-group">
+                        <div class="input-custom-group">
+                            <div class="input-custom">
+                                <label>Nome</label>
+                                <input type="text" placeholder="Nome" ng-model="user.firstName">
+                            </div>
+                            <div class="input-custom">
+                                <label>Sobrenome</label>
+                                <input type="text" placeholder="Sobrenome" ng-model="user.lastName">
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <div class="col-md-12">
-                    <div class="input-group">
-                        <span class="input-group-addon">
-                            <i class="fa fa-at"></i>
-                        </span>
-                        <input type="text" placeholder="email" class="form-control" ng-model="user.email">
+                    
+                    <div class="form-group">
+                        <div class="input-custom">
+                            <label>E-mail</label>
+                            <input type="text" placeholder="E-mail" ng-model="user.email">
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="col-md-12">
-                    <div class="input-group">
-                        <span class="input-group-addon">
-                            <i class="fa fa-user"></i>
-                        </span>
-                        <input type="text" placeholder="username" class="form-control" ng-model="user.username">
+                    
+                    <div class="form-group">
+                        <div class="input-custom">
+                            <label>username</label>
+                            <input type="text" placeholder="username" ng-model="user.username">
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <span class="input-group-addon" ng-click="showPwd = !showPwd">
-                            <i class="fa" ng-class="{'fa-eye-slash': !(showPwd),'fa-eye': showPwd}"></i>
-                        </span>
-                        <input type="{{!(showPwd) ? 'password' : 'text'}}" placeholder="Senha" class="form-control" ng-model="user.password">
+                    
+                    <div class="form-group">
+                        <div class="input-custom-group">
+                            <div class="input-custom">
+                                <label>
+                                    Senha
+                                    <i class="fa" ng-click="showPwd = !showPwd" ng-class="{'fa-eye-slash': !(showPwd),'fa-eye': showPwd}"></i>
+                                </label>
+                                <input type="{{!(showPwd) ? 'password' : 'text'}}" placeholder="Senha" ng-model="user.password">
+                            </div>
+                            <div class="input-custom">
+                                <label>
+                                    Confirmação de senha
+                                    <i class="fa" ng-click="showCfm = !showCfm" ng-class="{'fa-eye-slash': !(showCfm),'fa-eye': showCfm}"></i>
+                                </label>
+                                <input type="{{!(showCfm) ? 'password' : 'text'}}" placeholder="Confirmação" ng-model="user.confirmation">
+                            </div>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <span class="input-group-addon" ng-click="showCfm = !showCfm">
-                            <i class="fa" ng-class="{'fa-eye-slash': !(showCfm),'fa-eye': showCfm}"></i>
-                        </span>
-                        <input type="{{!(showCfm) ? 'password' : 'text'}}" placeholder="Confirmação de senha" class="form-control" data-ng-model="user.confirmation">
+                </uib-tab>
+                
+                <uib-tab index="1" heading="Alterar Foto">
+                    <div ng-if="user._id != undefined && sendUrl != undefined">
+                        <form-uploader many="false" allow-type="gif|jpg|jpeg|png|x-png|pjpeg" send-url="sendUrl" remove-url="removeUrl"></form-uploader>
                     </div>
-                </div>
-            </div>
+                </uib-tab>
+            </uib-tabset>
         </div>
         <div class="col-md-4" ng-if="user._id != undefined && sendUrl != undefined && user.image">
             <image-container-s3 model="user" render-type="normal"></image-container-s3>
-        </div>
-        
-        <div class="col-md-12" ng-if="user._id != undefined && sendUrl != undefined">
-            <uib-accordion close-others="oneAtATime">
-                <div uib-accordion-group class="panel-default" heading="Alterar Foto">
-                    <form-uploader many="false" allow-type="gif|jpg|jpeg|png|x-png|pjpeg" send-url="sendUrl" remove-url="removeUrl"></form-uploader>
-                </div>
-            </uib-accordion>
         </div>
 
         <div ng-if="isSimple">

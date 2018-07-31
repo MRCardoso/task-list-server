@@ -9,33 +9,25 @@ angular.module('app.directives')
             scope: {
                 model: '=?model',
                 renderType: '=?renderType',
-                withUserId: '=?withUserId'
+                withUserId: '=?withUserId',
+                hasPreview: '=?hasPreview'
             },
-            controller: ["$scope", "$sce", function($scope, $sce)
+            controller: ["$scope", "$filter", "$sce", function ($scope, $filter, $sce)
             {
                 if( angular.isUndefined($scope.model) )
                     return console.warn("The 'model' is required");
                 $scope.renderImage = '';
                 $scope.withUserId = angular.isDefined($scope.withUserId) ? $scope.withUserId : false;
+                $scope.hasPreview = angular.isDefined($scope.hasPreview) ? $scope.hasPreview : false;
                 $scope.type = angular.isDefined($scope.type) ? $scope.type : 'profile';
                 
                 $scope.preview = function () {
-                    $scope.$root.imagerender = $scope.renderImage;
+                    $scope.$root.imagerender = ($scope.hasPreview ? $scope.renderImage : null);
                 };
 
                 $scope.render = function()
                 {
-                    if( $scope.model.image != null ){
-                        $scope.renderImage = $sce.trustAsResourceUrl([
-                            $scope.$root.s3_url, 
-                            $scope.$root.userImages, 
-                            $scope.model._id,
-                            $scope.model.image.path
-                        ].join('/'));
-                    }
-                    else{
-                        $scope.renderImage = 'images/'+$scope.type+'.png';
-                    }
+                    $scope.renderImage = $sce.trustAsResourceUrl($filter('s3Url')($scope.model.image, $scope.model._id, $scope.type));
                 }
                 $scope.render();
             }]

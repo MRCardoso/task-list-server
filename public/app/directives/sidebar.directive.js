@@ -3,7 +3,7 @@ angular.module("app.directives", [])
         return{
             scope: {},
             templateUrl: "templates/sidebar.html",
-            controller: ["$scope", "Authentication", "messageBox", function ($scope, Authentication, messageBox){
+            controller: ["$scope", "$rootScope", "$filter", "Authentication", "messageBox", function ($scope, $rootScope, $filter, Authentication, messageBox){
                 $scope.auth = Authentication.user;
                 $scope.requestOnSignout = function() {
                     messageBox.confirm({
@@ -15,7 +15,14 @@ angular.module("app.directives", [])
                             }
                         }
                     });
-                }
+                };
+
+                $rootScope.$on('image.profile.change', function (ev, user) {
+                    if (user._id == $scope.auth._id){
+                        var path = $filter('s3Url')(user.image, $scope.auth._id);
+                        angular.element("#profile-container-image").attr('src', path);
+                    }
+                })
             }]
         }
     });

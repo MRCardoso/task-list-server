@@ -44,4 +44,24 @@ angular.module('app.filters', [])
             }
             return minSeg;
         }
+    })
+    /*
+    | --------------------------------------------------------------------------------------------
+    | Create a url with full endpoint of s3 to the image
+    | --------------------------------------------------------------------------------------------
+    */
+    .filter('s3Url', function ($rootScope) {
+        return function (string, action, type) {
+            if (string != null) {
+                var path = [
+                    $rootScope.s3_url,
+                    $rootScope.userImages,
+                    action,
+                    string.path
+                ].join('/');
+                return path;
+            }
+            type = (angular.isUndefined(type) ? 'profile' : type);
+            return 'images/' + type + '.png';
+        }
     });

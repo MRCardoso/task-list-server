@@ -1,6 +1,9 @@
 angular
     .module("app.controllers")
-    .controller('UserController', ['$scope', '$routeParams', '$location', '$filter', 'User', 'CoreService', 'Authentication', "defaultConfig", function ($scope, $routeParams, $location, $filter, User, CoreService, Authentication, defaultConfig) {
+    .controller('UserController', [
+    '$scope', '$routeParams', '$location', '$rootScope', 'User', 'CoreService', 'Authentication', "defaultConfig", 
+    function ($scope, $routeParams, $location, $rootScope, User, CoreService, Authentication, defaultConfig)
+    {
         $scope.isSimple = (Authentication.isAuthenticated() && !Authentication.user.isSuperUser ? true : false);
         $scope.lines = ($scope.isSimple ? [] : [{ path: 'users', label: 'Usuário' }]);
 
@@ -47,7 +50,10 @@ angular
             this.user.name = [fname, lname].join(' ');
 
             if ($routeParams.userId) {
-                CoreService.save(this.user, 'reload');
+                CoreService.save(this.user, function(response) {
+                    $rootScope.$broadcast("image.profile.change", response.module);
+                    $location.path([$scope.moduleName, response.module._id, 'view'].join('/'));
+                });
             }
             else {
                 var user = new User['admin']({

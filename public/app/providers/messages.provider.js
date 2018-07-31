@@ -25,7 +25,7 @@ angular.module('app.providers', [])
 			{
 				fail:
 				{
-					label: "Cancel",
+					label: "Cancelar",
 					className: "btn-default",
 					callback:function()
 					{
@@ -34,7 +34,7 @@ angular.module('app.providers', [])
 				},
 				success:
 				{
-					label: "Confirm",
+					label: "Confirmar",
 					className: "btn-primary",
 					callback: function()
 					{

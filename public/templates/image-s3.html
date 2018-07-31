@@ -1,11 +1,11 @@
-<div ng-class="{'col-md-12': isNormalType(), 'col-md-3': isDetailsType()}" style="margin-top: 20px">
+<div ng-class="{'col-md-12': isNormalType(), 'col-md-3': isDetailsType()}" style="margin-top: 20px; margin-bottom: 70px">
     <div class="row">        
         <a role="button" class="thumbnail">
             <button type="button" class="close delete-abs" ng-click="deleteImage()"><span aria-hidden="true">&times;</span></button>
             <!-- <button type="button" class="btn btn-blue btn-sm" ng-click="download(model)">
                 <i class="fa fa-download" aria-hidden="true"></i>
             </button>-->
-            <image-s3 model="model" alt="profile" uib-tooltip="{{ model.image.name }}"></image-s3>
+            <image-s3 model="model" alt="profile" has-preview="true" uib-tooltip="{{ model.image.name }}"></image-s3>
         </a>    
     </div>
 </div>
