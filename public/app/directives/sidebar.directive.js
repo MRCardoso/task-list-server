@@ -3,8 +3,16 @@ angular.module("app.directives", [])
         return{
             scope: {},
             templateUrl: "templates/sidebar.html",
-            controller: ["$scope", "$rootScope", "$filter", "Authentication", "messageBox", function ($scope, $rootScope, $filter, Authentication, messageBox){
+            controller: ["$scope", "$rootScope", "$filter", "$timeout", "Authentication", "messageBox", function ($scope, $rootScope, $filter, $timeout, Authentication, messageBox){
                 $scope.auth = Authentication.user;
+                $scope.hasshing = Date.now();
+                
+                $scope.$root.$on('logo.hassing', function (ev, d) {
+                    $timeout(function(params) {
+                        $scope.hasshing = d;
+                    }, 100);
+                })
+
                 $scope.requestOnSignout = function() {
                     messageBox.confirm({
                         title: 'Confirmação',

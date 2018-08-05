@@ -1,10 +1,10 @@
-<section class="border-side-bottom content content-large" ng-init="findOne();">
+<section class="content" ng-init="findOne();">
     <header-grid lines="lines" save="false"></header-grid>    
     <div class="col-md-4" ng-if="user.image != null">
         <div class="row">
             <div class="col-xs-6 col-md-12">
                 <a role="button" class="thumbnail">
-                    <image-s3 model="user" alt="profile" tooltip="{{ user.image.name }}"></image-s3>
+                    <image-s3 model="user" alt="profile" has-preview="true" tooltip="{{ user.image.name }}"></image-s3>
                 </a>
             </div>
         </div>

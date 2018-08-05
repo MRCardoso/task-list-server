@@ -65,6 +65,8 @@ angular.module('app.directives')
 
                 };
                 $scope.deleteImage = function(){
+                    console.log($scope.model);
+                    
                     $scope.model.image = null;
                 };
                 $scope.isDetailsType = function(){

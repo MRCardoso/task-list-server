@@ -25,7 +25,7 @@ exports.getErrorMessage = function(err, noTags = true, isString = true)
                 message.push('Usuário já existe');
                 break;
             default:                
-                message.push('Erro desconhecido!');
+                message.push(err.message || 'Erro desconhecido!');
         }
         this.writeLogs(JSON.stringify(err, null, 4));
     }

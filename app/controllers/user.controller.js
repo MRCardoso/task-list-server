@@ -2,7 +2,7 @@ var User = require('mongoose').model('User'),
     UserApi = require('mongoose').model('UserApi'), 
     help = require('../helpers'),
     credentials = require('../../config/credentials'),
-    s3Helper = require('uploader-go-bucket').s3Helper({ bucket: credentials.s3Bucket });
+    s3Helper = require('uploader-go-bucket').s3Helper(credentials.AWS);
 
 /**
  * Method to list all users
@@ -69,7 +69,7 @@ exports.update = function(req,res)
         user.image = req.session.image;
 
     s3Helper
-    .manageObject(`${credentials.s3ImagePath}/${user._id}`, user.image, req.body.image, req.session.image)
+    .manageObject(`${credentials.AWS.uploadFolder}/${user._id}`, user.image, req.body.image, req.session.image)
     .then(values => {
         if( req.body.image == null && req.session.image == null)
             user.image = null;
@@ -113,7 +113,7 @@ exports.delete = function(req,res)
 {
     let user = req.userData;
     s3Helper
-    .manageObject(`${credentials.s3ImagePath}/${user._id}`, user.image,null,null)
+    .manageObject(`${credentials.AWS.uploadFolder}/${user._id}`, user.image,null,null)
     .then(values => {
         UserApi.findOneAndRemove({ userId: user._id }, function (err) {
             if (err) {

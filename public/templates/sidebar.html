@@ -1,6 +1,5 @@
 <nav class="navbar navbar-blue">
     <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-toggle" aria-expanded="false">
                 <span class="sr-only">Toggle navigation</span>
@@ -9,12 +8,11 @@
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand" ng-href="/#!/" uib-tooltip="Home" tooltip-placement="bottom" tooltip-trigger="mouseenter">
-                <img src="/images/icon.png" class="image-sidebar" alt="Task-List App" title="Task-List App">
+                <img ng-src="./images/logo-banner-3.gif?hasshing={{hasshing}}" alt="Task-List App" title="Task-List App">
             </a>
         </div>
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse custom-font" ng-if="auth" id="navbar-toggle">
+        <!-- <div class="collapse navbar-collapse custom-font" ng-if="auth" id="navbar-toggle">
             <ul class="nav navbar-nav navbar-right">
                 <li ng-if="auth.isSuperUser">
                     <a ng-href="/#!/users">
@@ -41,7 +39,7 @@
                     </a>
                 </li>
             </ul>
-        </div><!-- /.navbar-collapse -->
+        </div> -->
         <div class="sign-in-up" ng-if="!auth">
             <a ng-href="/signup" accesskey="U">
                 Criar Conta
@@ -53,5 +51,33 @@
                 <span class="fa fa-sign-in"></span>
             </a>
         </div>
-    </div><!-- /.container-fluid -->
+    </div>
 </nav>
+
+<div class="vertica-sidebar custom-font" ng-if="auth">
+    <div class="user-info">
+        <image-s3 ng-if="auth" model="auth" has-preview="true" id="profile-container-image"></image-s3>
+        <a href="/#!/myData/{{auth.id}}" ng-hide="showItems">
+            {{auth.username}}
+        </a>
+        <a role="button" ng-click="requestOnSignout()" ng-hide="showItems">
+            <i class="fa fa-sign-out"></i>
+            Sair
+        </a>
+    </div>
+    <div class="clear"></div>
+    <ul>
+        <li ng-if="auth.isSuperUser">
+            <a ng-href="/#!/users">
+                <i class="fa fa-user"></i>
+                Usuário
+            </a>
+        </li>
+        <li>
+            <a ng-href="/#!/tasks">
+                <i class="fa fa-tasks"></i>
+                Tarefa
+            </a>
+        </li>
+    </ul>
+</div>

@@ -1,7 +1,7 @@
 angular
     .module("app.controllers")
     .controller('UserController', [
-    '$scope', '$routeParams', '$location', '$rootScope', 'User', 'CoreService', 'Authentication', "defaultConfig", 
+    '$scope', '$routeParams', '$location', '$rootScope', 'User', 'CoreService', 'Authentication', "defaultConfig",
     function ($scope, $routeParams, $location, $rootScope, User, CoreService, Authentication, defaultConfig)
     {
         $scope.isSimple = (Authentication.isAuthenticated() && !Authentication.user.isSuperUser ? true : false);
@@ -48,7 +48,7 @@ angular
                 lname = this.user.lastName || '';
 
             this.user.name = [fname, lname].join(' ');
-
+            
             if ($routeParams.userId) {
                 CoreService.save(this.user, function(response) {
                     $rootScope.$broadcast("image.profile.change", response.module);

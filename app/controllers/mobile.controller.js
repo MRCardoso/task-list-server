@@ -44,7 +44,7 @@ exports.signin = function(req, res)
             rJson.authToken = userApi.token;
             rJson.authExpires = userApi.expires;
             if (user.image){
-                rJson.url = `http:${credentials.s3Url}${credentials.s3Bucket}/${credentials.s3ImagePath}/${user._id}/${user.image.path}`;
+                rJson.url = `http:${credentials.AWS.URL}${credentials.AWS.Bucket}/${credentials.AWS.uploadFolder}/${user._id}/${user.image.path}`;
             } else{
                 rJson.url = null;
             }

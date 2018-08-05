@@ -6,7 +6,7 @@ angular.module('mrc-task-list')
         $rootScope.withCreate = true;        
         
         $rootScope.s3_url = window.S3URL;
-        $rootScope.userImages = window.s3ImagePath;
+        $rootScope.userImages = window.uploadFolder;
         
         window.S3URL = null;
         window.userImages = null;
@@ -30,6 +30,7 @@ angular.module('mrc-task-list')
 
         $rootScope.$on( "$routeChangeStart", function(event, next, current)
         {
+            $rootScope.$emit('logo.hassing', Date.now());
             $rootScope.inpercurse = true;
             if( next.$$route != undefined )
             {

@@ -4,7 +4,7 @@ angular
     function ($scope, Task, $routeParams, CoreService, tableConfig,defaultTinymceOptions,$resource) 
     {
         $scope.lines = [{path: 'tasks', label: 'Tarefa'}];
-        
+
         CoreService.validatePermission();
         
         $scope.situations = tableConfig.appLabels.situation;        

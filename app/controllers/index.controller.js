@@ -1,7 +1,7 @@
 var credentials = require('../../config/credentials'),
     fs = require('fs'),
     uploader = require('uploader-go-bucket'),
-    s3Helper = uploader.s3Helper({ bucket: credentials.s3Bucket }),
+    s3Helper = uploader.s3Helper(credentials.AWS),
     help = require('../helpers');
 
 exports.render = function (req,res)
@@ -17,8 +17,8 @@ exports.render = function (req,res)
         title: credentials.appName,
         user: JSON.stringify(req.user),
         isSuperUser: credentials.isSuperUser(req.user),
-        S3URL: credentials.s3Url+credentials.s3Bucket,
-        s3ImagePath: credentials.s3ImagePath,
+        S3URL: credentials.AWS.URL+credentials.AWS.Bucket,
+        uploadFolder: credentials.AWS.uploadFolder,
         ERR: JSON.stringify(ERR)
     });
 };
@@ -59,7 +59,7 @@ exports.upload = function(req, res)
         var date = new Date(),
             string = `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}-${file.name}`,
             hasString = require('crypto').createHash('md5').update(string).digest('hex')+'.'+file.name.split('.').pop(),
-            path = `${credentials.s3ImagePath}/${req.params.dataId}/${hasString}`;
+            path = `${credentials.AWS.uploadFolder}/${req.params.dataId}/${hasString}`;
         
         s3Helper
         .uploadObject(file, path, file.path)
@@ -80,7 +80,6 @@ exports.upload = function(req, res)
                 path: path,
             });
         },err=>{
-            fs.unlink(file.path);
             return res.status(500).send({
                 message: help.getErrorMessage(err)
             });

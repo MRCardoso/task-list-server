@@ -25,6 +25,6 @@
     "passport-local": "^1.0.0",
     "request": "^2.87.0",
     "signiuof": "latest",
-    "uploader-go-bucket": "^1.4.2"
+    "uploader-go-bucket": "latest"
   }
 }
