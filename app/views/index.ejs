@@ -30,7 +30,7 @@
         <div class="loading" ng-show="loading"></div>
         <div ng-show="imagerender!=null" ng-class="{'image-preview-modal': imagerender!=null}">
             <img ng-src="{{imagerender}}">
-            <span class="delete-abs fa fa-times-circle" ng-click="imagerender=null"></span>
+            <span ng-class="{'delete-abs fa fa-times-circle': imagerender!=null}" ng-click="imagerender=null"></span>
         </div>
         
         <my-sidebar></my-sidebar>
