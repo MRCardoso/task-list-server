@@ -14,6 +14,12 @@ module.exports = function (app)
     iuof.routes(app);
     
     app.get('/', index.render);
+
+    app.get('/oauth/google', passport.authenticate('google', {scope: ['profile', 'email']}));
+    app.get('/oauth/google/callback', passport.authenticate('google', {failureRedirect: '/signin'}), (req, res) => res.redirect('/'));
+
+    app.get('/oauth/facebook', passport.authenticate('facebook'));
+    app.get('/oauth/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/signin' }), (req, res) => res.redirect('/') );
     /*
     | ------------------------------------------------------------------
     | User requests

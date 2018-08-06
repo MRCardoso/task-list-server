@@ -6,7 +6,7 @@ module.exports = function ()
 {
     passport.use(new LocalStrategy((username, password, done) => {
         User.findAndAuthenticate({username: username, password:password}, (err, user) =>{
-            if(err){                
+            if(err){
                 return done(null,false, {
                     message: require('../../app/helpers').getErrorMessage(err,false)
                 });
