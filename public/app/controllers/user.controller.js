@@ -52,7 +52,10 @@ angular
             if ($routeParams.userId) {
                 CoreService.save(this.user, function(response) {
                     $rootScope.$broadcast("image.profile.change", response.module);
-                    $location.path([$scope.moduleName, response.module._id, 'view'].join('/'));
+                    var path = '/';
+                    if (!$scope.isSimple)
+                        path = [$scope.moduleName, response.module._id, 'view'].join('/');
+                    $location.path(path);
                 });
             }
             else {
