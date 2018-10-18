@@ -1,9 +1,21 @@
 angular
     .module("app.controllers")
-    .controller('TaskController', ['$scope', 'Task', '$routeParams', 'CoreService', 'tableConfig', 'defaultTinymceOptions','$resource',
-    function ($scope, Task, $routeParams, CoreService, tableConfig,defaultTinymceOptions,$resource) 
+    .controller('TaskController', ['$scope', 'Task', '$routeParams', 'CoreService', 'tableConfig', 'defaultTinymceOptions','Authentication',
+    function ($scope, Task, $routeParams, CoreService, tableConfig, defaultTinymceOptions, Authentication) 
     {
         $scope.lines = [{path: 'tasks', label: 'Tarefa'}];
+        $scope.fields = [
+            // { label: 'Usuário', column: 'username', fk: 'userId', type: 'simple' },
+            { label: 'Titulo', column: 'title', type: 'link', url: 'view' },
+            { label: 'Inicio', column: 'startDate', type: 'filter', filter: ['date', 'dd/MM/yyyy'] },
+            { label: 'Termino', column: 'endDate', type: 'filter', filter: ['date', 'dd/MM/yyyy'] },
+            { label: 'Prioridade', column: 'priority', type: 'template' },
+            { label: 'Situação', column: 'situation', type: 'template' },
+            { label: 'Status', column: 'status', type: 'template' },
+        ];
+        if (Authentication.isAuthenticated() && Authentication.user.isSuperUser){
+            $scope.fields.splice(0, 0, { label: 'Usuário', column: 'username', fk: 'userId', type: 'simple' });
+        }
 
         CoreService.validatePermission();
         

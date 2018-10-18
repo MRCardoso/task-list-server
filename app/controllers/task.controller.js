@@ -45,8 +45,6 @@ exports.create = function (req, res) {
                 return res.status(400).send({ message: help.getErrorMessage(err) });
             }
 
-            templateNotification(task, 'C', req);
-
             res.json({
                 output: `A tarefa '${task.title}' foi criada com sucesso`,
                 module: task
@@ -74,8 +72,6 @@ exports.update = function (req, res)
                 return res.status(400).send({ message: help.getErrorMessage(err) });
             }
 
-            templateNotification(task, 'U', req);
-
             res.json({
                 output: `A tarefa '${task.title}' foi atualizada com sucesso`,
                 module: task
@@ -101,8 +97,6 @@ exports.delete = function (req, res) {
                 return res.status(500).send({ message: help.getErrorMessage(err) });
             }
 
-            templateNotification(task, 'D', req);
-
             res.json({
                 output: `A tarefa '${task.title}' foi removida com sucesso`,
                 module: task
@@ -123,7 +117,6 @@ exports.delete = function (req, res) {
 exports.inactivate = function (req, res) {
     var task = req.taskData;
     integrationModel.inactivate(req, task.integrationApiId).then(function () {
-        templateNotification(task, 'I', req);
         res.json({ task: task });
     }, err1 => {
         return res.status(500).send({ message: help.getErrorMessage(err1) });
@@ -176,6 +169,8 @@ exports.listToDate = function (req, res) {
  * @returns {*}
  */
 exports.hasAuthorization = function (req, res, next) {
+    console.log(req.user)
+    console.log(req.taskData.userId)
     if (req.taskData.userId.id !== req.user.id) {
         if (!credentials.isSuperUser(req.user)) {
             return res.status(403).send({
