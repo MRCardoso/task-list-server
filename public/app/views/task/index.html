@@ -17,15 +17,7 @@
                 with-create="true"
                 show-breadcrumb="false"
                 lines="lines"
-                fields="[
-                    { label: 'Usuário', column: 'username', fk: 'userId', type:'simple'},
-                    { label: 'Titulo', column: 'title', type:'link', url: 'view'},
-                    { label: 'Inicio', column: 'startDate', type:'filter', filter: ['date', 'dd/MM/yyyy']},
-                    { label: 'Termino', column: 'endDate', type:'filter', filter: ['date', 'dd/MM/yyyy']},
-                    { label: 'Prioridade', column: 'priority', type:'template'},
-                    { label: 'Situação', column: 'situation', type:'template'},
-                    { label: 'Status', column: 'status', type:'template'},
-                ]">
+                fields="fields">
             </table-grid>
         </uib-tab>
         <uib-tab>
