@@ -13,7 +13,7 @@
     "ejs": "^2.5.7",
     "express": "^4.11.2",
     "express-session": "^1.15.6",
-    "jwt-simple": "^0.2.0",
+    "jwt-simple": ">=0.3.1",
     "method-override": "^2.3.10",
     "moment": "^2.9.0",
     "mongoose": "^4.10.4",
