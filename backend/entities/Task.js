@@ -25,15 +25,6 @@ class Task extends Model {
     beforeSave() {
         return new Promise(resolve => {
             this.status = (this.status == "1" || this.status == "true") ? true : false
-            if (this.startDate){
-                let arrayDate = this.startDate.split("/")
-                this.startDate = `${arrayDate[2]}-${arrayDate[1]}-${arrayDate[0]}`
-            }
-            
-            if (this.endDate){
-                let arrayEnd = this.endDate.split("/")
-                this.endDate = `${arrayEnd[2]}-${arrayEnd[1]}-${arrayEnd[0]}`
-            }
             resolve()
         })
     }

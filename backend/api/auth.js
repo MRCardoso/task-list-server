@@ -2,37 +2,48 @@ const { authSecret } = require('../.env')
 const jwt = require('jwt-simple')
 
 module.exports = app => {
-    const User = require('../entities/User')
-    const user = new User(app);
+    const Auth = require('../entities/Auth')
+    const auth = new Auth('signin',app);
 
     const signin = async (req, res) => {
-        if( !req.body.email || !req.body.password){
-            return res.status(400).send({message: ["Please provider the email and password"]})
+        try {
+            auth.login(req.body).then((logged) => {
+                const now = Math.floor(Date.now() / 1000)
+                const payload = {
+                    id: logged.id,
+                    email: logged.email,
+                    username: logged.username,
+                    iat: now,
+                    exp: now + (60 * 60 * 24 * 3)
+                }
+    
+                res.json({
+                    ...payload,
+                    token: jwt.encode(payload, authSecret)
+                })
+            }, (err) => {
+                res.status(err.status).send({ validations: err.message })
+            })
+        } catch (error) {
+            console.log({error})
+            res.status(500).send("Não foi possível fazer login")
         }
-
-        const logged = await user.findByEmail(req.body.email)
-
-        if(!user) {
-            return req.status(400).send({message: ["User not found"]})
-        }
-        const bcrypt = require('bcrypt-nodejs')
-        const isMatch = bcrypt.compareSync(req.body.password, logged.password)
-        if(!isMatch) return res.status(401).send({message: ["Password invalid"]})
-        
-        const now = Math.floor(Date.now() / 1000)
-        const payload = {
-            id: logged.id,
-            email: logged.email,
-            username: logged.username,
-            iat: now,
-            exp: now + (60 * 60 * 24 * 3)
-        }
-
-        res.json({
-            ...payload,
-            token: jwt.encode(payload, authSecret)
-        })
     }
 
-    return { signin }
+    const validateToken = async (req, res) => {
+        try {
+            if (req.body.token) {
+                const token = jwt.decode(req.body.token, authSecret)
+                if (new Date(token.exp * 1000) > new Date()) {
+                    return res.send(true)
+                }
+            }
+        } catch (e) {
+            console.log({ e })
+        }
+
+        res.send(false)
+    }
+
+    return { signin, validateToken }
 }

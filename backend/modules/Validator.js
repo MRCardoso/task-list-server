@@ -140,13 +140,19 @@ class Validator
     | Validator for verify if the attribute is not empty
     | ----------------------------------------------------------------------------
     * @param string attribute the attribute validated
+    * @param string mode the additional rule before validate field
     * @return bool
     */
-    required(attribute) {
+    required(attribute, mode) {
+        if (mode == 'create'){
+            if (this.post['id']){
+                return true
+            }
+        }
         let notNull = (this.post[attribute] != null && this.post[attribute] != "null");
         let notUndefined = (this.post[attribute] != undefined && this.post[attribute] != "undefined");
 
-        return ((this.post[attribute] != '' && notNull && notUndefined) ? true : false);
+        return ((notNull && notUndefined && this.post[attribute].toString() != '') ? true : false);
     }
 
     /**
@@ -195,7 +201,8 @@ class Validator
     */
     date(attribute){
         if (this.required(attribute)){
-            return (/^\d{2}\/\d{2}\/\d{4}$/.test(this.post[attribute])) ? true : false
+            // return (/^\d{2}\/\d{2}\/\d{4}$/.test(this.post[attribute])) ? true : false
+            return (/^\d{4}-\d{2}-\d{2}$/.test(this.post[attribute])) ? true : false
         }
         return true
     }

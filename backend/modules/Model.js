@@ -49,8 +49,11 @@ class Model {
         }
     }
 
-    getFields(){
-        let fields = this.fillables.concat(this.hiddens);
+    getFields(useHidden = true){
+        let fields = this.fillables;
+        if (useHidden){
+            fields = fields.concat(this.hiddens);
+        }
         if(this.timestamps){
             fields = fields.concat(timestamps)
         }
@@ -168,9 +171,9 @@ class Model {
     * @param object params of the filter data
     * @return Promise
     */
-    one(params, relations = []){
+    one(params, relations = [], useHidden = false){
         let query = this.app.db(this.table)
-        let fields = this.getFields().concat(this.prepareJoin(relations, query))
+        let fields = this.getFields(useHidden).concat(this.prepareJoin(relations, query))
 
         return query
             .select(...fields)
@@ -178,9 +181,9 @@ class Model {
             .first()
     }
 
-    all(relations = []){
+    all(relations = [], useHidden = false){
         let query = this.app.db(this.table)
-        let fields = this.getFields().concat(this.prepareJoin(relations, query))
+        let fields = this.getFields(useHidden).concat(this.prepareJoin(relations, query))
 
         query.select(...fields)
 

@@ -5,11 +5,11 @@ class User extends Model {
         const fillables = ["id", "name", "username", "email", "status"]
         const hiddens = ["password"]
         const rules = {
-            "name"          : "required",
-            "username"      : "required",
-            "email"         : "required|email",
-            "password"      : "required|min:8|max:255|compare:confirmation",
-            "confirmation"  : "required|min:8|max:255",
+            "name"          : "required|max:80",
+            "username"      : "required|max:80",
+            "email"         : "required|email|max:120",
+            "password"      : "required:create|min:8|max:255|compare:confirmation",
+            "confirmation"  : "required:create|min:8|max:255",
             "status"        : "number"
         }
         super(app, "users", rules, fillables, hiddens)
@@ -17,13 +17,21 @@ class User extends Model {
 
     beforeSave() {
         return new Promise((resolve, reject) => {
-            const bcrypt = require('bcrypt-nodejs')
-            const salt = bcrypt.genSaltSync(10)
-            
-            this.password = bcrypt.hashSync(this.password, salt)
+            if(this.id)
+            {
+                if(this.password){
+                    const bcrypt = require('bcrypt-nodejs')
+                    const salt = bcrypt.genSaltSync(10)
+                    
+                    this.password = bcrypt.hashSync(this.password, salt)
+                    this.attributes["password"] = this.password
+                } else{
+                    delete this.attributes["password"]
+                }
+                console.log(this.password, this.attributes)
+            }
             this.status = (this.status == "1" || this.status == "true") ? true : false
             this.attributes["status"] = this.status
-            this.attributes["password"] = this.password
             
             this.uniqueUser().then(res => {
                 if (res){
