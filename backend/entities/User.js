@@ -2,7 +2,7 @@ const Model = require('../modules/Model');
 
 class User extends Model {
     constructor(app){
-        const fillables = ["id", "name", "username", "email", "status"]
+        const fillables = ["id", "name", "username", "email", "status", "admin"]
         const hiddens = ["password"]
         const rules = {
             "name"          : "required|max:80",
@@ -28,7 +28,6 @@ class User extends Model {
                 } else{
                     delete this.attributes["password"]
                 }
-                console.log(this.password, this.attributes)
             }
             this.status = (this.status == "1" || this.status == "true") ? true : false
             this.attributes["status"] = this.status

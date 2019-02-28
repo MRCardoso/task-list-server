@@ -13,7 +13,7 @@
 
 <script>
 import TaskAppFormItem from '@/components/FormItem.vue'
-import { prepareError } from '@/utils/index'
+import { prepareError, browserData } from '@/utils/index'
 
 export default {
     components: {TaskAppFormItem},
@@ -25,7 +25,8 @@ export default {
     },
     methods: {
         signin(){
-            this.$http.post("signin", this.user).then(
+            let { name, version } = browserData()
+            this.$http.post(`signin?PlatformName=${name}&PlatformVersion=${version}`, this.user).then(
                 res => {
                     this.$store.commit("addUser", res.data)
                     this.$toasted.global.defaultSuccess({message: "Login realizado com sucesso"})

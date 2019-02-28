@@ -29,7 +29,7 @@ export default {
     methods: {
         signup(){
             this.$http.post("signup", this.user).then(
-                id => {
+                () => {
                     this.$toasted.global.defaultSuccess({message: "Conta criada com sucesso"})
                     this.$router.push("/")
                 }, 

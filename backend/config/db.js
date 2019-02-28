@@ -1,4 +1,3 @@
-const { DB } = require('../.env')
-const knex = require('knex')(DB)
+const knex = require('knex')(require('../knexfile'))
 
 module.exports = knex

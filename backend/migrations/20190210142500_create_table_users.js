@@ -8,17 +8,10 @@ exports.up = function(knex, Promise) {
         table.string('password').notNull()
         table.boolean('status').notNull().defaultTo(true)
         table.boolean('admin').notNull().defaultTo(false)
+        table.string('resetToken')
+        table.date('resetExpires')
+        table.timestamp('deleted_at')
         table.timestamps();
-        // table.string('image')
-        // reset token
-        // table.string('resetToken')
-        // table.date('resetExpires').defaultTo(Date.now)
-        // apis to save data
-        // table.integer('userApis')
-        // OAuth Credentials Providers, maybe table providers
-        // table.string('provider')
-        // table.integer('providerId')
-        // table.text('providerData')
     })
 };
 

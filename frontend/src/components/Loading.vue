@@ -12,19 +12,19 @@ export default {
 
 <style>
 .loading {
-    display: flex;
-    flex: 1;
-    justify-content: center;
-    align-items: center;
-    z-index: 2;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0 !important;
+    z-index: 10;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     background-color: rgba(10,23,55,0.5);
 }
 .loading > img{
     width: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position: absolute;
+    left: 45%;
+    top: 40%;
 }
 </style>

@@ -34,11 +34,11 @@ export default {
         }
     },
     watch: {
-        date (val) {
+        date () {
             this.item[this.field] = this.date
             this.formated = (this.date ? this.$moment(this.date).format('DD/MM/YYYY') : null)
         },
-        item(val2){
+        item(){
             if(this.item[this.field]){
                 this.date = this.$moment(this.item[this.field]).format("YYYY-MM-DD")
             }

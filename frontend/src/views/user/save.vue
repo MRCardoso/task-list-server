@@ -1,5 +1,5 @@
 <template>
-    <task-app-form-item title="Alterar Dados" :inlineButtons="false">
+    <task-app-form-item :title="title" :path="indexRoute" inputClass>
         <template slot="inputs">
             <v-tabs fixed-tabs>
                 <v-tab ripple>Dados Iniciais</v-tab>
@@ -28,23 +28,34 @@
             </v-tabs>
         </template>
         <template slot="buttons">
+            <v-spacer></v-spacer>
+            <v-btn :to="indexRoute">Voltar</v-btn>
+            <v-btn v-if="id" class="blue lighten-3 white--text" :to="`${indexRoute}/${id}/detail`">Visualizar</v-btn>
             <v-btn class="my-blue darken-1 white--text" @click.prevent="save">Salvar</v-btn>
         </template>
     </task-app-form-item>
 </template>
-
 <script>
-import TaskAppToggleStatus from '@/components/ToggleStatus.vue'
-import TaskAppFileUploader from '@/components/FileUploader.vue'
+
 import TaskAppFormItem from '@/components/FormItem.vue'
+import TaskAppFileUploader from '@/components/FileUploader.vue'
+import TaskAppToggleStatus from '@/components/ToggleStatus.vue'
 import { prepareError } from '@/utils/index'
 
 export default {
-    components: {TaskAppToggleStatus, TaskAppFormItem, TaskAppFileUploader},
-    data(){
+    components: { TaskAppFormItem, TaskAppToggleStatus, TaskAppFileUploader },
+    props: ['id'],
+    data() {
         return {
+            step: 0,
             user: {},
-            rules: {}
+            rules: {},
+            indexRoute: '/users'
+        }
+    },
+    computed: {
+        title(){
+            return this.id ? 'Atualizar Usuário' : 'Criar Usuário'
         }
     },
     methods: {
@@ -60,37 +71,43 @@ export default {
             }
         },
         save(){
-            this.$http.put(`users/${this.user.id}`, this.user).then(
-                () => {
-                    this.$store.dispatch('busNotifyLoading', true)
-                    this.$store.dispatch('sendFile', this.user.id)
+            let method = this.id ? 'put' : 'post'
+            let endpoint = `users`+(this.id ? `/${this.id}` : '')
+
+            this.$store.dispatch('busNotifyLoading', true)
+
+            this.$http[method](endpoint, this.user)
+            .then(
+                res => {
+                    this.$store.dispatch('sendFile', (this.id ? this.id : res.data.id))
                     .then(() => {
-                        this.$toasted.global.defaultSuccess({message: "Dados atualizados com sucesso"})
+                        this.$toasted.global.defaultSuccess({message: `Usuário ao ${this.id ? 'atualizada' : 'criada'} com sucesso`})
                         this.$store.dispatch('busNotifyLoading', false)
+                        this.$router.push('/users')
                     }, err => {
                         this.rules = prepareError(err)
                         this.$store.dispatch('busNotifyLoading', false)
                     })
                 },
-                err => this.rules = prepareError(err)
+                err => {
+                    this.rules = prepareError(err)
+                    this.$store.dispatch('busNotifyLoading', false)
+                }
             );
         },
-        loadUser(){
-            let user = this.$store.state.auth.user;
-            if(user){
-                this.$http.get(`users/${user.id}`).then(
-                    res => {
-                        this.user = res.data
-                        this.$store.commit('refrashImage', this.user.images)
-                    }, 
+        find(){
+            if(this.id){
+                this.$http.get(`users/${this.id}`).then(
+                    res => this.user = res.data,
                     err => this.$toasted.global.defaultError({message: prepareError(err)})
                 )
-
+            } else{
+                this.user = { status: 1 }
             }
         }
     },
     created(){
-        this.loadUser()
+        this.find()
     }
 }
 </script>

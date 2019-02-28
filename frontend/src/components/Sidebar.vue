@@ -23,7 +23,8 @@
             <v-toolbar-title slot="activator">
                 <div class="auth-box">
                     <span>{{user.username}}</span>
-                    <img src="@/assets/icon.png" alt="Banner" />
+                    <img v-if="logo" :src="logo" alt="User logo" />
+                    <img v-else src="@/assets/profile.png" alt="Logo" />
                 </div>
                 <!-- <v-icon dark>more_vert</v-icon> -->
             </v-toolbar-title>
@@ -41,17 +42,31 @@
 </template>
 
 <script>
+import { prepareError } from '@/utils/index'
 
 export default {
     computed: {
 		user(){
             return this.$store.state.auth.user;
+        },
+        logo(){
+            let user = this.$store.state.auth.user
+            if(user.image){
+                return user.image
+            }
+            return null
         }
     },
     methods: {
         logout(){
-            this.$store.commit('addUser', null)
-            this.$router.push("/")
+            let user = this.$store.state.auth.user
+            this.$http.get(`signout/${user.apiId}`).then(
+                () => {
+                    this.$store.commit('addUser', null)
+                    this.$router.push("/")
+                },
+                err => this.rules = prepareError(err)
+            )
         }
     },
 }
@@ -62,7 +77,9 @@ export default {
     }
     .auth-box img{
         float: right;
+        margin: 0 !important;
         width: 40px;
+        height: 40px;
         border: 1px solid rgba(85, 85, 85, 0.6);
         border-radius: 20px;
     }

@@ -1,8 +1,8 @@
 <template>
 	<v-app>
 		<task-app-sidebar />
-		<task-app-loading v-if="verifyToken" />
-		<task-app-content v-else />
+		<task-app-loading v-if="verifyToken || loading" />
+		<task-app-content />
 	</v-app>
 </template>
 
@@ -18,7 +18,8 @@ export default {
 	components: { TaskAppSidebar, TaskAppLoading, TaskAppContent },
 	data(){
 		return {
-			verifyToken: true
+			verifyToken: true,
+			loading: false,
 		}
 	},
 	methods: {
@@ -30,9 +31,10 @@ export default {
 			this.$store.commit("addUser", user)
 			
 			if(user) {
-				const res = await this.$http.post("validateToken", {token: user.token})
-
-				if (!res.data) {
+				try {
+					await this.$http.post(`validateToken`, {token: user.token, userId: user.id, apiId: user.apiId})
+				} catch (e) {
+					this.$store.commit("addUser", null)
 					this.$router.push('/')
 				}
 				this.verifyToken = false
@@ -43,6 +45,7 @@ export default {
 		}
 	},
 	created() {
+		this.$store.dispatch('busListenLoading', (value) => this.loading = value)
 		this.validateToken()
 	}
 }

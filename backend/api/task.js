@@ -42,5 +42,14 @@ module.exports = app => {
             .catch(error => res.status(500).send(error))
     }
 
-    return { all, save, one, remove, dailyTask}
+    const hasAuthorization = (req, res, next) => {
+        if (req.body.userId !== req.user.id) {
+            if (!req.user.admin) {
+                return res.status(403).send('Usuário não autorizado');
+            }
+        }
+        next()
+    }
+
+    return { all, save, one, remove, dailyTask, hasAuthorization}
 }

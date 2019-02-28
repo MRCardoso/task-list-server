@@ -1,3 +1,5 @@
+require('./config/globlaConstant')
+
 const app = require('express')()
 const consign = require('consign')
 const db = require('./config/db')

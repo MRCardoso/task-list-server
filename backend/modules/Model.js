@@ -92,8 +92,15 @@ class Model {
         return this.app.db(this.table).update(data).where({ id: this.id })
     }
 
-    delete(params){
-        return this.app.db(this.table).where(params).del()
+    delete(params, method = 'where'){
+        let query = this.app.db(this.table)
+        if (Array.isArray(params)){
+            query[method](...params)
+        } else{
+            query[method](params)
+        }
+        
+        return query.del()
     }
     /**
     | ----------------------------------------------------------------------------
@@ -124,8 +131,11 @@ class Model {
                 }
                 
                 result.then(r => {
-                    this.afterSave()
-                    resolve((Array.isArray(r) ? r[0] : r))
+                    let insertedId = (Array.isArray(r) ? r[0] : r)
+                    this.afterSave(insertedId).then(
+                        () => resolve(insertedId),
+                        err => reject(err)
+                    )
                 }).catch(err => reject(err))
             }, (err) => reject(err))
         })
@@ -145,7 +155,7 @@ class Model {
      * Behavior to process a logic after save the record
      * ----------------------------------------------------------------------------
      */
-    afterSave(){ }
+    afterSave() { return Promise.resolve() }
 
     /**
      * ----------------------------------------------------------------------------

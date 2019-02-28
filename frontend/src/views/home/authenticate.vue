@@ -63,7 +63,7 @@ export default {
         }
     },
     watch: {
-        date (val) {
+        date () {
             this.find()
         }
     },

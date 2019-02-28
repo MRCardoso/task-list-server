@@ -11,6 +11,14 @@ export default {
         },
     },
     mutations: {
+        refrashImage(state, payload){
+            if(state.user){
+                if(Array.isArray(payload) && payload.length > 0){
+                    state.user.image = payload[0].url
+                    localStorage.setItem(userKey, JSON.stringify(state.user))
+                }
+            }
+        },
         addUser(state, payload) {
             state.user = payload
             if (payload) {

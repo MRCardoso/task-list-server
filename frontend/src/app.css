@@ -46,6 +46,10 @@
     clear: both;
 }
 
+.captalized-text{
+    text-transform: capitalize;
+}
+
 .my-blue{
     background-color: #6E9FDD !important;
     color: #F4F4F4;
@@ -53,10 +57,25 @@
 .flex-row{
     display: flex;
 }
+.flex-columns{
+    display: flex;
+    flex-direction: column
+}
+.space-between{
+    justify-content: center;
+    justify-items: flex-end;
+}
 .flex-end{
     display: flex;
     flex: 1;
     justify-content: flex-end;
     align-self: flex-end;
     align-items: center;
+}
+.flex-start{
+    display: flex;
+    flex: 1;
+    justify-content: flex-start;
+    align-self: flex-end;
+    align-items: flex-end;
 }
