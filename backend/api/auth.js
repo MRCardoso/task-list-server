@@ -1,4 +1,5 @@
 const { authSecret } = require('../.env')
+let { responseErr } = require("../modules/Utils")
 const jwt = require('jwt-simple')
 
 module.exports = app => {
@@ -8,23 +9,37 @@ module.exports = app => {
     const signin = async (req, res) => {
         try {
             auth.login(req.body).then(logged => {
-                auth.createApi(logged, (req.query.PlatformName || ''), (req.query.PlatformVersion || 0))
+                let keepLogin = req.body.keepLogin || false
+                let PlatformName = req.query.PlatformName || '' 
+                let PlatformVersion = req.query.PlatformVersion || 0
+
+                auth.createApi(logged, PlatformName, PlatformVersion, 1,keepLogin)
                     .then((apiData) => res.json(apiData))
-                    .catch(err => {
-                        res.status(400).send({ validations: err })
-                    })
-            }, (err) => {
-                res.status(err.status).send({ validations: err.message })
-            })
+                    .catch(err => responseErr(res, err))
+            }, err => responseErr(res, err))
         } catch (error) {
-            res.status(500).send("Não foi possível fazer login")
+            responseErr(res, error, "Não foi possível fazer login")
         }
     }
 
     const signout = (req, res) => {
         auth.logout(req.params.id, req.user.id)
             .then((deleted) => res.json({ deleted}))
-            .catch(err => res.status(500).send(err))
+            .catch(err => responseErr(res, err))
+    }
+
+    const refrashToken = (req, res) => {
+        if (!req.body.id){
+            return res.status(400).send("Usuário não fornecido")
+        }
+        
+        let keepLogin = req.body.keepLogin || false
+        let PlatformName = req.body.PlatformName || ''
+        let PlatformVersion = req.body.PlatformVersion || 0
+        
+        auth.refrashLogin(req.body.id, PlatformName, PlatformVersion, 1, keepLogin)
+            .then(updated => res.json({ updated }))
+            .catch(err => responseErr(res, err))
     }
 
     const validateToken = async (req, res) => {
@@ -51,7 +66,7 @@ module.exports = app => {
             }
             auth.logout(req.body.apiId, req.body.userId)
                 .then(() => res.status(401).send(message))
-                .catch(err => res.status(500).send(err))
+                .catch(err => responseErr(res, err))
         }
     }
 
@@ -62,5 +77,5 @@ module.exports = app => {
         next()
     }
 
-    return { signin, signout, validateToken, isAdmin }
+    return { signin, signout, validateToken, isAdmin, refrashToken }
 }

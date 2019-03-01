@@ -17,6 +17,37 @@ class Image extends Model {
         };
         return relations[alias]
     }
+
+    imagesByUser(userId){
+        return new Promise( (resolve) => {
+            let { AWS } = require('../.env')
+            this.all().where({ userId })
+            .then(images => {
+                let listImages = []
+                images.forEach(i => {
+                    listImages.push({
+                        id: i.id,
+                        userId: i.userId,
+                        name: i.name,
+                        url: `${AWS.URL}${AWS.Bucket}/${AWS.uploadFolder}/${i.userId}/${i.name}`
+                    })
+                })
+                resolve(listImages)
+            })
+            .catch(() => resolve([]))
+
+        })
+    }
+    imageByUser(userId){
+        return new Promise( resolve => {
+            this.one({ userId })
+                .then(i => {
+                    let { AWS } = require('../.env')
+                    resolve(`${AWS.URL}${AWS.Bucket}/${AWS.uploadFolder}/${i.userId}/${i.name}`)
+                })
+                .catch(() => resolve(null))
+        })
+    }
 }
 
 module.exports = Image

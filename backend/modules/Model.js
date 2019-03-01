@@ -12,12 +12,15 @@ class Model {
         this.attributes = {}
         this.timestamps = true
 
+        this.resertFields()
+    }
+
+    resertFields()
+    {
         let fields = this.fillables.concat(this.hiddens)
         fields.forEach((value) => {
-            if (this[value] == undefined){
-                this[value] = null
-                this.attributes[value] = null
-            }
+            this[value] = null
+            this.attributes[value] = null
         })
     }
 
@@ -89,6 +92,9 @@ class Model {
         if (this.timestamps) {
             data[timestamps[1]] = new Date()
         }
+        if ('id' in data){
+            delete data.id
+        }
         return this.app.db(this.table).update(data).where({ id: this.id })
     }
 
@@ -114,10 +120,11 @@ class Model {
     save (data) {
         return new Promise((resolve, reject) =>
         {
-            this.bindFillables(data);
+            this.resertFields()
+            this.bindFillables(data)
 
             if(!this.validator.validate(data)){
-                return reject(this.validator.getErrors());
+                return reject({ Validator: this.validator.getErrors()});
             }
 
             this.beforeSave().then(() => {
@@ -185,10 +192,14 @@ class Model {
         let query = this.app.db(this.table)
         let fields = this.getFields(useHidden).concat(this.prepareJoin(relations, query))
 
-        return query
-            .select(...fields)
-            .where(params)
-            .first()
+        return new Promise( (resolve, reject) => {
+            query
+                .select(...fields)
+                .where(params)
+                .first()
+                .then(item => (item ? resolve(item) : reject(`nenhum resultado encontrado em '${this.table}'`)))
+                .catch(err => reject(err))
+        })
     }
 
     all(relations = [], useHidden = false){

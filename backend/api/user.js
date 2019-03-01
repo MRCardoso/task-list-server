@@ -1,4 +1,6 @@
 module.exports = app => {
+    const { responseErr } = require("../modules/Utils")
+    
     const User = require('../entities/User')
     const user = new User(app)
 
@@ -9,47 +11,35 @@ module.exports = app => {
         user.all()
             .orderBy('id', 'desc')
             .then(users => res.json(users))
-            .catch(error => res.status(500).send(error))
+            .catch(error => responseErr(res, error))
     }
 
     const save = (req,res) => {
         let data = { ...req.body }
         data.id = (req.params.id ? req.params.id : null)
+        data.admin = (req.user.admin ? (req.body.admin  || false) : false)
 
         user
         .save(data)
         .then(id => res.json({ id }) )
-        .catch(error => res.status(400).send({ validations: error }))
+        .catch(error => responseErr(res, error))
     }
 
     const remove = (req, res) => {
         return user.delete({ id: req.params.id })
             .then(deleted => res.json({deleted}))
-            .catch(error => res.status(500).send(error))
+            .catch(error => responseErr(res, error))
     }
 
     const one = (req, res) => {
         user.one({ "users.id": req.params.id })
             .then(user => {
-                let { AWS } = require('../.env')
-                
-                image.all()
-                .where({userId: user.id})
-                .then( images => {
-                    user.images = []
-                    images.forEach(i => {
-                        user.images.push({
-                            id: i.id,
-                            userId: i.userId,
-                            name: i.name,
-                            url: `${AWS.URL}${AWS.Bucket}/${AWS.uploadFolder}/${user.id}/${i.name}`
-                        })
-                    })
+                image.imagesByUser(user.id).then(images => {
+                    user.images = images
                     res.json(user)
                 })
-                .catch(error => res.status(500).send(error))
             })
-            .catch(error => res.status(404).send(error))
+            .catch(error => responseErr(res,{ Notfound: error}, "Usuário não encontrado"))
     }
 
     const hasAuthorization = (req, res, next) => {

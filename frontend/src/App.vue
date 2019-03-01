@@ -3,6 +3,7 @@
 		<task-app-sidebar />
 		<task-app-loading v-if="verifyToken || loading" />
 		<task-app-content />
+		<task-app-modal :dialog="dialog" @confirmDialog="redoLogin" title="Refazer o login" content="Deseja restaurar sua sessão?" />
 	</v-app>
 </template>
 
@@ -11,18 +12,43 @@
 import TaskAppSidebar from './components/Sidebar.vue'
 import TaskAppLoading from './components/Loading.vue'
 import TaskAppContent from './components/Content.vue'
-import { userKey } from '@/utils/index'
+import TaskAppModal from '@/components/Modal.vue'
+import { userKey, browserData } from '@/utils/index'
 
 export default {
 	name: "App",
-	components: { TaskAppSidebar, TaskAppLoading, TaskAppContent },
+	components: { TaskAppSidebar, TaskAppLoading, TaskAppContent, TaskAppModal },
 	data(){
 		return {
 			verifyToken: true,
+			dialog: false,
 			loading: false,
 		}
 	},
 	methods: {
+		async redoLogin(confimation){
+			if(confimation){
+				let user = this.$store.state.auth.user
+				let { name, version } = browserData()
+
+				try {
+					let res = await this.$http.post(`refrashToken`, {
+						id: user.id,
+						PlatformName:name,
+						PlatformVersion: version,
+						keepLogin: user.keepLogin
+					})
+					if(res.data.updated){
+						this.dialog = false
+						return this.$store.commit("addUser", res.data.updated)
+					}
+				} catch (error) {}
+			}
+
+			this.$store.commit("addUser", null)
+			this.$router.push('/')
+			this.dialog = false
+		},
 		async validateToken() {
 			this.verifyToken = true
 			
@@ -34,14 +60,15 @@ export default {
 				try {
 					await this.$http.post(`validateToken`, {token: user.token, userId: user.id, apiId: user.apiId})
 				} catch (e) {
-					this.$store.commit("addUser", null)
-					this.$router.push('/')
+					if(user.keepLogin){
+						this.dialog = true
+					} else{
+						this.$store.commit("addUser", null)
+						this.$router.push('/')
+					}
 				}
-				this.verifyToken = false
-			} else{
-				// this.$router.push('/')
-				this.verifyToken = false
 			}
+			this.verifyToken = false
 		}
 	},
 	created() {

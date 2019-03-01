@@ -70,7 +70,10 @@ export default {
 
             reader.readAsDataURL(this.$store.state.uploader.file);
         }
-    }
+    },
+    created() {
+        this.$store.commit('addFile', null)
+    },
 }
 </script>
 <style>

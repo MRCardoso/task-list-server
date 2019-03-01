@@ -9,7 +9,7 @@ exports.up = function(knex, Promise) {
         table.text('token').notNull()
         table.bigInteger('expires').notNull()
         table.boolean('keepLogin').notNull().defaultTo(false)
-        table.timestamps();
+        table.timestamp('created_at')
     })
 };
 

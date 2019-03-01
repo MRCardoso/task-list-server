@@ -1,12 +1,17 @@
 module.exports = app => {
+    const { responseErr } = require("../modules/Utils")
+
     const Task = require('../entities/Task')
     const task = new Task(app);
 
     const all = (req, res) => {
-        task.all(['users'])
-            .where({userId: req.user.id})
-            .then(tasks => res.json(tasks))
-            .catch(error => res.status(500).send(error))
+        let query = task.all(['users'])
+        if(!req.user.admin){
+            query.where({ userId: req.user.id })
+        }
+            
+        query.then(tasks => res.json(tasks))
+            .catch(error => responseErr(res, error))
     }
 
     const dailyTask = (req, res) => {
@@ -17,7 +22,7 @@ module.exports = app => {
         task.all(['users'])
             .where({ userId: req.user.id, startDate:  currentDay })
             .then(tasks => res.json(tasks))
-            .catch(error => res.status(500).send(error))
+            .catch(error => responseErr(res, error))
     }
 
     const save = (req,res) => {
@@ -27,19 +32,19 @@ module.exports = app => {
         
         task.save(data)
             .then(id => res.json({ id }) )
-            .catch(error => res.status(400).send({ validations: error }))
+            .catch(error => responseErr(res, error))
     }
 
     const remove = (req, res) => {
-        task.delete({ id: req.params.id })
+        task.delete(paramsChanges(req))
             .then(deleted => res.json({deleted}))
-            .catch(error => res.status(500).send(error))
+            .catch(error => responseErr(res, error))
     }
 
     const one = (req, res) => {
-        task.one({ "tasks.id": req.params.id }, ["users"])
+        task.one(paramsChanges(req), ["users"])
             .then(task => res.json(task))
-            .catch(error => res.status(500).send(error))
+            .catch(error => responseErr(res, error))
     }
 
     const hasAuthorization = (req, res, next) => {
@@ -49,6 +54,14 @@ module.exports = app => {
             }
         }
         next()
+    }
+
+    const paramsChanges = (request) => {
+        let params = { "tasks.id": request.params.id }
+        if (!request.user.admin) {
+            params["users.id"] = request.user.id
+        }
+        return params
     }
 
     return { all, save, one, remove, dailyTask, hasAuthorization}

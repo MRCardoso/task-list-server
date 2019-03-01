@@ -1,6 +1,6 @@
 <template>
     <div>
-        <task-app-modal :dialog="dialog" v-on:confirmDialog="deleteItem" title="Deletar Tarefa" content="Deseja realmente remover este registro?" />
+        <task-app-modal :dialog="dialog" @confirmDialog="deleteItem" title="Deletar Tarefa" content="Deseja realmente remover este registro?" />
 
         <v-card-title>
             <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details />

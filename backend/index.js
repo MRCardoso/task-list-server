@@ -14,5 +14,5 @@ consign()
     .into(app)
 
 app.listen(3000, () => {
-    console.log("backend executando hahahah...")
+    console.log(`backend executando ${new Date()}`)
 })

@@ -10,6 +10,7 @@ module.exports = app => {
         .all(app.config.passport.authenticate())
         .get(app.api.auth.signout)
     app.post('/validateToken', app.api.auth.validateToken)
+    app.post('/refrashToken', app.api.auth.refrashToken)
 
     /**
      * ----------------------------------------------------
@@ -41,7 +42,7 @@ module.exports = app => {
         .all(app.config.passport.authenticate())
         .get(app.api.task.hasAuthorization, app.api.task.one)
         .put(app.api.task.hasAuthorization, app.api.task.save)
-        .delete(app.api.task.hasAuthorization, app.api.task.remove)
+        .delete(app.api.task.remove)
 
     app.route('/dailytask/:date').all(app.config.passport.authenticate()).get(app.api.task.dailyTask)
     app.route('/upload/:userId').all(app.config.passport.authenticate()).post(app.api.uploader.save)

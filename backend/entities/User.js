@@ -17,18 +17,17 @@ class User extends Model {
 
     beforeSave() {
         return new Promise((resolve, reject) => {
-            if(this.id)
-            {
-                if(this.password){
-                    const bcrypt = require('bcrypt-nodejs')
-                    const salt = bcrypt.genSaltSync(10)
-                    
-                    this.password = bcrypt.hashSync(this.password, salt)
-                    this.attributes["password"] = this.password
-                } else{
-                    delete this.attributes["password"]
-                }
+            if (this.id && !this.password) {
+                delete this.attributes["password"]
+            } 
+            else if (this.password){
+                const bcrypt = require('bcrypt-nodejs')
+                const salt = bcrypt.genSaltSync(10)
+                
+                this.password = bcrypt.hashSync(this.password, salt)
+                this.attributes["password"] = this.password
             }
+            
             this.status = (this.status == "1" || this.status == "true") ? true : false
             this.attributes["status"] = this.status
             

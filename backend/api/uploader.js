@@ -1,7 +1,8 @@
-let uploader = require('uploader-go-bucket')
-let { AWS } = require('../.env')
-
 module.exports = app => {
+    let uploader = require('uploader-go-bucket')
+    let { AWS } = require('../.env')
+    let { responseErr } = require("../modules/Utils")
+
     let Image = require('../entities/Image')
     let image = new Image(app);
     /**
@@ -14,12 +15,10 @@ module.exports = app => {
         uploadFile(req).then(file => {
             sendToBucket(file, userId).then(imageData => {
                 image.save({name: imageData.hashString, userId})
-                    .then(
-                        id => res.json({ id }),
-                        error => res.status(400).send({ validations: error })
-                    )
-            }, err => res.status(400).send(err))
-        }, err => res.status(400).send(err))
+                    .then(id => res.json({ id }))
+                    .catch(error => responseErr(res, error))
+            }, err => responseErr(res, err))
+        }, err => responseErr(res, err))
     }
 
     const removeObject = function (req, res) {
@@ -37,10 +36,7 @@ module.exports = app => {
             .then(data => {
                 return image.delete(['id', items.id], 'whereIn')
                     .then(deleted => res.json({ message: "Arquivo Removido Com Sucesso!" }))
-                    .catch(error => {
-                        console.log({error})
-                        res.status(500).send(error)
-                    })
+                    .catch(error => responseErr(res, error))
             }, err => {
                 let defaultMessage = 'Não foi possível remover o arquivo!'
                 return res.status(500).send((err != null ? (err.message || defaultMessage) : defaultMessage))

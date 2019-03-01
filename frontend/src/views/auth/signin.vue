@@ -3,6 +3,7 @@
         <template slot="inputs">
             <v-text-field prepend-icon="fa fa-at" label="E-mail" type="text" v-model="user.email" :error-messages="rules.email"/>
             <v-text-field prepend-icon="lock" label="Password" type="password" v-model="user.password" :error-messages="rules.password"/>
+            <v-switch v-model="user.keepLogin" label="Manter Login"></v-switch>
         </template>
         <template slot="buttons">
             <v-btn @click="signin" class="my-blue darken-1 white--text">Login</v-btn>
@@ -32,7 +33,13 @@ export default {
                     this.$toasted.global.defaultSuccess({message: "Login realizado com sucesso"})
                     this.$router.push("/")
                 },
-                err => this.rules = prepareError(err)
+                err => {
+                    let e = prepareError(err)
+                    if(typeof e === "string")
+                        this.$toasted.global.defaultError({message: e})
+                    else
+                        this.rules = e
+                }
             );
         }
     },

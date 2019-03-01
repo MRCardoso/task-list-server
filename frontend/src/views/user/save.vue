@@ -9,6 +9,7 @@
                     <v-card flat>
                     <v-card-text>
                         <task-app-toggle-status :item="user" :rule="rules" />
+                        <v-switch v-if="logged.admin" v-model="user.admin" label="Administrador"></v-switch>
                         <v-text-field prepend-icon="fa fa-user" label="name" type="text" v-model="user.name" :counter="80" :error-messages="rules.name"/>
                         <v-text-field prepend-icon="fa fa-user" label="username" type="text" v-model="user.username" :counter="80" :error-messages="rules.username"/>
                         <v-text-field prepend-icon="fa fa-at" label="E-mail" type="text" v-model="user.email" :counter="120" :error-messages="rules.email"/>
@@ -56,7 +57,10 @@ export default {
     computed: {
         title(){
             return this.id ? 'Atualizar Usuário' : 'Criar Usuário'
-        }
+        },
+        logged(){
+            return this.$store.state.auth.user;
+        },
     },
     methods: {
         removeImage(){
