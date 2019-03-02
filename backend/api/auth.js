@@ -49,6 +49,7 @@ module.exports = app => {
 
         try {
             const token = jwt.decode(req.body.token, authSecret)
+            console.log(`NOW: ${new Date()}`)
             
             if (new Date(token.exp * 1000) < new Date()) {
                 throw "Token expirado"

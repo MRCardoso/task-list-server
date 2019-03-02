@@ -42,7 +42,7 @@ export default {
 						this.dialog = false
 						return this.$store.commit("addUser", res.data.updated)
 					}
-				} catch (error) {}
+				} catch (error) {/* Has error in refrash re-auth, set logout */}
 			}
 
 			this.$store.commit("addUser", null)

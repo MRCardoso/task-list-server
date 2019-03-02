@@ -11,6 +11,16 @@ class Image extends Model {
         this.timestamps = false
     }
 
+    static imageAsObject(i){
+        let { AWS } = require('../.env')
+        return {
+            id: i.id,
+            userId: i.userId,
+            name: i.name,
+            url: `${AWS.URL}${AWS.Bucket}/${AWS.uploadFolder}/${i.userId}/${i.name}`
+        }
+    }
+
     relations(alias) {
         let relations = {
             "users": ["users", "id", "userId", ["users.name", "users.email"]]
@@ -20,18 +30,10 @@ class Image extends Model {
 
     imagesByUser(userId){
         return new Promise( (resolve) => {
-            let { AWS } = require('../.env')
             this.all().where({ userId })
             .then(images => {
                 let listImages = []
-                images.forEach(i => {
-                    listImages.push({
-                        id: i.id,
-                        userId: i.userId,
-                        name: i.name,
-                        url: `${AWS.URL}${AWS.Bucket}/${AWS.uploadFolder}/${i.userId}/${i.name}`
-                    })
-                })
+                images.forEach(i => listImages.push(Image.imageAsObject(i)))
                 resolve(listImages)
             })
             .catch(() => resolve([]))
@@ -41,10 +43,7 @@ class Image extends Model {
     imageByUser(userId){
         return new Promise( resolve => {
             this.one({ userId })
-                .then(i => {
-                    let { AWS } = require('../.env')
-                    resolve(`${AWS.URL}${AWS.Bucket}/${AWS.uploadFolder}/${i.userId}/${i.name}`)
-                })
+                .then(i => resolve(Image.imageAsObject(i).url))
                 .catch(() => resolve(null))
         })
     }

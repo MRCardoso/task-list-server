@@ -1,96 +1,16 @@
 <template>
-    <task-app-form-item title="Alterar Dados" :inlineButtons="false">
-        <template slot="inputs">
-            <v-tabs fixed-tabs>
-                <v-tab ripple>Dados Iniciais</v-tab>
-                <v-tab ripple>Adicionar Imagem</v-tab>
-                
-                <v-tab-item>
-                    <v-card flat>
-                    <v-card-text>
-                        <task-app-toggle-status :item="user" :rule="rules" />
-                        <v-text-field prepend-icon="fa fa-user" label="name" type="text" v-model="user.name" :counter="80" :error-messages="rules.name"/>
-                        <v-text-field prepend-icon="fa fa-user" label="username" type="text" v-model="user.username" :counter="80" :error-messages="rules.username"/>
-                        <v-text-field prepend-icon="fa fa-at" label="E-mail" type="text" v-model="user.email" :counter="120" :error-messages="rules.email"/>
-                        <v-text-field prepend-icon="lock" label="Password" type="password" v-model="user.password" :error-messages="rules.password"/>
-                        <v-text-field prepend-icon="lock" label="confirmation" type="password" v-model="user.confirmation" :error-messages="rules.confirmation"/>
-                    </v-card-text>
-                    </v-card>
-                </v-tab-item>
-
-                <v-tab-item>
-                    <v-card flat>
-                    <v-card-text>
-                        <task-app-file-uploader :images="user.images" @detachImage="removeImage" />
-                    </v-card-text>
-                    </v-card>
-                </v-tab-item>
-            </v-tabs>
-        </template>
-        <template slot="buttons">
-            <v-btn class="my-blue darken-1 white--text" @click.prevent="save">Salvar</v-btn>
-        </template>
-    </task-app-form-item>
+    <task-app-user-form :id="user.id" mode="logged" />
 </template>
 
 <script>
-import TaskAppToggleStatus from '@/components/ToggleStatus.vue'
-import TaskAppFileUploader from '@/components/FileUploader.vue'
-import TaskAppFormItem from '@/components/FormItem.vue'
-import { prepareError } from '@/utils/index'
+import TaskAppUserForm from '@/components/UserForm.vue'
 
 export default {
-    components: {TaskAppToggleStatus, TaskAppFormItem, TaskAppFileUploader},
-    data(){
-        return {
-            user: {},
-            rules: {}
+    components: { TaskAppUserForm },
+    computed: {
+        user(){
+            return this.$store.state.auth.user;
         }
-    },
-    methods: {
-        removeImage(){
-            if(Array.isArray(this.user.images) && this.user.images.length > 0)
-            {
-                let Keys = this.user.images.map(e => e)
-                this.$store.dispatch('busNotifyLoading', true)
-                this.$store.dispatch('deleteFile', {id: this.id, Keys: Keys})
-                .then(() => this.user.images = false)
-                .catch(err => this.$toasted.global.defaultError({message: prepareError(err)}))
-                .finally(() => this.$store.dispatch('busNotifyLoading', false))
-            }
-        },
-        save(){
-            this.$http.put(`users/${this.user.id}`, this.user).then(
-                () => {
-                    this.$store.dispatch('busNotifyLoading', true)
-                    this.$store.dispatch('sendFile', this.user.id)
-                    .then(() => {
-                        this.$toasted.global.defaultSuccess({message: "Dados atualizados com sucesso"})
-                        this.$store.dispatch('busNotifyLoading', false)
-                    }, err => {
-                        this.rules = prepareError(err)
-                        this.$store.dispatch('busNotifyLoading', false)
-                    })
-                },
-                err => this.rules = prepareError(err)
-            );
-        },
-        loadUser(){
-            let user = this.$store.state.auth.user;
-            if(user){
-                this.$http.get(`users/${user.id}`).then(
-                    res => {
-                        this.user = res.data
-                        this.$store.commit('refrashImage', this.user.images)
-                    }, 
-                    err => this.$toasted.global.defaultError({message: prepareError(err)})
-                )
-
-            }
-        }
-    },
-    created(){
-        this.loadUser()
     }
 }
 </script>

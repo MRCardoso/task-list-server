@@ -17,7 +17,7 @@ module.exports = app => {
     const save = (req,res) => {
         let data = { ...req.body }
         data.id = (req.params.id ? req.params.id : null)
-        data.admin = (req.user.admin ? (req.body.admin  || false) : false)
+        data.admin = (req.user && req.user.admin ? (req.body.admin  || false) : false)
 
         user
         .save(data)

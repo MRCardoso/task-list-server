@@ -27,9 +27,12 @@ class User extends Model {
                 this.password = bcrypt.hashSync(this.password, salt)
                 this.attributes["password"] = this.password
             }
-            
-            this.status = (this.status == "1" || this.status == "true") ? true : false
-            this.attributes["status"] = this.status
+            if (this.status == null || this.status == undefined){
+                delete this.attributes["status"]
+            } else{
+                this.status = (this.status == "1" || this.status == "true") ? true : false
+                this.attributes["status"] = this.status
+            }
             
             this.uniqueUser().then(res => {
                 if (res){

@@ -15,7 +15,7 @@ module.exports = app => {
         uploadFile(req).then(file => {
             sendToBucket(file, userId).then(imageData => {
                 image.save({name: imageData.hashString, userId})
-                    .then(id => res.json({ id }))
+                    .then(id => res.json(Image.imageAsObject({ id, userId, name: imageData.hashString })))
                     .catch(error => responseErr(res, error))
             }, err => responseErr(res, err))
         }, err => responseErr(res, err))

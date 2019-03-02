@@ -72,7 +72,7 @@ export default {
         }
     },
     created() {
-        this.$store.commit('addFile', null)
+        this.$store.commit('resetInstance')
     },
 }
 </script>
