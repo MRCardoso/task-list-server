@@ -1,3 +1,4 @@
+/* Animations */
 @keyframes flip-out {
     from { transform: rotateX(0deg); }
     to { transform: rotateX(90deg); }
@@ -34,6 +35,13 @@
     animation: flipY-out 0.3s ease;
 }
 
+.fade-enter-active, .fade-leave-active {
+    transition: opacity 0.2s;
+}
+.fade-enter, .fade-leave-to{
+    opacity: 0;
+}
+
 @keyframes rotate {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
@@ -42,6 +50,8 @@
 .rotation{
     animation: rotate 1s linear infinite
 }
+
+/* App styles */
 .clear{
     clear: both;
 }
@@ -78,4 +88,11 @@
     justify-content: flex-start;
     align-self: flex-end;
     align-items: flex-end;
+}
+.flex-down{
+    display: flex;
+    padding-left: 8px;
+    font-style: italic;
+    align-self: flex-end;
+    justify-self: flex-end;
 }

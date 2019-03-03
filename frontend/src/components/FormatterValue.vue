@@ -1,7 +1,7 @@
 <template>
     <v-tooltip bottom>
         <template #activator="data">
-            <div class="label-container">
+            <div class="label-container" :class="{'justify-center': centered}">
                 <strong v-if="showTitle">{{title}}</strong>
                 <div :class="instanceValue.class" class="label-item darken-1" dark v-on="data.on">
                     {{instanceValue.name}}
@@ -15,7 +15,7 @@
 <script>
 export default {
     name: "FormatterValue",
-    props: ['title','value', 'data', 'showTitle'],
+    props: ['title','value', 'data', 'showTitle', 'centered'],
     computed: {
         instanceValue(){
             let item = this.data.find(r => r.id == this.value)
@@ -38,6 +38,8 @@ export default {
         display: flex;
         flex-direction: column;
         justify-content: center;
-        /* align-items: center; */
+    }
+    .justify-center{
+        align-items: center;
     }
 </style>

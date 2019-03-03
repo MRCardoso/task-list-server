@@ -6,9 +6,9 @@
                 <div v-html="task.description"></div>
                 <div class="flex-row">
                     <div class="flex-start">
-                        <task-app-formatter-value :showTitle="true" title="Situação" :value="task.situation" :data="situationData" />
-                        <task-app-formatter-value :showTitle="true" title="Prioridade" :value="task.priority" :data="priorityData" />
-                        <task-app-formatter-value :showTitle="true" title="Status" :value="task.status" :data="statusData" />
+                        <task-app-formatter-value :centered="true" :showTitle="true" title="Situação" :value="task.situation" :data="situationData" />
+                        <task-app-formatter-value :centered="true" :showTitle="true" title="Prioridade" :value="task.priority" :data="priorityData" />
+                        <task-app-formatter-value :centered="true" :showTitle="true" title="Status" :value="task.status" :data="statusData" />
                     </div>
 
                     <span class="flex-end">
@@ -25,6 +25,9 @@
             </div>
         </template>
         <template slot="buttons">
+            <div class="flex-down" v-if="task.created_at">
+                Criado em {{ task.created_at | moment("DD(dddd), MM, YYYY") }}
+            </div>
             <v-spacer></v-spacer>
             <v-btn to="/tasks">Voltar</v-btn>
             <v-btn class="blue lighten-3 white--text" :to="`/tasks/${id}/edit`">Editar</v-btn>

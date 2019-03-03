@@ -24,7 +24,7 @@
             </div>
         </template>
         <template slot="buttons">
-            <div class="pl-2" v-if="user.created_at">
+            <div class="flex-down" v-if="user.created_at">
                 Criado em {{ user.created_at | moment("DD(dddd), MM, YYYY") }}
             </div>
             <v-spacer></v-spacer>
