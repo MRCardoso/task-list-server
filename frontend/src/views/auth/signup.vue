@@ -28,13 +28,12 @@ export default {
     },
     methods: {
         signup(){
-            this.$http.post("signup", this.user).then(
-                () => {
-                    this.$toasted.global.defaultSuccess({message: "Conta criada com sucesso"})
-                    this.$router.push("/")
-                }, 
-                err => this.rules = prepareError(err)
-            );
+            this.$http.post("signup", this.user)
+            .then(() => {
+                this.$toasted.global.defaultSuccess({message: "Conta criada com sucesso"})
+                this.$router.push("/")
+            })
+            .catch(err => prepareError(err, this));
         }
     },
 }

@@ -73,10 +73,9 @@ export default {
             if(remove && this.deletedId)
             {
                 this.$http.delete(`users/${this.deletedId}`)
-                .then(
-                    () => this.$toasted.global.defaultSuccess({message: "Usuário removida com sucesso"}), 
-                    err => this.$toasted.global.defaultError({message: prepareError(err)})
-                ).finally(() => {
+                .then(() => this.$toasted.global.defaultSuccess({message: "Usuário removida com sucesso"}))
+                .catch(err => prepareError(err, this))
+                .finally(() => {
                     this.dialog = false
                     this.find()
                 })
@@ -85,11 +84,7 @@ export default {
             }
         },
         find(){
-            this.$http.get(`users`)
-            .then(
-                res => this.users = res.data,
-                err => this.$toasted.global.defaultError({message: prepareError(err)})
-            )
+            this.$http(`users`).then(res => this.users = res.data).catch(err => prepareError(err, this))
         }
     },
     created() {

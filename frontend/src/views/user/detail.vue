@@ -55,10 +55,9 @@ export default {
     },
     methods: {
         find(){
-            this.$http.get(`users/${this.id}`).then(
-                res => this.user = res.data,
-                err => this.$toasted.global.defaultError({message: prepareError(err)})
-            )
+            this.$http(`users/${this.id}`)
+                .then(res => this.user = res.data)
+                .catch(err => prepareError(err,this))
         }
     },
     created(){

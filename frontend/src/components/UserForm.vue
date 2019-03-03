@@ -54,7 +54,6 @@ export default {
     ],
     data() {
         return {
-            step: 0,
             user: {},
             rules: {},
             indexRoute: '/users'
@@ -94,42 +93,37 @@ export default {
             this.$store.dispatch('busNotifyLoading', true)
 
             this.$http[method](endpoint, this.user)
-            .then(
-                res => {
-                    let savedId = (this.id ? this.id : res.data.id)
-                    this.$store.dispatch('sendFile', savedId)
-                    .then(images => {
-                        this.$toasted.global.defaultSuccess({message: `Usuário ao ${this.id ? 'atualizada' : 'criada'} com sucesso`})
-                        this.$store.dispatch('busNotifyLoading', false)
-                        
-                        if(images != null){
-                            this.user.images = images
-                            this.$store.commit('refrashImage', {id: savedId, images})
-                        }
-                        
-                        if(this.isChangesMode()){
-                            this.$router.push(`/users/${savedId}/detail`)
-                        }
-                    }, err => {
-                        this.rules = prepareError(err)
-                        this.$store.dispatch('busNotifyLoading', false)
-                    })
-                },
-                err => {
-                    this.rules = prepareError(err)
+            .then(res => {
+                let savedId = (this.id ? this.id : res.data.id)
+                this.$store.dispatch('sendFile', savedId)
+                .then(images => {
+                    this.$toasted.global.defaultSuccess({message: `Usuário ao ${this.id ? 'atualizada' : 'criada'} com sucesso`})
                     this.$store.dispatch('busNotifyLoading', false)
-                }
-            );
+                    
+                    if(images != null){
+                        this.user.images = images
+                        this.$store.commit('refrashImage', {id: savedId, images})
+                    }
+                    
+                    if(this.isChangesMode()){
+                        this.$router.push(`/users/${savedId}/detail`)
+                    }
+                })
+                .catch(err => {
+                    prepareError(err, this)
+                    this.$store.dispatch('busNotifyLoading', false)
+                })
+            })
+            .catch(err => {
+                prepareError(err, this)
+                this.$store.dispatch('busNotifyLoading', false)
+            });
         },
         find(){
             if(this.id){
-                this.$http.get(`users/${this.id}`).then(
-                    res => {
-                        this.user = res.data
-                        this.$store.commit('refrashImage', {id: this.user.id, images: this.user.images})
-                    },
-                    err => this.$toasted.global.defaultError({message: prepareError(err)})
-                )
+                this.$http.get(`users/${this.id}`)
+                    .then(res => this.user = res.data)
+                    .catch(err => prepareError(err, this))
             } else{
                 this.user = { status: 1 }
             }

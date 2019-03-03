@@ -85,10 +85,9 @@ export default {
             if(remove && this.deletedId)
             {
                 this.$http.delete(`tasks/${this.deletedId}`)
-                .then(
-                    () => this.$toasted.global.defaultSuccess({message: "Tarefa removida com sucesso"}), 
-                    err => this.$toasted.global.defaultError({message: prepareError(err)})
-                ).finally(() => {
+                .then(() => this.$toasted.global.defaultSuccess({message: "Tarefa removida com sucesso"}))
+                .catch(err => prepareError(err, this))
+                .finally(() => {
                     this.dialog = false
                     this.find()
                 })
@@ -98,10 +97,8 @@ export default {
         },
         find(){
             this.$http.get(`tasks`)
-            .then(
-                res => this.tasks = res.data,
-                err => this.$toasted.global.defaultError({message: prepareError(err)})
-            )
+            .then(res => this.tasks = res.data)
+            .catch(err => prepareError(err, this))
         }
     },
     created() {

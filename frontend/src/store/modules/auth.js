@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { userKey } from '@/utils/index'
+import { userKey, browserData } from '@/utils/index'
 
 export default {
     state: {
@@ -30,6 +30,28 @@ export default {
                 delete axios.defaults.headers.common['Authorization']
                 localStorage.removeItem(userKey)
             }
+        }
+    },
+    actions: {
+        async redoLogin({state}) {
+            try {
+                let user = state.user
+                let { name, version } = browserData()
+
+                let res = await axios.post(`refrashToken`, {
+                    id: user.id,
+                    PlatformName: name,
+                    PlatformVersion: version,
+                    keepLogin: user.keepLogin
+                })
+
+                if (res.data.updated) {
+                    return res.data.updated
+                }
+            } catch (error) {
+                /* Has error in refrash re-auth, set logout */
+            }
+            return false
         }
     }
 }

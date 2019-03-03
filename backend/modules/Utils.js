@@ -10,7 +10,7 @@ exports.createTokenPayload = (logged, keepLogin) => {
     let jwt = require('jwt-simple')
 
     let now = Math.floor(Date.now() / 1000)
-    let expires = now + (60 * 60 * 24 * 3)
+    let expires = now + (60 * 60 * 24 * 1)
 
     let payload = {
         id: logged.id,

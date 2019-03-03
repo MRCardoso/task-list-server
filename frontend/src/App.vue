@@ -28,21 +28,12 @@ export default {
 	methods: {
 		async redoLogin(confimation){
 			if(confimation){
-				let user = this.$store.state.auth.user
-				let { name, version } = browserData()
-
-				try {
-					let res = await this.$http.post(`refrashToken`, {
-						id: user.id,
-						PlatformName:name,
-						PlatformVersion: version,
-						keepLogin: user.keepLogin
-					})
-					if(res.data.updated){
-						this.dialog = false
-						return this.$store.commit("addUser", res.data.updated)
-					}
-				} catch (error) {/* Has error in refrash re-auth, set logout */}
+				let updated = await this.$store.dispatch('redoLogin')
+				if(updated){
+					this.dialog = false
+					this.$store.commit("addUser", updated)
+					return window.location.reload()
+				}
 			}
 
 			this.$store.commit("addUser", null)
@@ -73,6 +64,7 @@ export default {
 	},
 	created() {
 		this.$store.dispatch('busListenLoading', (value) => this.loading = value)
+		this.$store.dispatch('busListenDialog', (value) => this.dialog = value)
 		this.validateToken()
 	}
 }
@@ -86,25 +78,4 @@ export default {
 	body {
 		margin: 0;
 	}
-
-	/* #app {
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
-
-		height: 100vh;
-		display: grid;
-		grid-template-rows: 60px 1fr 40px;
-		grid-template-columns: 300px 1fr;
-		grid-template-areas:
-			"header header"
-			"menu content"
-			"menu footer";
-	}
-
-	#app.hide-menu {
-		grid-template-areas:
-			"header header"
-			"content content"
-			"footer footer";
-	} */
 </style>

@@ -81,15 +81,18 @@ export default {
             .then(() => {
                 this.$toasted.global.defaultSuccess({message: `Tarefa ao ${this.id ? 'atualizada' : 'criada'} com sucesso`})
                 this.$router.push('/tasks')
-            }, err => this.rules = prepareError(err));
+            })
+            .catch(err => prepareError(err, this));
         },
         find(){
             if(this.id){
-                this.$http.get(`tasks/${this.id}`).then(res => {
-                    this.task = res.data
-                    this.situation = situationData.find(r => r.id ==this.task.situation)
-                    this.priority = priorityData.find(r => r.id ==this.task.priority)
-                }, err => this.$toasted.global.defaultError({message: prepareError(err)}))
+                this.$http(`tasks/${this.id}`)
+                    .then(res => {
+                        this.task = res.data
+                        this.situation = situationData.find(r => r.id ==this.task.situation)
+                        this.priority = priorityData.find(r => r.id ==this.task.priority)
+                    })
+                    .catch(err => prepareError(err,this))
             } else{
                 this.task = { status: 1, startDate: new Date()}
             }

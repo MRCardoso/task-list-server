@@ -8,8 +8,8 @@
         
 
         <v-toolbar-items v-if="user" class="hidden-sm-and-down">
-            <v-btn flat to="/tasks">Tarefa</v-btn>
             <v-btn flat to="/users" v-if="user.admin">Usuário</v-btn>
+            <v-btn flat to="/tasks">Tarefa</v-btn>
         </v-toolbar-items>
 
         <v-toolbar-items v-else class="hidden-sm-and-down">
@@ -60,13 +60,12 @@ export default {
     methods: {
         logout(){
             let user = this.$store.state.auth.user
-            this.$http.get(`signout/${user.apiId}`).then(
-                () => {
+            this.$http(`signout/${user.apiId}`)
+                .then(() => {
                     this.$store.commit('addUser', null)
                     this.$router.push("/")
-                },
-                err => this.rules = prepareError(err)
-            )
+                })
+                .catch(err => prepareError(err,this))
         }
     },
 }

@@ -1,20 +1,46 @@
+function ClientException(message, code = 1) {
+    this.message = message;
+    /* 1 - syntax, 2 - validation/form */
+    this.code = code;
+}
 export const userKey = 'task-app-user-data'
 
-export const prepareError = (e) => {
-    if (e.response.data)
-    {
-        let reason = e.response.data
-        if (typeof reason === "string"){
-            return reason
-        } else if (reason.validations) {
-            let rules = {}
-            for (let key in reason.validations) {
-                rules[key] = reason.validations[key].join(', ')
+export const prepareError = (e, vm) => {
+    /* eslint-disable */
+    try {
+        if (typeof e === "object")
+        {
+            if (e.response && e.response.data)
+            {
+                if (e.response.status == 401) {
+                    let user = vm.$store.state.auth.user
+                    if (user && user.keepLogin) {
+                        return vm.$store.dispatch('busNotifyDialog', true)
+                    }
+                }
+
+                let reason = e.response.data
+                if (typeof reason === "object" && reason.validations){
+                    let rules = {}
+                    for (let key in reason.validations) {
+                        rules[key] = reason.validations[key].join(', ')
+                    }
+                    vm.rules = rules
+                    throw new ClientException("Por favor, corriga os campos com erro", 2)
+                } else{
+                    throw new ClientException(reason.toString(), 2)
+                }
+            } else if (e.message && e.stack){
+                throw new ClientException(e.message)
             }
-            return rules
-        } else{
-            return "Erro desconhecido"
         }
+        else{
+            throw new ClientException(e.toString(), 2)
+        }
+    } catch (ex) {
+        let message = ex.code == 2 ? ex.message :  "erro desconhecido"
+        vm.$toasted.global.defaultError({ message })
+        console.log({e})
     }
 }
 

@@ -69,10 +69,9 @@ export default {
     },
     methods: {
         find(){ 
-            this.$http.get(`dailytask/${this.date}`).then(
-                res => this.tasks = res.data, 
-                err => this.$toasted.global.defaultError({message: prepareError(err)})
-            )
+            this.$http.get(`dailytask/${this.date}`)
+            .then(res => this.tasks = res.data)
+            .catch(err => prepareError(err, this))
         }
     },
     created() {

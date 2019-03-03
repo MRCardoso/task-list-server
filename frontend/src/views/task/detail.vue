@@ -53,11 +53,13 @@ export default {
     },
     methods: {
         find(){
-            this.$http.get(`tasks/${this.id}`).then(res => {
+            this.$http(`tasks/${this.id}`)
+            .then(res => {
                 this.task = res.data
                 this.situation = situationData.find(r => r.id ==this.task.situation)
                 this.priority = priorityData.find(r => r.id ==this.task.priority)
-            }, err => this.$toasted.global.defaultError({message: prepareError(err)}))
+            })
+            .catch(err => prepareError(err, this))
         }
     },
     created(){

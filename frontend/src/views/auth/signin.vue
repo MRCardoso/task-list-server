@@ -27,20 +27,14 @@ export default {
     methods: {
         signin(){
             let { name, version } = browserData()
-            this.$http.post(`signin?PlatformName=${name}&PlatformVersion=${version}`, this.user).then(
-                res => {
+            this.$http
+                .post(`signin?PlatformName=${name}&PlatformVersion=${version}`, this.user)
+                .then(res => {
                     this.$store.commit("addUser", res.data)
                     this.$toasted.global.defaultSuccess({message: "Login realizado com sucesso"})
                     this.$router.push("/")
-                },
-                err => {
-                    let e = prepareError(err)
-                    if(typeof e === "string")
-                        this.$toasted.global.defaultError({message: e})
-                    else
-                        this.rules = e
-                }
-            );
+                })
+                .catch(err => prepareError(err,this))
         }
     },
 }
