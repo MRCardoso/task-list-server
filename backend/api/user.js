@@ -43,7 +43,7 @@ module.exports = app => {
     }
 
     const hasAuthorization = (req, res, next) => {
-        if (req.params.id !== req.user.id) {
+        if (req.params.id != req.user.id) {
             if (!req.user.admin) {
                 return res.status(403).send('Usuário não autorizado');
             }

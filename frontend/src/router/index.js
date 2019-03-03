@@ -20,10 +20,11 @@ Vue.use(Router)
 
 const router = new Router({
     routes: [
+        { path: '*', redirect: '/' },
+        { path: '/', component: Home },
         { path: '/signin', component: Signin },
         { path: '/signup', component: Signup },
         { path: '/logged', component: Logged, meta: { requiresLogin: true } },
-        { path: '/', component: Home },
         /*
         | ------------------------------------------------------------------------------------------
         | Task Routes
@@ -38,10 +39,10 @@ const router = new Router({
         | User Routes
         | ------------------------------------------------------------------------------------------
         */
-        { path: '/users', component: User, meta: { requiresLogin: true } },
-        { path: '/users/new', component: UserSave, meta: { requiresLogin: true } },
-        { path: '/users/:id/edit', component: UserSave, meta: { requiresLogin: true }, props: true },
-        { path: '/users/:id/detail', component: UserDetail, meta: { requiresLogin: true }, props: true },
+        { path: '/users', component: User, meta: { requiresLogin: true, requiresAdmin: true } },
+        { path: '/users/new', component: UserSave, meta: { requiresLogin: true, requiresAdmin: true } },
+        { path: '/users/:id/edit', component: UserSave, meta: { requiresLogin: true, requiresAdmin: true }, props: true },
+        { path: '/users/:id/detail', component: UserDetail, meta: { requiresLogin: true, requiresAdmin: true }, props: true },
     ]
 });
 
@@ -49,6 +50,9 @@ router.beforeEach( (to, from, next) => {
     if (to.matched.some(record => record.meta.requiresLogin)) {
         const json = localStorage.getItem(userKey)
         const user = JSON.parse(json)
+        if (to.matched.some(record => record.meta.requiresAdmin) && !user.admin){
+            return next({ path: '/' })
+        }
         user ? next() : next({ path: '/' })
     } else {
         next()
