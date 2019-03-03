@@ -6,6 +6,7 @@ import VueMoment from 'vue-moment'
 import './plugins/vuetify'
 import './plugins/axios'
 import './plugins/toasted'
+import './plugins/clipper'
 import './app.css'
 
 import router from './router/index'

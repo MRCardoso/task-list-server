@@ -1,29 +1,39 @@
 <template>
-    <div class="uploader-content">
-        <input type="file" v-show="false" id="file" ref="file" @change="handleFileUpload()"/>
-        <transition name="flip" mode="out-in">
-            <div class="uploader-file" v-if="file || hasImage">
-                <div class="uploader-file-actions">
-                    <v-tooltip bottom class="mr-2">
-                        <template #activator="data">
-                            <v-icon class="red--text action-remove" v-on="data.on" @click="remove">fa fa-times-circle</v-icon>
-                        </template>
-                        <span>Remover</span>
-                    </v-tooltip>
-                </div>
-                <span v-if="file">
-                    <img ref="image" width="100">
-                    <v-progress-linear v-model="progress"></v-progress-linear>
-                </span>
-                <img v-else-if="hasImage" :src="images[0].url" width="100">
+    <transition name="flip" mode="out-in">
+        <div v-if="hasImage()" key="image" class="uploader-image" :style="imageContent">
+            <div class="uploader-file-actions fixed">
+                <v-tooltip bottom class="mr-2">
+                    <template #activator="data">
+                        <v-icon class="red--text action-remove" v-on="data.on" @click="remove">fa fa-times-circle</v-icon>
+                    </template>
+                    <span>Remover</span>
+                </v-tooltip>
             </div>
-
-            <div v-else class="uploader-button" @click="$refs.file.click()">
-                <v-icon right dark>cloud_upload</v-icon>
-                Upload
+        </div>
+        <div v-else-if="uploaded" key="edit" class="uploader-add-file">
+            <div class="uploader-file-actions">
+                <v-tooltip bottom class="pr-2">
+                    <template #activator="data">
+                        <v-icon class="red--text action-remove" v-on="data.on" @click="remove">fa fa-times-circle</v-icon>
+                    </template>
+                    <span>Remover</span>
+                </v-tooltip>
+                <v-tooltip bottom>
+                    <template #activator="data">
+                        <v-icon class="blue--text action-crop" v-on="data.on" @click="crop">fa fa-cut</v-icon>
+                    </template>
+                    <span>Cortar</span>
+                </v-tooltip>
             </div>
-        </transition>
-    </div>
+            <clipper-basic class="uploader-crop" ref="clipper" :src="uploaded"></clipper-basic>
+            <v-progress-linear v-model="progress"></v-progress-linear>
+        </div>
+        <div v-else class="uploader-file-content" key="upload" @click="$refs.file.click()">
+            <input type="file" v-show="false" ref="file" @change="upload($event)">
+            <v-icon right dark>cloud_upload</v-icon>
+            Upload
+        </div>
+    </transition>
 </template>
 
 <script>
@@ -36,39 +46,51 @@ export default {
         file(){
             return this.$store.state.uploader.file
         },
-        hasImage(){
-            return Array.isArray(this.images) && this.images.length > 0
+        imageContent(){
+            if(this.hasImage()){
+                return {
+                    backgroundImage: `url('${this.images[0].url}')`,
+                    backgroundSize: `100% 100%`
+                }
+            }
+            return {}
         }
     },
     watch: {
         images(val){
             this.images = val
+            this.allowUpload = this.hasImage() ? false : true
         }
     },
     data() {
         return {
-            showImages: true
+            uploaded: null,
         }
     },
     methods: {
-        remove(){
-            if(this.$refs.image){
-                this.$refs.image.src = null
+        hasImage(){
+            return Array.isArray(this.images) && this.images.length > 0
+        },
+        upload: function(e){
+            let file = null
+            if (e.target.files.length !== 0) {
+                if(this.uploaded) URL.revokeObjectURL(this.uploaded)
+                this.uploaded = window.URL.createObjectURL(e.target.files[0]);
+                file = e.target.files[0]
             }
+            this.$store.commit('addFile', file)
+        },
+        crop: function () {
+            this.$refs.clipper.clip().toBlob(blob => {
+                if(this.uploaded) URL.revokeObjectURL(this.uploaded)
+                this.uploaded = URL.createObjectURL(blob)
+                this.$store.commit('addFile', blob)
+            })
+        },
+        remove(){
+            this.uploaded = null
             this.$emit('detachImage')
             this.$store.commit('addFile', null)
-        },
-        handleFileUpload(){
-            this.$store.commit('addFile', this.$refs.file.files[0])
-            this.imagePreview()
-        },
-        imagePreview() {
-            var reader = new FileReader();
-            reader.onload = (e) => {
-                this.$refs.image.src = e.target.result
-            }
-
-            reader.readAsDataURL(this.$store.state.uploader.file);
         }
     },
     created() {
@@ -77,17 +99,26 @@ export default {
 }
 </script>
 <style>
-    .uploader-content{
+    .uploader-image{
+        position: relative;
+        width: 320px;
+        height: 280px;
         box-shadow: 0 2px 8px #000;
+        margin: auto;
         display: flex;
-        justify-content: flex-end;
+        flex-direction: column;
         align-items: center;
     }
-    .uploader-content img{
+    .uploader-add-file{
         width: 100%;
-        height: 100%;
+        padding-top: 4px;
+        padding-left: 4px;
+        box-shadow: 0 2px 8px #000;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
-    .uploader-button{
+    .uploader-file-content{
         width: 100%;
         padding: 40px 0;
         font-size: 20px;
@@ -95,21 +126,24 @@ export default {
         cursor: pointer;
         color: #fff;
         background-color: #7986CB;
+        box-shadow: 0 2px 8px #000;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
     }
-    .uploader-button:hover{
+    .uploader-file-content:hover{
         background-color: #9FA8DA;
     }
-    .uploader-file{
-        margin: 4px;
+    .uploader-file-actions{
+        width: 100%;
+        display: flex;
+        justify-content: flex-start;
     }
-    .uploader-file-actions .action-remove{
-        float: left;
+    .action-crop, .action-remove{
+        opacity: 1;
     }
-    .uploader-file-actions .action-save{
-        float: right;
+    .action-remove:hover, .action-crop:hover{
+        opacity: 0.8;
     }
 </style>

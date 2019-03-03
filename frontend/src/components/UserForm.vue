@@ -98,12 +98,17 @@ export default {
                 res => {
                     let savedId = (this.id ? this.id : res.data.id)
                     this.$store.dispatch('sendFile', savedId)
-                    .then(response => {
+                    .then(images => {
                         this.$toasted.global.defaultSuccess({message: `Usuário ao ${this.id ? 'atualizada' : 'criada'} com sucesso`})
-                        this.$store.commit('refrashImage', {id: savedId, images: (response && response.data ? [response.data] : [])})
                         this.$store.dispatch('busNotifyLoading', false)
+                        
+                        if(images != null){
+                            this.user.images = images
+                            this.$store.commit('refrashImage', {id: savedId, images})
+                        }
+                        
                         if(this.isChangesMode()){
-                            this.$router.push('/users')
+                            this.$router.push(`/users/${savedId}/detail`)
                         }
                     }, err => {
                         this.rules = prepareError(err)

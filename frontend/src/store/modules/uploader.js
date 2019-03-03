@@ -8,7 +8,12 @@ export default {
     },
     mutations: {
         addFile(state, payload){
-            state.file = payload
+            let file = payload
+            if(payload instanceof File)
+                file = payload
+            else if (payload instanceof Blob)
+                file = new File([payload], state.file.name, { type: state.file.type })
+            state.file = file
         },
         removeUploadedFile(state, payload){
             state.deletedKeys = payload
@@ -27,22 +32,32 @@ export default {
             }
             return Promise.resolve()
         },
-        sendFile({ state, dispatch }, payload) {
-            return dispatch('deleteFile', payload)
+        sendFile({ state, dispatch, commit }, payload) {
+            return new Promise((resolve, reject) => {
+                dispatch('deleteFile', payload)
                 .then(() => {
                     if (state.file){
                         let formData = new FormData();
                         formData.append('file', state.file);
-            
-                        return axios.post(`upload/${payload}`, formData, {
+
+                        axios.post(`upload/${payload}`, formData, {
                             headers: { 'Content-Type': 'multipart/form-data' },
                             onUploadProgress: p => state.progress = Math.round(p.loaded / p.total * 100) || 0
                         })
+                        .then(response => {
+                            commit('resetInstance')
+                            resolve([response.data])
+                        })
+                        .catch(err => reject(err))
+                    } else{
+                        let mode = state.deletedKeys.length > 0 ? false : null
+                        commit('resetInstance')
+                        resolve(mode)
                     }
-                    return Promise.resolve(null)
 
                 })
-                .catch(err => Promise.reject(err))
+                .catch(err => reject(err))
+            })
         },
     }
 }
