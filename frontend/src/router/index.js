@@ -50,10 +50,14 @@ router.beforeEach( (to, from, next) => {
     if (to.matched.some(record => record.meta.requiresLogin)) {
         const json = localStorage.getItem(userKey)
         const user = JSON.parse(json)
-        if (to.matched.some(record => record.meta.requiresAdmin) && !user.admin){
+        if (user){
+            if (to.matched.some(record => record.meta.requiresAdmin) && !user.admin){
+                return next({ path: '/' })
+            }
+        } else{
             return next({ path: '/' })
         }
-        user ? next() : next({ path: '/' })
+        next()
     } else {
         next()
     }
