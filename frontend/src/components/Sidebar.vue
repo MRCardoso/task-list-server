@@ -2,7 +2,7 @@
     <v-toolbar dark color="#6E9FDD" app>
         <v-toolbar-title class="headline text-uppercase mr-4">
             <router-link to="/">
-                <img src="@/assets/logo-banner-3.gif" alt="Banner" width="100" />
+                <img v-bind:src="logoApp" alt="Banner" width="100" />
             </router-link>
         </v-toolbar-title>
         
@@ -55,6 +55,9 @@ export default {
                 return user.image
             }
             return null
+        },
+        logoApp(){
+            return require("@/assets/logo-banner-3.gif")+`?hashTime=${this.$store.state.hashTime}`
         }
     },
     methods: {

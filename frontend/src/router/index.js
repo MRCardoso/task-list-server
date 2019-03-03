@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from '@/views/home/home.vue'
 
+import store from '@/store/index'
 import { userKey } from '@/utils/index'
 
 const Signin = () => import(/* webpackChunkName: "auth" */'@/views/auth/signin.vue')
@@ -47,6 +48,7 @@ const router = new Router({
 });
 
 router.beforeEach( (to, from, next) => {
+    store.state.hashTime = Date.now()
     if (to.matched.some(record => record.meta.requiresLogin)) {
         const json = localStorage.getItem(userKey)
         const user = JSON.parse(json)

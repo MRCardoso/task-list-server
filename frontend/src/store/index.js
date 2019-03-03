@@ -8,5 +8,8 @@ import uploader from '@/store/modules/uploader'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
+    state: {
+        hashTime: Date.now()
+    },
     modules: { bus, auth, uploader }
 })
