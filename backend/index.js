@@ -14,5 +14,5 @@ consign()
     .into(app)
 
 app.listen(3000, () => {
-    console.log(`backend executando ${new Date()}`)
+    console.log(`backend executando ${require('moment')().format('DD/MM/YY HH:mm:ss')}`)
 })

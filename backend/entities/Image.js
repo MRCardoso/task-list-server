@@ -1,5 +1,11 @@
 const Model = require('../modules/Model');
 
+/**
+ * @author Marlon R. Cardoso
+ * @property {int} id the primary key the the table
+ * @property {int} userId the user foreign of this model
+ * @property {string} name the name of this model
+ */
 class Image extends Model {
     constructor(app) {
         const fillables = ["id", "userId", "name"]

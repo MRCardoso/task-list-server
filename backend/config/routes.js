@@ -6,9 +6,16 @@ module.exports = app => {
      */
     app.post('/signup', app.api.user.save)
     app.post('/signin', app.api.auth.signin)
+    app.post('/forgot', app.api.auth.forgot)
+    
+    app.route('/reset/:token')
+        .get(app.api.auth.validateResetToken)
+        .post(app.api.auth.reset)
+    
     app.route('/signout/:id')
         .all(app.config.passport.authenticate())
         .get(app.api.auth.signout)
+    
     app.post('/validateToken', app.api.auth.validateToken)
     app.post('/refrashToken', app.api.auth.refrashToken)
 

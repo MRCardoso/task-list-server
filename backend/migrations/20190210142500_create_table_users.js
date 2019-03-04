@@ -9,7 +9,7 @@ exports.up = function(knex, Promise) {
         table.boolean('status').notNull().defaultTo(true)
         table.boolean('admin').notNull().defaultTo(false)
         table.string('resetToken')
-        table.date('resetExpires')
+        table.bigInteger('resetExpires')
         table.timestamp('deleted_at')
         table.timestamps();
     })

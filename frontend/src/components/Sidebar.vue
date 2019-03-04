@@ -22,7 +22,13 @@
         <v-menu transition="slide-x-transition" v-if="user">
             <v-toolbar-title slot="activator">
                 <div class="auth-box">
-                    <span>{{user.username}}</span>
+                    <div class="auth-box-detail">
+                        <span>{{user.username}}</span>
+                        <i>
+                            Sessão expira em:
+                            {{new Date(user.exp) | moment('DD/MM/YY HH:mm')}}
+                        </i>
+                    </div>
                     <img v-if="logo" :src="logo" alt="User logo" />
                     <img v-else src="@/assets/profile.png" alt="Logo" />
                 </div>
@@ -47,6 +53,7 @@ import { prepareError } from '@/utils/index'
 export default {
     computed: {
 		user(){
+            console.log(this.$store.state.auth.user)
             return this.$store.state.auth.user;
         },
         logo(){
@@ -74,15 +81,31 @@ export default {
 }
 </script>
 <style>
-    .auth-box{
-        display: inline;
-    }
-    .auth-box img{
-        float: right;
-        margin: 0 !important;
-        width: 40px;
-        height: 40px;
-        border: 1px solid rgba(85, 85, 85, 0.6);
-        border-radius: 20px;
-    }
+.auth-box{
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+}
+.auth-box img{
+    margin: 0 !important;
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(85, 85, 85, 0.6);
+    border-radius: 20px;
+}
+.auth-box-detail{
+    display: flex;
+    flex-direction: column;
+}
+.auth-box-detail span{
+    display: flex;
+    justify-content: flex-end;
+    justify-self: flex-start;
+}
+.auth-box-detail i{
+    display: flex;
+    align-self: flex-end;
+    justify-self: flex-end;
+    font-size: 10px;
+}
 </style>

@@ -20,13 +20,17 @@ export const prepareError = (e, vm) => {
                 }
 
                 let reason = e.response.data
-                if (typeof reason === "object" && reason.validations){
+                let kindErr = typeof reason ==="object"
+                
+                if (kindErr && reason.validations) {
                     let rules = {}
                     for (let key in reason.validations) {
                         rules[key] = reason.validations[key].join(', ')
                     }
                     vm.rules = rules
                     throw new ClientException("Por favor, corriga os campos com erro", 2)
+                } else if (kindErr && reason.message) {
+                    throw new ClientException(reason.message, 2)
                 } else{
                     throw new ClientException(reason.toString(), 2)
                 }
@@ -40,7 +44,9 @@ export const prepareError = (e, vm) => {
     } catch (ex) {
         let message = ex.code == 2 ? ex.message :  "erro desconhecido"
         vm.$toasted.global.defaultError({ message })
-        console.log({e})
+        if(ex.code == 1){
+            console.log({ e })
+        }
     }
 }
 

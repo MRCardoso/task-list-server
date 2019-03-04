@@ -1,6 +1,16 @@
 const Validator = require('./Validator')
 const timestamps = ["created_at", "updated_at"]
 
+/**
+ * @property {object} app the app created in the express
+ * @property {string} table the table name in the database of the instance of model
+ * @property {object} fillables the fields allowed to work in the sql methods (select, inset and update)
+ * @property {object} hiddens the fields hidden in the sql methods (select, inset and update)
+ * @property {object} rules the validations of the model instance
+ * @property {Validator} validator the instance of the class Validator to make the validations
+ * @property {object} attributes the magic attributes of the model created in constructor
+ * @property {bool} timestamps the definition if the model has create and update dates
+ */
 class Model {
     constructor(app, table, rules, fillables, hiddens = []) {
         this.app = app
@@ -185,12 +195,20 @@ class Model {
     | ----------------------------------------------------------------------------
     | Find by a specific record in db
     | ----------------------------------------------------------------------------
-    * @param object params of the filter data
+    * @param {object} params of the filter data
+    * @param {array} relations thie joins with the foreign tables
+    * @param {bool|array} hiddenOrCustom the custom field or use the hidden field
     * @return Promise
     */
-    one(params, relations = [], useHidden = false){
+    one(params, relations = [], hiddenOrCustom = false){
         let query = this.app.db(this.table)
-        let fields = this.getFields(useHidden).concat(this.prepareJoin(relations, query))
+        let fields = ['id']
+        
+        if (Array.isArray(hiddenOrCustom)){
+            fields = hiddenOrCustom
+        } else{
+            fields = this.getFields(hiddenOrCustom).concat(this.prepareJoin(relations, query))
+        }
 
         return new Promise( (resolve, reject) => {
             query
@@ -202,9 +220,15 @@ class Model {
         })
     }
 
-    all(relations = [], useHidden = false){
+    all(relations = [], hiddenOrCustom = false){
         let query = this.app.db(this.table)
-        let fields = this.getFields(useHidden).concat(this.prepareJoin(relations, query))
+        let fields = ['id']
+        
+        if (Array.isArray(hiddenOrCustom)){
+            fields = hiddenOrCustom
+        } else{
+            fields = this.getFields(hiddenOrCustom).concat(this.prepareJoin(relations, query))
+        }
 
         query.select(...fields)
 

@@ -1,5 +1,19 @@
 const Model = require('../modules/Model');
 
+/**
+ * @author Marlon R. Cardoso
+ * @property {int} id the primary key the the table
+ * @property {int} userId the user foreign of this model
+ * @property {string} title the title of this model
+ * @property {string} description the description of this model
+ * @property {int} priority the priority of this model
+ * @property {int} situation the situation of this model
+ * @property {bool} status the status of this model
+ * @property {Date} startDate the startDate of this model
+ * @property {Date} endDate the endDate of this model
+ * @property {Date} created_at the date of creation of user
+ * @property {Date} updated_at the date of last update of data the user
+ */
 class Task extends Model {
     constructor(app) {
         const fillables = ["id", "userId", "title", "description", "priority", "situation", "status", "startDate", "endDate"]

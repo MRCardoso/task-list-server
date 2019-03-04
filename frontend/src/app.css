@@ -55,15 +55,15 @@
 .clear{
     clear: both;
 }
-
 .captalized-text{
     text-transform: capitalize;
 }
-
 .my-blue{
     background-color: #6E9FDD !important;
     color: #F4F4F4;
 }
+
+/* flex boxes */
 .flex-row{
     display: flex;
 }

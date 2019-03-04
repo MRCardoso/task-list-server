@@ -6,8 +6,17 @@
             <v-switch v-model="user.keepLogin" label="Manter Login"></v-switch>
         </template>
         <template slot="buttons">
-            <v-btn @click="signin" class="my-blue darken-1 white--text">Login</v-btn>
-            <v-btn to="/signup">Criar Conta</v-btn>
+            <v-btn @click="signin" class="my-blue darken-1 white--text">Acessar</v-btn>
+
+            <div class="mr-2 ml-2">
+                <div class="signin-item">
+                    <router-link to="/forgot" class="blue--text darken-5">Esqueceu a senha?</router-link>
+                </div>
+                <div class="signin-item">
+                    Novo por aqui?
+                    <router-link to="/signup" class="pl-1 blue--text darken-5">Crie uma conta</router-link>
+                </div>
+            </div>
         </template>
     </task-app-form-item>
 </template>
@@ -26,6 +35,7 @@ export default {
     },
     methods: {
         signin(){
+            this.rules = {}
             let { name, version } = browserData()
             this.$http
                 .post(`signin?PlatformName=${name}&PlatformVersion=${version}`, this.user)
@@ -39,3 +49,17 @@ export default {
     },
 }
 </script>
+<style>
+.signin-item{
+    display: flex;
+    justify-content: center;
+    padding: 8px;
+    border:1px solid #E2E2E2;
+    margin-bottom: 6px;
+    border-radius: 4px;
+    text-align: center
+}
+.signin-item:hover{
+    background: #F4F4F4
+}
+</style>

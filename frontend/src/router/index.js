@@ -7,6 +7,8 @@ import { userKey } from '@/utils/index'
 
 const Signin = () => import(/* webpackChunkName: "auth" */'@/views/auth/signin.vue')
 const Signup = () => import(/* webpackChunkName: "auth" */'@/views/auth/signup.vue')
+const Forgot = () => import(/* webpackChunkName: "auth" */'@/views/auth/forgot.vue')
+const Reset = () => import(/* webpackChunkName: "auth" */'@/views/auth/reset.vue')
 const Logged = () => import(/* webpackChunkName: "user" */'@/views/auth/logged.vue')
 
 const Task = () => import(/* webpackChunkName: "task" */'@/views/task/index.vue')
@@ -25,6 +27,8 @@ const router = new Router({
         { path: '/', component: Home },
         { path: '/signin', component: Signin },
         { path: '/signup', component: Signup },
+        { path: '/forgot', component: Forgot },
+        { path: '/reset/:token', component: Reset, props: true},
         { path: '/logged', component: Logged, meta: { requiresLogin: true } },
         /*
         | ------------------------------------------------------------------------------------------
