@@ -19,6 +19,26 @@ module.exports = app => {
     app.post('/validateToken', app.api.auth.validateToken)
     app.post('/refrashToken', app.api.auth.refrashToken)
 
+    /*
+    | ------------------------------------------------------------------
+    | Mobile requests
+    | ------------------------------------------------------------------
+    */
+    app.post('/mobile/signin', app.api.mobile.signin);
+    app.route('/mobile/signout/:id')
+        .all(app.config.passport.authenticate())
+        .post(app.api.mobile.signout);
+
+    app.route('/mobile/tasks')
+        .all(app.config.passport.authenticate())
+        .get(app.api.mobile.tasks)
+        .post(app.api.mobile.sync)
+
+    app.route('/mobile/tasks/:id')
+        .all(app.config.passport.authenticate())
+        .put(app.api.task.hasAuthorization, app.api.mobile.sync)
+        .patch(app.api.task.hasAuthorization, app.api.mobile.inactivate)
+
     /**
      * ----------------------------------------------------
      * User routes
@@ -33,7 +53,11 @@ module.exports = app => {
         .all(app.config.passport.authenticate())
         .get(app.api.user.hasAuthorization, app.api.user.one)
         .put(app.api.user.hasAuthorization, app.api.user.save)
-        .delete(app.api.user.hasAuthorization, app.api.user.remove)
+        .patch(app.api.user.hasAuthorization, app.api.user.remove)
+
+    app.route('/users/:id/tokens/:apiId')
+        .all(app.config.passport.authenticate())
+        .delete(app.api.auth.isAdmin, app.api.user.removeToken)
 
     /**
     * ----------------------------------------------------

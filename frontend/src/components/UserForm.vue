@@ -22,7 +22,7 @@
                 <v-tab-item>
                     <v-card flat>
                     <v-card-text>
-                        <task-app-file-uploader :images="user.images" @detachImage="removeImage" />
+                        <task-app-file-uploader :image="user.image" @detachImage="removeImage" />
                     </v-card-text>
                     </v-card>
                 </v-tab-item>
@@ -80,10 +80,9 @@ export default {
             return this.mode == 'changes'
         },
         removeImage(){
-            if(Array.isArray(this.user.images) && this.user.images.length > 0)
-            {
-                this.$store.commit('removeUploadedFile', this.user.images)
-                this.user.images = false
+            if(this.user.image){
+                this.$store.commit('removeUploadedFile', [this.user.image])
+                this.user.image = false
             }
         },
         save(){
@@ -96,13 +95,13 @@ export default {
             .then(res => {
                 let savedId = (this.id ? this.id : res.data.id)
                 this.$store.dispatch('sendFile', savedId)
-                .then(images => {
+                .then(image => {
                     this.$toasted.global.defaultSuccess({message: `Usuário ao ${this.id ? 'atualizada' : 'criada'} com sucesso`})
                     this.$store.dispatch('busNotifyLoading', false)
                     
-                    if(images != null){
-                        this.user.images = images
-                        this.$store.commit('refrashImage', {id: savedId, images})
+                    if(image != null){
+                        this.user.image = image
+                        this.$store.commit('refrashImage', {id: savedId, image})
                     }
                     
                     if(this.isChangesMode()){

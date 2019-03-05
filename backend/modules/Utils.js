@@ -18,7 +18,7 @@ exports.datesExpires = (expires, def = 3600000) => {
     return { now, expires: (now + (expires || def))}
 }
 
-exports.createTokenPayload = (logged, keepLogin) => {
+exports.createTokenPayload = (logged, keepLogin, platform) => {
     let { authSecret, authToken } = require('../.env')
     let { now, expires } = exports.datesExpires(authToken)
     let jwt = require('jwt-simple')
@@ -26,10 +26,12 @@ exports.createTokenPayload = (logged, keepLogin) => {
     let payload = {
         id: logged.id,
         email: logged.email,
+        name: logged.name,
         username: logged.username,
         admin: logged.admin,
         image: logged.image || null,
         keepLogin,
+        platform,
         iat: now,
         exp: expires
     }

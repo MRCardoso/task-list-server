@@ -21,6 +21,11 @@ module.exports = app => {
         }, err => responseErr(res, err))
     }
 
+    /**
+     * ---------------------------------------------------------------------------
+     * Remove object from bucket of s3, when the image was deleted from the interface
+     * ---------------------------------------------------------------------------
+     */
     const removeObject = function (req, res) {
         let items = {id: [], Keys: []}
         if (req.body.Keys != undefined && req.body.Keys.length > 0){
@@ -34,9 +39,11 @@ module.exports = app => {
             .s3Helper(AWS)
             .deleteObject(items.Keys)
             .then(data => {
-                return image.delete(['id', items.id], 'whereIn')
-                    .then(deleted => res.json({ message: "Arquivo Removido Com Sucesso!" }))
-                    .catch(error => responseErr(res, error))
+                image.delete(function(){
+                    this.whereIn('id', items.id)
+                })
+                .then(deleted => res.json({ message: "Arquivo Removido Com Sucesso!" }))
+                .catch(error => responseErr(res, error))
             }, err => {
                 let defaultMessage = 'Não foi possível remover o arquivo!'
                 return res.status(500).send((err != null ? (err.message || defaultMessage) : defaultMessage))

@@ -13,11 +13,7 @@ export default {
     mutations: {
         refrashImage(state, payload){
             if (state.user && (state.user.id == payload.id)){
-                if(Array.isArray(payload.images) && payload.images.length > 0){
-                    state.user.image = payload.images[0].url
-                } else{
-                    state.user.image = null
-                }
+                state.user.image = payload.image
                 localStorage.setItem(userKey, JSON.stringify(state.user))
             }
         },

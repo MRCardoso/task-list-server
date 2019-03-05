@@ -47,7 +47,7 @@ export default {
             this.$store.dispatch('busNotifyLoading', true)
             this.$http
                 .post(`reset/${this.token}`, this.user)
-                .then(res => {
+                .then(() => {
                     this.$toasted.global.defaultSuccess({message: "Senha atualizada com sucesso"})
                     this.$router.push("/")
                 })

@@ -1,8 +1,6 @@
 const Validator = require('../modules/Validator')
 const Model = require('../modules/Model')
-const { createTokenPayload } = require("../modules/Utils")
 const User = require('./User')
-const Image = require('./Image')
 
 /**
  * @author Marlon R. Cardoso
@@ -19,16 +17,9 @@ const Image = require('./Image')
  */
 class UserApi extends Model {
     constructor(app) {
-        const fillables = ["id", "userId", "name", "version", "platform", "token", "expires", "keepLogin"]
+        const fillables = ["id", "userId", "name", "version", "platform", "token", "expires", "keepLogin", "created_at"]
         super(app, "users_api", {}, fillables)
         this.timestamps = false
-    }
-
-    relations(alias) {
-        let relations = {
-            "users": ["users", "id", "userId", ["users.name", "users.email"]]
-        };
-        return relations[alias]
     }
 
     /**
@@ -44,7 +35,7 @@ class UserApi extends Model {
     login(post) {
         return new Promise((resolve, reject) => {
             this.validator = new Validator({
-                "email": "required|email",
+                "username": "required",
                 "password": "required|min:8|max:255",
             })
 
@@ -53,21 +44,19 @@ class UserApi extends Model {
             }
 
             const user = new User(this.app)
-            const image = new Image(this.app)
 
-            user.one({ email: post.email }, [], true).then(logged => {
+            user.one({ username: post.username }, ["image"], true).then(logged => {
                 const bcrypt = require('bcrypt-nodejs')
                 const isMatch = bcrypt.compareSync(post.password, logged.password)
                 if (!isMatch) {
                     return reject({ Validator: { password: ["Senha inválida"] }})
                 }
-                image.imageByUser(logged.id).then( i => {
-                    logged.image = i
-                    resolve(logged)
-                })
+                resolve(logged)
             }).catch(err => {
-                console.log({ err })
-                return reject({ Unauthorized: { email: ["Usuário não encontrado"] } })
+                if(typeof err === "string") {
+                    err = { Unauthorized: { username: ["Usuário não encontrado"] } }
+                }
+                return reject(err)
             })
         })
     }
@@ -133,8 +122,8 @@ class UserApi extends Model {
                 "token": "required",
                 "expires": "required|number"
             })
-
-            let { token, expires, payload } = createTokenPayload(logged, keepLogin)
+            const { createTokenPayload } = require("../modules/Utils")
+            let { token, expires, payload } = createTokenPayload(logged, keepLogin, platform)
             let post = { userId: logged.id, token, name, version, platform, expires, keepLogin, created_at: new Date()}
 
             if (!this.validator.validate(post)) {
@@ -162,20 +151,14 @@ class UserApi extends Model {
     refrashLogin(id, name, version, platform = 1, keepLogin = false) {
         return new Promise((resolve, reject) => {
             const user = new User(this.app)
-            const image = new Image(this.app)
 
-            user.one({ id })
-            .then(logged => {
-                image.imageByUser(logged.id)
-                    .then(i => {
-                        logged.image = i
-                        this.createApi(logged, name, version, platform, keepLogin)
-                            .then((apiData) => resolve(apiData))
-                            .catch(err => reject(err))
-                    })
-                    .catch(err => reject(err))
-            })
-            .catch(err => reject(err))
+            user.one({ id }, ["image"])
+                .then(logged => {
+                    this.createApi(logged, name, version, platform, keepLogin)
+                        .then((apiData) => resolve(apiData))
+                        .catch(err => reject(err))
+                })
+                .catch(err => reject(err))
         })
     }
 }

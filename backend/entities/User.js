@@ -56,6 +56,23 @@ class User extends Model {
         })
     }
 
+    relations(alias) {
+        let { AWS } = require('../.env')
+        
+        let relations = {
+            "image": [
+                "images", //FK table
+                "userId", // FK column
+                [ // fk fields
+                    "id", "userId", "name", 
+                    this.app.db.raw(`CONCAT("${AWS.URL}${AWS.Bucket}/${AWS.uploadFolder}", "/", userId, "/",name) as url`)
+                ]
+            ],
+            "apis": ["users_api", "userId", "*", true]
+        };
+        return relations[alias]
+    }
+
     /**
     * ----------------------------------------------------------------------------
     * Method to use select one default of the App, filter by email of user

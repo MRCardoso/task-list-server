@@ -46,7 +46,7 @@ export default {
                         })
                         .then(response => {
                             commit('resetInstance')
-                            resolve([response.data])
+                            resolve(response.data)
                         })
                         .catch(err => reject(err))
                     } else{

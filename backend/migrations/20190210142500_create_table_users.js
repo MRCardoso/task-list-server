@@ -11,7 +11,7 @@ exports.up = function(knex, Promise) {
         table.string('resetToken')
         table.bigInteger('resetExpires')
         table.timestamp('deleted_at')
-        table.timestamps();
+        table.timestamps()
     })
 };
 

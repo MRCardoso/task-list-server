@@ -72,7 +72,7 @@ export default {
         deleteItem(remove){
             if(remove && this.deletedId)
             {
-                this.$http.delete(`users/${this.deletedId}`)
+                this.$http.patch(`users/${this.deletedId}`)
                 .then(() => this.$toasted.global.defaultSuccess({message: "Usuário removida com sucesso"}))
                 .catch(err => prepareError(err, this))
                 .finally(() => {

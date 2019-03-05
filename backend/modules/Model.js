@@ -21,6 +21,8 @@ class Model {
         this.validator = new Validator(this.rules)
         this.attributes = {}
         this.timestamps = true
+        this.transaction = false
+        this.primaryKey = 'id'
 
         this.resertFields()
     }
@@ -88,7 +90,15 @@ class Model {
         if (this.timestamps){
             data[timestamps[0]] = new Date()
         }
-        return this.app.db(this.table).insert(data)
+        if (data.id) {
+            delete data.id
+        }
+
+        let db = this.app.db(this.table)
+        if (this.transaction){
+            db = db.transacting(this.transaction)
+        }
+        return db.insert(data)
     }
 
     /**
@@ -102,21 +112,25 @@ class Model {
         if (this.timestamps) {
             data[timestamps[1]] = new Date()
         }
-        if ('id' in data){
+        if (data.id) {
             delete data.id
         }
-        return this.app.db(this.table).update(data).where({ id: this.id })
-    }
+        
+        let db = this.app.db(this.table)
 
-    delete(params, method = 'where'){
-        let query = this.app.db(this.table)
-        if (Array.isArray(params)){
-            query[method](...params)
-        } else{
-            query[method](params)
+        if (this.transaction){
+            db = db.transacting(this.transaction)
         }
         
-        return query.del()
+        return new Promise((resolve, reject) => {
+            db.update(data).where({ id: this.id })
+                .then(_ => resolve(this.id))
+                .catch(err => reject(err))
+        })
+    }
+
+    delete(params){
+        return this.app.db(this.table).where(params).del()
     }
     /**
     | ----------------------------------------------------------------------------
@@ -127,9 +141,10 @@ class Model {
     * @param int|null the id of the record to update
     * @return bool
     */
-    save (data) {
+    save (data, transaction = false) {
         return new Promise((resolve, reject) =>
         {
+            this.transaction = transaction
             this.resertFields()
             this.bindFillables(data)
 
@@ -173,22 +188,49 @@ class Model {
      * ----------------------------------------------------------------------------
      */
     afterSave() { return Promise.resolve() }
-
+    
     /**
      * ----------------------------------------------------------------------------
      * Behavior to process the join relation
      * ----------------------------------------------------------------------------
      */
-    prepareJoin(relations, query) {
-        let joinFields = []
+    getRelations(relations, base) {
         if (relations) {
-            relations.forEach(r => {
-                let array = this.relations(r)
-                joinFields = joinFields.concat(array[3])
-                query.innerJoin(array[0], `${array[0]}.${array[1]}`, `${this.table}.${array[2]}`)
+            let promises = []
+            
+            relations.forEach(index => {
+                let rel = this.relations(index)
+                if (Array.isArray(rel)) {
+                    let [t, fk, f, many] = rel
+                    let condition, value
+                    if (base[fk]){
+                        condition = `${t}.${this.primaryKey}`
+                        value = base[fk]
+                    } else{
+                        condition = `${t}.${fk}`
+                        value = base[this.primaryKey]
+                    }
+                    
+                    promises.push(
+                        new Promise(resolve => {
+                            let query = this.app.db(t)
+                                query.select(f || []).where(condition, value).orderBy(condition, 'desc')
+                            
+                                if (!many) { query.first() }
+                                
+                                query.then(r => resolve({ table: index, items: r })).catch(err => {
+                                    console.log(err)
+                                    resolve({})
+                                })
+                        })
+                    )
+                }
             })
+            if (promises.length>0){
+                return Promise.all(promises)
+            }
         }
-        return joinFields
+        return Promise.resolve([])
     }
 
     /**
@@ -202,21 +244,26 @@ class Model {
     */
     one(params, relations = [], hiddenOrCustom = false){
         let query = this.app.db(this.table)
-        let fields = ['id']
-        
-        if (Array.isArray(hiddenOrCustom)){
-            fields = hiddenOrCustom
-        } else{
-            fields = this.getFields(hiddenOrCustom).concat(this.prepareJoin(relations, query))
-        }
+        let fields = (Array.isArray(hiddenOrCustom) ? hiddenOrCustom : this.getFields(hiddenOrCustom))
 
         return new Promise( (resolve, reject) => {
             query
                 .select(...fields)
                 .where(params)
                 .first()
-                .then(item => (item ? resolve(item) : reject(`nenhum resultado encontrado em '${this.table}'`)))
-                .catch(err => reject(err))
+                .then(item => {
+                    if(item){
+                        return this.getRelations(relations, item).then(results => {
+                            results.forEach(row => item[row.table] = row.items)
+                            resolve(item)
+                        })
+                    }
+                    return reject(`nenhum resultado encontrado em '${this.table}'`)
+                })
+                .catch(err => {
+                    console.log(err)
+                    reject(err)
+                })
         })
     }
 
@@ -227,7 +274,7 @@ class Model {
         if (Array.isArray(hiddenOrCustom)){
             fields = hiddenOrCustom
         } else{
-            fields = this.getFields(hiddenOrCustom).concat(this.prepareJoin(relations, query))
+            fields = this.getFields(hiddenOrCustom)//.concat(this.prepareJoin(relations, query))
         }
 
         query.select(...fields)

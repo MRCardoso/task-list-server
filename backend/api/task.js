@@ -2,7 +2,10 @@ module.exports = app => {
     const { responseErr } = require("../modules/Utils")
 
     const Task = require('../entities/Task')
-    const task = new Task(app);
+    const task = new Task(app)
+
+    const IntegrationApi = require('../entities/IntegrationApi')
+    const integration = new IntegrationApi(app)
 
     const all = (req, res) => {
         let query = task.all(['users'])
@@ -42,7 +45,7 @@ module.exports = app => {
     }
 
     const one = (req, res) => {
-        task.one(paramsChanges(req), ["users"])
+        task.one(paramsChanges(req), ["user", "integration"])
             .then(task => res.json(task))
             .catch(error => responseErr(res, error))
     }

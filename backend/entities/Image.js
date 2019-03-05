@@ -20,38 +20,9 @@ class Image extends Model {
     static imageAsObject(i){
         let { AWS } = require('../.env')
         return {
-            id: i.id,
-            userId: i.userId,
-            name: i.name,
+            ...i,
             url: `${AWS.URL}${AWS.Bucket}/${AWS.uploadFolder}/${i.userId}/${i.name}`
         }
-    }
-
-    relations(alias) {
-        let relations = {
-            "users": ["users", "id", "userId", ["users.name", "users.email"]]
-        };
-        return relations[alias]
-    }
-
-    imagesByUser(userId){
-        return new Promise( (resolve) => {
-            this.all().where({ userId })
-            .then(images => {
-                let listImages = []
-                images.forEach(i => listImages.push(Image.imageAsObject(i)))
-                resolve(listImages)
-            })
-            .catch(() => resolve([]))
-
-        })
-    }
-    imageByUser(userId){
-        return new Promise( resolve => {
-            this.one({ userId })
-                .then(i => resolve(Image.imageAsObject(i).url))
-                .catch(() => resolve(null))
-        })
     }
 }
 

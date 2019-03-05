@@ -13,7 +13,7 @@ import TaskAppSidebar from './components/Sidebar.vue'
 import TaskAppLoading from './components/Loading.vue'
 import TaskAppContent from './components/Content.vue'
 import TaskAppModal from '@/components/Modal.vue'
-import { userKey, browserData } from '@/utils/index'
+import { userKey } from '@/utils/index'
 
 export default {
 	name: "App",

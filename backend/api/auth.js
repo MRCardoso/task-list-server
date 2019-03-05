@@ -23,7 +23,7 @@ module.exports = app => {
                 let PlatformName = req.query.PlatformName || '' 
                 let PlatformVersion = req.query.PlatformVersion || 0
 
-                auth.createApi(logged, PlatformName, PlatformVersion, 1,keepLogin)
+                auth.createApi(logged, PlatformName, PlatformVersion, PLATFORM_WEB,keepLogin)
                     .then((apiData) => res.json(apiData))
                     .catch(err => responseErr(res, err))
             }, err => responseErr(res, err))

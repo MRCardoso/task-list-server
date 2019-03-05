@@ -4,9 +4,6 @@ module.exports = app => {
     const User = require('../entities/User')
     const user = new User(app)
 
-    const Image = require('../entities/Image')
-    const image = new Image(app)
-
     const all = (req, res) => {
         user.all()
             .orderBy('id', 'desc')
@@ -26,19 +23,23 @@ module.exports = app => {
     }
 
     const remove = (req, res) => {
-        return user.delete({ id: req.params.id })
+        return user.update({ id: req.params.id, deleted_at: new Date() })
             .then(deleted => res.json({deleted}))
             .catch(error => responseErr(res, error))
     }
 
+    const removeToken = (req, res) => {
+        const Api = require('../entities/UserApi')
+        const api = new Api(app)
+
+        return api.delete({ id: req.params.apiId, userId: req.params.id })
+            .then(deleted => res.json({ deleted }))
+            .catch(error => responseErr(res, error))
+    }
+
     const one = (req, res) => {
-        user.one({ "users.id": req.params.id })
-            .then(user => {
-                image.imagesByUser(user.id).then(images => {
-                    user.images = images
-                    res.json(user)
-                })
-            })
+        user.one({ "users.id": req.params.id }, ["image", "apis"])
+            .then(user => res.json(user))
             .catch(error => responseErr(res,{ Notfound: error}, "Usuário não encontrado"))
     }
 
@@ -51,5 +52,5 @@ module.exports = app => {
         next()
     }
 
-    return { all, save, one, remove, hasAuthorization}
+    return { all, save, one, remove, removeToken, hasAuthorization}
 }

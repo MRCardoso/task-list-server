@@ -38,7 +38,7 @@
 
 <script>
 export default {
-    props: ['images'],
+    props: ['image'],
     computed: {
         progress(){
             return this.$store.state.uploader.progress
@@ -49,7 +49,7 @@ export default {
         imageContent(){
             if(this.hasImage()){
                 return {
-                    backgroundImage: `url('${this.images[0].url}')`,
+                    backgroundImage: `url('${this.image.url}')`,
                     backgroundSize: `100% 100%`
                 }
             }
@@ -57,8 +57,8 @@ export default {
         }
     },
     watch: {
-        images(val){
-            this.images = val
+        image(val){
+            this.image = val
             this.allowUpload = this.hasImage() ? false : true
         }
     },
@@ -69,7 +69,7 @@ export default {
     },
     methods: {
         hasImage(){
-            return Array.isArray(this.images) && this.images.length > 0
+            return (this.image ? true : false)
         },
         upload: function(e){
             let file = null

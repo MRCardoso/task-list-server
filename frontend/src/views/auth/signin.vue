@@ -1,7 +1,7 @@
 <template>
     <task-app-form-item title="Acessar Conta" :inlineButtons="false">
         <template slot="inputs">
-            <v-text-field prepend-icon="fa fa-at" label="E-mail" type="text" v-model="user.email" :error-messages="rules.email"/>
+            <v-text-field prepend-icon="person" label="Usuário" type="text" v-model="user.username" :error-messages="rules.username"/>
             <v-text-field prepend-icon="lock" label="Password" type="password" v-model="user.password" :error-messages="rules.password"/>
             <v-switch v-model="user.keepLogin" label="Manter Login"></v-switch>
         </template>

@@ -53,13 +53,12 @@ import { prepareError } from '@/utils/index'
 export default {
     computed: {
 		user(){
-            console.log(this.$store.state.auth.user)
             return this.$store.state.auth.user;
         },
         logo(){
             let user = this.$store.state.auth.user
             if(user.image){
-                return user.image
+                return user.image.url
             }
             return null
         },

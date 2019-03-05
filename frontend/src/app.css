@@ -63,6 +63,32 @@
     color: #F4F4F4;
 }
 
+/* Table styles */
+.table{
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border-collapse: collapse;
+}
+.table tr{
+    margin: 0;
+    padding: 0;
+}
+.table tr:hover{
+    background: #F2F3F2;
+}
+.table th,.table td{
+    border: 1px solid #DDDDDf;
+    padding: 6px;
+}
+
+.image-container{
+    width: 300px;
+    height: 220px;
+    box-shadow: 0 0 8px #000;
+    margin: auto;
+}
+
 /* flex boxes */
 .flex-row{
     display: flex;
