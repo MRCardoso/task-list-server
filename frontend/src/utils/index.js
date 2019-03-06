@@ -14,7 +14,7 @@ export const prepareError = (e, vm) => {
             {
                 if (e.response.status == 401) {
                     let user = vm.$store.state.auth.user
-                    if (user && user.keepLogin) {
+                    if (user && user.authToken.keepLogin) {
                         return vm.$store.dispatch('busNotifyDialog', true)
                     }
                 }

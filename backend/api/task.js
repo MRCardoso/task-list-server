@@ -4,11 +4,8 @@ module.exports = app => {
     const Task = require('../entities/Task')
     const task = new Task(app)
 
-    const IntegrationApi = require('../entities/IntegrationApi')
-    const integration = new IntegrationApi(app)
-
     const all = (req, res) => {
-        let query = task.all(['users'])
+        let query = task.all(["user"])
         if(!req.user.admin){
             query.where({ userId: req.user.id })
         }
@@ -22,7 +19,7 @@ module.exports = app => {
         if (!currentDay){
             return res.status(400).send("Pro favor, fornece uma data")
         }
-        task.all(['users'])
+        task.all()
             .where({ userId: req.user.id, startDate:  currentDay })
             .then(tasks => res.json(tasks))
             .catch(error => responseErr(res, error))

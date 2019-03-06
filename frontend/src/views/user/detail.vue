@@ -4,7 +4,7 @@
     
         <task-app-form-item title="Detalhes do Usuário" :path="indexRoute" inputClass="mt-4 mb-2 ml-4 mr-4">
             <template slot="inputs">
-                <div v-if="hasImage" class="flex-row">
+                <div v-if="hasImage" class="flex-row" :class="classStatus">
                     <img class="image-container" :src="user.image.url" />
                 </div>
                 <v-expansion-panel v-model="panel" expand>
@@ -49,8 +49,8 @@
                                     <td><strong>{{api.name}}</strong></td>
                                     <td>{{api.version}}</td>
                                     <td>{{api.platform == 1 ? "web" : (api.platform==2 ? 'mobile' : 'outros') }}</td>
-                                    <td>{{new Date(api.expires) | moment('DD/MM/YY HH:mm')}}</td>
-                                    <td>{{api.created_at}}</td>
+                                    <td>{{new Date(api.expires) | moment('DD/MM/YY HH:mm:ss')}}</td>
+                                    <td>{{api.created_at | moment('DD/MM/YY HH:mm:ss')}}</td>
                                     <td align="center"><v-icon class="red--text" small @click="openConfirmation(api.id)">delete</v-icon></td>
                                 </tr>
                             </tbody>
@@ -81,6 +81,12 @@ export default {
     computed: {
         hasImage(){
             return this.user.image ? true : false
+        },
+        classStatus(){
+            return {
+                'green darken-2': this.user.status,
+                'grey': !this.user.status,
+            }
         }
     },
     data() {
@@ -101,27 +107,33 @@ export default {
             this.dialog = true
             this.deletedId = id
         },
-        deleteItem(remove){
+        async deleteItem(remove){
             if(remove && this.deletedId){
-                this.$http.delete(`users/${this.user.id}/tokens/${this.deletedId}`)
+                let forceLogout = await this.$store.dispatch("removedToken", {id: this.user.id, apiId: this.deletedId})
+                let promise
+                
+                if(forceLogout)
+                    promise = this.$http.get(`signout/${this.deletedId}`)
+                else
+                    promise = this.$http.delete(`users/${this.user.id}/tokens/${this.deletedId}`)
+                
+                promise
                     .then(() => {
-                        let record = this.user.apis.find(r => r.id == this.deletedId)
-                        if(record){
-                            if(record.token == this.$store.state.auth.user.token){
-                                this.$router.push('/')
-                            }
+                        if(forceLogout){
+                            this.$store.commit('addUser', null)
+                            this.$router.push("/")
                         }
-                        this.user.apis = this.user.apis.filter(r => r.id == this.deletedId)
+                        this.user.apis = this.user.apis.filter(r => r.id != this.deletedId)
                     })
                     .catch(err => prepareError(err,this))
                     .finally(() => {
                         this.dialog = false
                         this.deletedId = null
                     })
-            } else{
-                this.dialog = false
-                this.deletedId = null
+                return
             }
+            this.dialog = false
+            this.deletedId = null
         },
         find(){
             this.$http(`users/${this.id}`)

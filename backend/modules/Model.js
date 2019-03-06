@@ -267,15 +267,28 @@ class Model {
         })
     }
 
+    fieldsAndJoins(relations = [], query){
+        let relFields = []
+        relations.forEach(index => {
+            let rel = this.relations(index)
+            if (Array.isArray(rel)) {
+                let [t, fk, f] = rel
+                relFields = relFields.concat(f || [])
+                query.innerJoin(`${t} as ${index}`, `${index}.${this.primaryKey}`, `${this.table}.${fk}`)
+                query.groupBy(`${this.table}.${this.primaryKey}`)
+            }
+        })
+
+        return relFields
+    }
+
     all(relations = [], hiddenOrCustom = false){
         let query = this.app.db(this.table)
-        let fields = ['id']
-        
-        if (Array.isArray(hiddenOrCustom)){
-            fields = hiddenOrCustom
-        } else{
-            fields = this.getFields(hiddenOrCustom)//.concat(this.prepareJoin(relations, query))
-        }
+        let fields = (
+            Array.isArray(hiddenOrCustom) 
+            ? hiddenOrCustom 
+            : this.getFields(hiddenOrCustom).concat(this.fieldsAndJoins(relations, query))
+        )
 
         query.select(...fields)
 

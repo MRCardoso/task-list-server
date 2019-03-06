@@ -26,7 +26,7 @@
                         <span>{{user.username}}</span>
                         <i>
                             Sessão expira em:
-                            {{new Date(user.exp) | moment('DD/MM/YY HH:mm')}}
+                            {{new Date(user.authToken.exp) | moment('DD/MM/YY HH:mm')}}
                         </i>
                     </div>
                     <img v-if="logo" :src="logo" alt="User logo" />

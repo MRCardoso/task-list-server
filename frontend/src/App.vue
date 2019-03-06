@@ -49,9 +49,13 @@ export default {
 			
 			if(user) {
 				try {
-					await this.$http.post(`validateToken`, {token: user.token, userId: user.id, apiId: user.apiId})
+					await this.$http.post(`validateToken`, {
+						token: user.authToken.token, 
+						apiId: user.authToken.apiId,
+						userId: user.id, 
+					})
 				} catch (e) {
-					if(user.keepLogin){
+					if(user.authToken.keepLogin){
 						this.dialog = true
 					} else{
 						this.$store.commit("addUser", null)

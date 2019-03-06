@@ -90,7 +90,7 @@ export default {
             let endpoint = `users`+(this.id ? `/${this.id}` : '')
 
             this.$store.dispatch('busNotifyLoading', true)
-
+            
             this.$http[method](endpoint, this.user)
             .then(res => {
                 let savedId = (this.id ? this.id : res.data.id)

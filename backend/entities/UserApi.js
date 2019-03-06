@@ -131,7 +131,7 @@ class UserApi extends Model {
             }
             
             this.save(post)
-                .then(id => resolve({ ...payload, token, apiId: id }))
+                .then(id => resolve({ authToken: { ...payload, token, apiId: id}, ...logged }))
                 .catch(err => reject(err))
         })
     }

@@ -54,9 +54,9 @@ module.exports = app => {
     * @param {Object} res the data of response app
     */
     const tasks = (req, res) => {
-        task.all(['integrations_api'])
+        task.all(['integration'])
             .whereNotNull('integrationId')
-            .andWhere({ userId: req.user.id, "integrations_api.platform": PLATFORM_MOBILE})
+            .andWhere({ userId: req.user.id, "integration.platform": PLATFORM_MOBILE})
             .then(tasks => {
                 var result = tasks
                     .map(r => {

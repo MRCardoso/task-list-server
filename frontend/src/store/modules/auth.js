@@ -21,7 +21,7 @@ export default {
             state.user = payload
             if (payload) {
                 localStorage.setItem(userKey, JSON.stringify(payload))
-                axios.defaults.headers.common['Authorization'] = `bearer ${payload.token}`
+                axios.defaults.headers.common['Authorization'] = `bearer ${payload.authToken.token}`
             } else {
                 delete axios.defaults.headers.common['Authorization']
                 localStorage.removeItem(userKey)
@@ -29,6 +29,14 @@ export default {
         }
     },
     actions: {
+        removedToken({state}, payload) {
+            return Promise.resolve(
+                (
+                    payload.id == state.user.id &&
+                    payload.apiId == state.user.authToken.apiId
+                ) ? true : false
+            )
+        },
         async redoLogin({state}) {
             try {
                 let user = state.user
@@ -38,7 +46,7 @@ export default {
                     id: user.id,
                     PlatformName: name,
                     PlatformVersion: version,
-                    keepLogin: user.keepLogin
+                    keepLogin: user.authToken.keepLogin
                 })
 
                 if (res.data.updated) {

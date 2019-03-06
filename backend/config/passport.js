@@ -10,11 +10,12 @@ module.exports = app => {
     }
 
     const strategy = new Strategy(params, (payload, done) => {
-        app.db('users')
-        .where({ id: payload.id })
-        .first()
-        .then(user => done(null, (user ? {...payload} : false)))
-        .catch(err => done(err, false))
+        const User = require('../entities/User')
+        const user = new User(app)
+
+        user.one({ id: payload.id }, ['image'])
+            .then(u => done(null, (u ? { authToken: { ...payload }, ...u } : false)))
+            .catch(err => done(err, false))
     })
 
     passport.use(strategy)

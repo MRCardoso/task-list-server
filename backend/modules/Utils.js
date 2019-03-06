@@ -7,10 +7,9 @@ function replaceCharacters(html, content, title) {
 }
 
 exports.generateFileString = name => {
-    const crypto = require('crypto')
-    let date = new Date()
-    let string = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}-${name}`
-    return crypto.createHash('md5').update(string).digest('hex') + '.' + name.split('.').pop()
+    let hasName = require('crypto').createHash('md5').update(`${Date.now()}-${name}`).digest('hex')
+    let ext = name.split('.').pop()
+    return `${hasName}.${ext}`
 }
 
 exports.datesExpires = (expires, def = 3600000) => {
@@ -25,11 +24,6 @@ exports.createTokenPayload = (logged, keepLogin, platform) => {
 
     let payload = {
         id: logged.id,
-        email: logged.email,
-        name: logged.name,
-        username: logged.username,
-        admin: logged.admin,
-        image: logged.image || null,
         keepLogin,
         platform,
         iat: now,

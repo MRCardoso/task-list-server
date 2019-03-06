@@ -141,6 +141,7 @@ module.exports = app => {
             }
             res.send(apiData)
         } catch (e) {
+            console.log({e})
             let message = 'Token expirado, por favor faça o login novamente'
             if (!req.body.apiId || !req.body.userId){
                 return res.status(401).send(message)
