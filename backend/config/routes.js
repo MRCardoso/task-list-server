@@ -13,8 +13,7 @@ module.exports = app => {
         .post(app.api.auth.reset)
     
     app.route('/signout/:id')
-        .all(app.config.passport.authenticate())
-        .get(app.api.auth.signout)
+        .get(app.config.jwt.authenticate, app.api.auth.signout)
     
     app.post('/validateToken', app.api.auth.validateToken)
     app.post('/refrashToken', app.api.auth.refrashToken)
@@ -26,18 +25,15 @@ module.exports = app => {
     */
     app.post('/mobile/signin', app.api.mobile.signin);
     app.route('/mobile/signout/:id')
-        .all(app.config.passport.authenticate())
-        .post(app.api.mobile.signout);
+        .post(app.config.jwt.authenticate, app.api.mobile.signout);
 
     app.route('/mobile/tasks')
-        .all(app.config.passport.authenticate())
-        .get(app.api.mobile.tasks)
-        .post(app.api.mobile.sync)
+        .get(app.config.jwt.authenticate, app.api.mobile.tasks)
+        .post(app.config.jwt.authenticate, app.api.mobile.sync)
 
     app.route('/mobile/tasks/:id')
-        .all(app.config.passport.authenticate())
-        .put(app.api.task.hasAuthorization, app.api.mobile.sync)
-        .patch(app.api.task.hasAuthorization, app.api.mobile.inactivate)
+        .put(app.config.jwt.authenticate, app.api.task.hasAuthorization, app.api.mobile.sync)
+        .patch(app.config.jwt.authenticate, app.api.task.hasAuthorization, app.api.mobile.inactivate)
 
     /**
      * ----------------------------------------------------
@@ -45,19 +41,16 @@ module.exports = app => {
      * ----------------------------------------------------
      */
     app.route('/users')
-        .all(app.config.passport.authenticate())
-        .get(app.api.auth.isAdmin,app.api.user.all)
-        .post(app.api.auth.isAdmin, app.api.user.save)
+        .get(app.config.jwt.authenticate, app.api.auth.isAdmin,app.api.user.all)
+        .post(app.config.jwt.authenticate, app.api.auth.isAdmin, app.api.user.save)
 
     app.route('/users/:id')
-        .all(app.config.passport.authenticate())
-        .get(app.api.user.hasAuthorization, app.api.user.one)
-        .put(app.api.user.hasAuthorization, app.api.user.save)
-        .patch(app.api.user.hasAuthorization, app.api.user.remove)
+        .get(app.config.jwt.authenticate, app.api.user.hasAuthorization, app.api.user.one)
+        .put(app.config.jwt.authenticate, app.api.user.hasAuthorization, app.api.user.save)
+        .patch(app.config.jwt.authenticate, app.api.user.hasAuthorization, app.api.user.remove)
 
     app.route('/users/:id/tokens/:apiId')
-        .all(app.config.passport.authenticate())
-        .delete(app.api.auth.isAdmin, app.api.user.removeToken)
+        .delete(app.config.jwt.authenticate, app.api.auth.isAdmin, app.api.user.removeToken)
 
     /**
     * ----------------------------------------------------
@@ -65,17 +58,15 @@ module.exports = app => {
     * ----------------------------------------------------
     */
     app.route('/tasks')
-        .all(app.config.passport.authenticate())
-        .get(app.api.task.all)
-        .post(app.api.task.save)
+        .get(app.config.jwt.authenticate, app.api.task.all)
+        .post(app.config.jwt.authenticate, app.api.task.save)
 
     app.route('/tasks/:id')
-        .all(app.config.passport.authenticate())
-        .get(app.api.task.hasAuthorization, app.api.task.one)
-        .put(app.api.task.hasAuthorization, app.api.task.save)
-        .delete(app.api.task.remove)
+        .get(app.config.jwt.authenticate, app.api.task.hasAuthorization, app.api.task.one)
+        .put(app.config.jwt.authenticate, app.api.task.hasAuthorization, app.api.task.save)
+        .delete(app.config.jwt.authenticate, app.api.task.remove)
 
-    app.route('/dailytask/:date').all(app.config.passport.authenticate()).get(app.api.task.dailyTask)
-    app.route('/upload/:userId').all(app.config.passport.authenticate()).post(app.api.uploader.save)
-    app.route('/remove/:userId').all(app.config.passport.authenticate()).post(app.api.uploader.removeObject)
+    app.route('/dailytask/:date').get(app.config.jwt.authenticate, app.api.task.dailyTask)
+    app.route('/upload/:userId').post(app.config.jwt.authenticate, app.api.uploader.save)
+    app.route('/remove/:userId').post(app.config.jwt.authenticate, app.api.uploader.removeObject)
 }

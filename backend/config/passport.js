@@ -14,7 +14,7 @@ module.exports = app => {
         const user = new User(app)
 
         user.one({ id: payload.id }, ['image'])
-            .then(u => done(null, (u ? { authToken: { ...payload }, ...u } : false)))
+            .then(u => done(null, { authToken: { ...payload }, ...u }))
             .catch(err => done(err, false))
     })
 

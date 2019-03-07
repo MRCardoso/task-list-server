@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { userKey, browserData } from '@/utils/index'
+import { userKey } from '@/utils/index'
 
 export default {
     state: {
@@ -40,12 +40,9 @@ export default {
         async redoLogin({state}) {
             try {
                 let user = state.user
-                let { name, version } = browserData()
 
                 let res = await axios.post(`refrashToken`, {
                     id: user.id,
-                    PlatformName: name,
-                    PlatformVersion: version,
                     keepLogin: user.authToken.keepLogin
                 })
 

@@ -107,8 +107,8 @@ module.exports = app => {
         }
         
         let keepLogin = req.body.keepLogin || false
-        let PlatformName = req.body.PlatformName || ''
-        let PlatformVersion = req.body.PlatformVersion || 0
+        let PlatformName = req.query.PlatformName || ''
+        let PlatformVersion = req.query.PlatformVersion || 0
         
         auth.refrashLogin(req.body.id, PlatformName, PlatformVersion, 1, keepLogin)
             .then(updated => res.json({ updated }))
@@ -129,7 +129,7 @@ module.exports = app => {
 
         try {
             const token = jwt.decode(req.body.token, authSecret)
-            console.log(`NOW: ${new Date()}`)
+            console.log(`NOW: ${new Date()} ---- EXP: ${new Date(token.exp)}`)
             
             if (new Date(token.exp) < new Date()) {
                 throw "Token expirado"
