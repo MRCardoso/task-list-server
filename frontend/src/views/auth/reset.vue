@@ -46,7 +46,7 @@ export default {
             this.rules = {}
             this.$store.dispatch('busNotifyLoading', true)
             this.$http
-                .post(`reset/${this.token}`, this.user)
+                .post(`api/reset/${this.token}`, this.user)
                 .then(() => {
                     this.$toasted.global.defaultSuccess({message: "Senha atualizada com sucesso"})
                     this.$router.push("/")
@@ -56,7 +56,7 @@ export default {
         },
         find(){
             this.$store.dispatch('busNotifyLoading', true)
-            this.$http(`reset/${this.token}`, this.user)
+            this.$http(`api/reset/${this.token}`, this.user)
                 .then(res => this.tokenData = res.data)
                 .catch(err => {
                     prepareError(err,this)

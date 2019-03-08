@@ -37,7 +37,7 @@ export default {
         signin(){
             this.rules = {}
             this.$http
-                .post(`signin`, this.user)
+                .post(`api/signin`, this.user)
                 .then(res => {
                     this.$store.commit("addUser", res.data)
                     this.$toasted.global.defaultSuccess({message: "Login realizado com sucesso"})

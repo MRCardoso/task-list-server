@@ -68,8 +68,7 @@ export default {
     },
     methods: {
         logout(){
-            let user = this.$store.state.auth.user
-            this.$http(`signout/${user.apiId}`)
+            this.$store.dispatch("signout")
                 .then(() => {
                     this.$store.commit('addUser', null)
                     this.$router.push("/")

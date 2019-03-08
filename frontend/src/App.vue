@@ -49,11 +49,7 @@ export default {
 			
 			if(user) {
 				try {
-					await this.$http.post(`validateToken`, {
-						token: user.authToken.token, 
-						apiId: user.authToken.apiId,
-						userId: user.id, 
-					})
+					await this.$http.post(`api/validateToken`, {token: user.authToken.token})
 				} catch (e) {
 					if(user.authToken.keepLogin){
 						this.dialog = true

@@ -37,11 +37,18 @@ export default {
                 ) ? true : false
             )
         },
+        signout({state}) {
+            let user = state.user
+            if (user && user.authToken){
+                return this.$http(`api/signout/${user.id}/${user.authToken.apiId}`)
+            }
+            return Promise.resolve()
+        },
         async redoLogin({state}) {
             try {
                 let user = state.user
 
-                let res = await axios.post(`refrashToken`, {
+                let res = await axios.post('api/refrashToken', {
                     id: user.id,
                     keepLogin: user.authToken.keepLogin
                 })

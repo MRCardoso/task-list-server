@@ -13,8 +13,8 @@ exports.generateFileString = name => {
 }
 
 exports.datesExpires = (expires, def = 3600000) => {
-    let now = Date.now()
-    return { now, expires: (now + (10 * 1000)/* (expires || def) */)}
+    let now = Math.floor(Date.now()/1000)
+    return { now, expires: (now + (10)/* (expires || def) */)}
 }
 
 exports.createTokenPayload = (logged, keepLogin, platform) => {

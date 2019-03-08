@@ -22,8 +22,9 @@ module.exports = app => {
                 let keepLogin = req.body.keepLogin || false
                 let PlatformName = req.query.PlatformName || '' 
                 let PlatformVersion = req.query.PlatformVersion || 0
+                let PlatformOrigin = req.query.PlatformOrigin || PLATFORM_WEB
 
-                auth.createApi(logged, PlatformName, PlatformVersion, PLATFORM_WEB,keepLogin)
+                auth.createApi(logged, PlatformName, PlatformVersion, PlatformOrigin,keepLogin)
                     .then((apiData) => res.json(apiData))
                     .catch(err => responseErr(res, err))
             }, err => responseErr(res, err))
@@ -40,7 +41,7 @@ module.exports = app => {
      * @param {object} res the object with response information(output)
     */
     const signout = (req, res) => {
-        auth.logout(req.params.id, req.user.id)
+        auth.logout(req.params.apiId, req.params.id)
             .then((deleted) => res.json({ deleted}))
             .catch(err => responseErr(res, err))
     }
@@ -123,31 +124,30 @@ module.exports = app => {
     * @param {object} res the object with response information(output)
     */
     const validateToken = async (req, res) => {
-        if (!req.body.token) {
-            return res.status(400).send("Token não informado!")
+        let apiData
+
+        try {
+            apiData = await auth.getApiByToken(req.body.token || '')
+        } catch (error) {
+            return res.status(401).send("token não encontrado")
         }
 
         try {
             const token = jwt.decode(req.body.token, authSecret)
-            console.log(`NOW: ${new Date()} ---- EXP: ${new Date(token.exp)}`)
+            let now = new Date()
+            let expires = new Date(token.exp * 1000)
+
+            console.log(`date: ${now} - expires: ${expires}`)
             
-            if (new Date(token.exp) < new Date()) {
+            if (expires < now) {
                 throw "Token expirado"
             }
 
-            let apiData = await auth.getApiByToken(req.body.token, token.exp)
-            if (!apiData){
-                throw "token não encontrado"
-            }
             res.send(apiData)
         } catch (e) {
             console.log({e})
-            let message = 'Token expirado, por favor faça o login novamente'
-            if (!req.body.apiId || !req.body.userId){
-                return res.status(401).send(message)
-            }
-            auth.logout(req.body.apiId, req.body.userId)
-                .then(() => res.status(401).send(message))
+            auth.logout(apiData.id, apiData.userId)
+                .then(() => res.status(401).send({ message: 'Token expirado, por favor faça o login novamente'}))
                 .catch(err => responseErr(res, err))
         }
     }
@@ -175,7 +175,7 @@ module.exports = app => {
     */
     const isAdmin = (req, res, next) => {
         if (!req.user.admin) {
-            return res.status(401).send('Usuário não tem permissão de acesso.')
+            return res.status(403).send('Usuário não tem permissão de acesso.')
         }
         next()
     }

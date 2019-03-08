@@ -26,7 +26,7 @@ export default {
             this.rules = {}
             this.$store.dispatch('busNotifyLoading', true)
             this.$http
-                .post(`forgot`, {email: this.email})
+                .post(`api/forgot`, {email: this.email})
                 .then(() => {
                     this.$toasted.global.defaultSuccess({message: "E-mail encaminhado com sucesso"})
                     this.$router.push("/")

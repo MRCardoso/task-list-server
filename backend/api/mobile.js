@@ -1,50 +1,11 @@
 module.exports = app => {
     const { responseErr } = require("../modules/Utils")
 
-    const Auth = require('../entities/UserApi')
-    const auth = new Auth(app)
-
     const Task = require('../entities/Task')
     const task = new Task(app)
 
     const IntegrationApi = require('../entities/IntegrationApi')
     const integration = new IntegrationApi(app)
-    /**
-    * --------------------------------------------------------------------------------
-    * Authenticate a user by username and password, 
-    * and creates a token to use in api secrety requests
-    * --------------------------------------------------------------------------------
-    * @param {Object} req the data of request app
-    * @param {Object} res the data of response app
-    */
-    const signin = (req, res) =>{
-        try {
-            auth.login(req.body).then(logged => {
-                let keepLogin = req.body.keepLogin || false
-                let PlatformName = req.query.PlatformName || ''
-                let PlatformVersion = req.query.PlatformVersion || 0
-
-                auth.createApi(logged, PlatformName, PlatformVersion, PLATFORM_MOBILE, keepLogin)
-                    .then((apiData) => res.json({user: apiData}))
-                    .catch(err => responseErr(res, err))
-            }, err => responseErr(res, err))
-        } catch (error) {
-            responseErr(res, error, "Não foi possível fazer login")
-        }
-    };
-
-    /**
-    * --------------------------------------------------------------------------------
-    * Run the logout with the app device, connected with jwt
-    * --------------------------------------------------------------------------------
-    * @param {Object} req the data of request app
-    * @param {Object} res the data of response app
-    */
-    const signout = (req, res) => {
-        auth.logout(req.params.id, req.user.id)
-            .then((deleted) => res.json({ deleted }))
-            .catch(err => responseErr(res, err))
-    }
 
     /**
     * --------------------------------------------------------------------------------
@@ -121,5 +82,5 @@ module.exports = app => {
             .catch(error => responseErr(res, error))
     }
 
-    return { signin, signout, tasks, sync, inactivate }
+    return { tasks, sync, inactivate }
 }
