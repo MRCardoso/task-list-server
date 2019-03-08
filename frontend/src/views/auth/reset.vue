@@ -1,14 +1,12 @@
 <template>
     <task-app-form-item title="Restaurar Senha" path="/signin" :inlineButtons="false" inputClass="ml-4 mr-4 mt-1">
         <template slot="inputs">
-            <task-app-sheeting v-if="expiredToken" :elevation="6" color="red" class="mb-3" :message="expiresMessage"/>
-            <template v-else>
-                <v-text-field prepend-icon="lock" label="Password" type="password" v-model="user.password" :error-messages="rules.password"/>
-                <v-text-field prepend-icon="lock" label="confirmation" type="password" v-model="user.confirmation" :error-messages="rules.confirmation"/>
-            </template>
+            <!-- <task-app-sheeting v-if="expiredToken" :elevation="6" color="red" class="mb-3" :message="expiresMessage"/> -->
+            <v-text-field prepend-icon="lock" label="Password" type="password" v-model="user.password" :error-messages="rules.password"/>
+            <v-text-field prepend-icon="lock" label="confirmation" type="password" v-model="user.confirmation" :error-messages="rules.confirmation"/>
         </template>
         <template slot="buttons">
-            <v-btn @click="reset" v-if="!expiredToken" class="my-blue darken-1 white--text">Restaurar Senha</v-btn>
+            <v-btn @click="reset" class="my-blue darken-1 white--text">Restaurar Senha</v-btn>
         </template>
     </task-app-form-item>
 </template>
@@ -25,48 +23,20 @@ export default {
         return {
             user: {},
             rules: {},
-            tokenData: {}
-        }
-    },
-    computed: {
-        expiredToken(){
-            if(this.tokenData.resetExpires)
-                return new Date(this.tokenData.resetExpires) < new Date()
-            return false
-        },
-        expiresMessage(){
-            if(this.tokenData.resetExpires){
-                return "Token expirado as: "+this.$moment(this.tokenData.resetExpires).format('DD/MM/YYYY HH:mm:ss')
-            }
-            return '';
         }
     },
     methods: {
         reset(){
             this.rules = {}
             this.$store.dispatch('busNotifyLoading', true)
-            this.$http
-                .post(`api/reset/${this.token}`, this.user)
+            this.$store.dispatch('reset', {token: this.token, user: this.user})
                 .then(() => {
                     this.$toasted.global.defaultSuccess({message: "Senha atualizada com sucesso"})
                     this.$router.push("/")
                 })
                 .catch(err => prepareError(err,this))
                 .finally(() => this.$store.dispatch('busNotifyLoading', false))
-        },
-        find(){
-            this.$store.dispatch('busNotifyLoading', true)
-            this.$http(`api/reset/${this.token}`, this.user)
-                .then(res => this.tokenData = res.data)
-                .catch(err => {
-                    prepareError(err,this)
-                    this.$router.push("/")
-                })
-                .finally(() => this.$store.dispatch('busNotifyLoading', false))
         }
-    },
-    created(){
-        this.find()
     }
 }
 </script>

@@ -49,7 +49,7 @@ export default {
 			
 			if(user) {
 				try {
-					await this.$http.post(`api/validateToken`, {token: user.authToken.token})
+					await this.$store.dispatch("verifyToken", user.authToken.token)
 				} catch (e) {
 					if(user.authToken.keepLogin){
 						this.dialog = true

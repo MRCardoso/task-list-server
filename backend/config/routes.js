@@ -13,9 +13,7 @@ module.exports = app => {
     /* Request to send email to user with link to recovery password */
     app.post('/api/forgot', app.api.auth.forgot)
     /* Request to reset password with token generated in forgot route */
-    app.route('/api/reset/:token')
-        .get(app.api.auth.validateResetToken)
-        .post(app.api.auth.reset)
+    app.patch('/api/reset/:token', app.api.auth.reset)
     /* Request to validate the token for logged user */
     app.post('/api/validateToken', app.api.auth.validateToken)
     /* request to redo login */

@@ -26,7 +26,7 @@
                         <span>{{user.username}}</span>
                         <i>
                             Sessão expira em:
-                            {{new Date(user.authToken.exp) | moment('DD/MM/YY HH:mm')}}
+                            {{new Date(user.authToken.exp*1000) | moment('DD/MM/YY HH:mm')}}
                         </i>
                     </div>
                     <img v-if="logo" :src="logo" alt="User logo" />
@@ -68,12 +68,10 @@ export default {
     },
     methods: {
         logout(){
-            this.$store.dispatch("signout")
-                .then(() => {
-                    this.$store.commit('addUser', null)
-                    this.$router.push("/")
-                })
-                .catch(err => prepareError(err,this))
+            this.$store.dispatch("logout").then(() => {
+                this.$store.commit('addUser', null)
+                this.$router.push("/")
+            }).catch(err => prepareError(err,this))
         }
     },
 }

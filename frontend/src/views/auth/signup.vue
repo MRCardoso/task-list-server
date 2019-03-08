@@ -28,12 +28,10 @@ export default {
     },
     methods: {
         signup(){
-            this.$http.post("api/signup", this.user)
-            .then(() => {
+            this.$store.dispatch('createAccount', this.user).then(() => {
                 this.$toasted.global.defaultSuccess({message: "Conta criada com sucesso"})
                 this.$router.push("/")
-            })
-            .catch(err => prepareError(err, this));
+            }).catch(err => prepareError(err, this));
         }
     },
 }

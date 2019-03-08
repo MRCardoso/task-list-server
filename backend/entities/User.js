@@ -148,16 +148,15 @@ class User extends Model {
      */
     updateResetToken(id) {
         let { resetToken } = require('../.env')
-        let { datesExpires } = require("../modules/Utils")
-        let { expires } = datesExpires(resetToken)
-
+        
         let bcrypt = require('bcrypt-nodejs')
         let password = bcrypt.hashSync(Date.now() * 1000, bcrypt.genSaltSync(10));
         let token = require('crypto').randomBytes(32).toString('hex');
+        let resetExpires = Date.now() + (resetToken || (1 * 60 * 60 * 1000))
         
         return new Promise( (resolve, reject) => {
             this.id = id
-            this.update({ password, resetToken: token, resetExpires: expires })
+            this.update({ password, resetToken: token, resetExpires })
                 .then(_ => resolve(token))
                 .catch(err => reject(err))
         })

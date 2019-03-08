@@ -154,19 +154,6 @@ module.exports = app => {
 
     /**
     * ----------------------------------------------------------------------------
-    * Endpoint to verify if the reset token is valid
-    * ----------------------------------------------------------------------------
-    * @param {object} req the object with request information(input)
-    * @param {object} res the object with response information(output)
-    */
-    const validateResetToken = (req, res) => {
-        user.findByResetToken(req.params.token, false)
-            .then(u => res.json(u))
-            .catch(err => responseErr(res, err, "Token não encontrado ou expirado"))
-    }
-
-    /**
-    * ----------------------------------------------------------------------------
     * Endpoint to verify if the auth user has admin permission
     * ----------------------------------------------------------------------------
     * @param {object} req the object with request information(input)
@@ -180,5 +167,5 @@ module.exports = app => {
         next()
     }
 
-    return { signin, signout, forgot, reset, refrashToken, validateToken, validateResetToken, isAdmin }
+    return { signin, signout, forgot, reset, refrashToken, validateToken, isAdmin }
 }

@@ -12,9 +12,9 @@ exports.generateFileString = name => {
     return `${hasName}.${ext}`
 }
 
-exports.datesExpires = (expires, def = 3600000) => {
+exports.datesExpires = (expires, def = 60) => {
     let now = Math.floor(Date.now()/1000)
-    return { now, expires: (now + (10)/* (expires || def) */)}
+    return { now, expires: (now + (expires || def))}
 }
 
 exports.createTokenPayload = (logged, keepLogin, platform) => {

@@ -37,13 +37,35 @@ export default {
                 ) ? true : false
             )
         },
-        signout({state}) {
+        // Make a ajax to request logout
+        logout({state}) {
             let user = state.user
             if (user && user.authToken){
-                return this.$http(`api/signout/${user.id}/${user.authToken.apiId}`)
+                return axios.get(`api/signout/${user.id}/${user.authToken.apiId}`)
             }
             return Promise.resolve()
         },
+        // Make a ajax to create a new account
+        createAccount(_, payload){
+            return axios.post("api/signup", payload)
+        },
+        // Make a ajax to request login
+        login(_, payload) {
+            return axios.post("api/signin", payload)
+        },
+        // Make a ajax for send email to reset password
+        forgot(_, email) {
+            return axios.post(`api/forgot`, { email })
+        },
+        // Make a ajax for reset password to user
+        reset(_, payload) {
+            return axios.patch(`api/reset/${payload.token}`, payload.user)
+        },
+        // Make a ajax to validate the to toke to logged user
+        verifyToken(_, token) {
+            return axios.post(`api/validateToken`, { token })
+        },
+        // Make a ajax to reset the login to user
         async redoLogin({state}) {
             try {
                 let user = state.user

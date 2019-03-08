@@ -36,14 +36,11 @@ export default {
     methods: {
         signin(){
             this.rules = {}
-            this.$http
-                .post(`api/signin`, this.user)
-                .then(res => {
-                    this.$store.commit("addUser", res.data)
-                    this.$toasted.global.defaultSuccess({message: "Login realizado com sucesso"})
-                    this.$router.push("/")
-                })
-                .catch(err => prepareError(err,this))
+            this.$store.dispatch('login', this.user).then(res => {
+                this.$store.commit("addUser", res.data)
+                this.$toasted.global.defaultSuccess({message: "Login realizado com sucesso"})
+                this.$router.push("/")
+            }).catch(err => prepareError(err,this))
         }
     },
 }
