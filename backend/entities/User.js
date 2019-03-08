@@ -152,12 +152,12 @@ class User extends Model {
         let bcrypt = require('bcrypt-nodejs')
         let password = bcrypt.hashSync(Date.now() * 1000, bcrypt.genSaltSync(10));
         let token = require('crypto').randomBytes(32).toString('hex');
-        let resetExpires = Date.now() + (resetToken || (1 * 60 * 60 * 1000))
+        let expires = Date.now() + (resetToken || (1 * 60 * 60 * 1000))
         
         return new Promise( (resolve, reject) => {
             this.id = id
-            this.update({ password, resetToken: token, resetExpires })
-                .then(_ => resolve(token))
+            this.update({ password, resetToken: token, resetExpires: expires })
+                .then(_ => resolve({ token, expires }))
                 .catch(err => reject(err))
         })
     }

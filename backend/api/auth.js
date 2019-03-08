@@ -57,8 +57,9 @@ module.exports = app => {
         user.findByEmail(req.body.email)
         .then(data => {
             user.updateResetToken(data.id)
-            .then(token => {
-                let url = `${endpoint}reset/${token}`;
+            .then(reseted => {
+                let url = `${endpoint}reset/${reseted.token}`;
+                let moment = require('moment')
 
                 sendMail({
                     mail: data.email,
@@ -68,6 +69,11 @@ module.exports = app => {
                         {strong}Token:{/strong}{br}
                         {a href="${url}" title="token"}Clique aqui{/a}{br}
                         ou cole este link em seu navegador: ${url}
+                        {br}
+                        {p}
+                            {strong}Token expira em: {/strong}
+                            {i}${moment(reseted.expires).format('DD/MM/YY HH:mm:ss')}{/i}
+                        {/p}
                     `
                 }, MAIL)
                 .then(_ => res.json({ success: "Token enviado com sucesso" }))
