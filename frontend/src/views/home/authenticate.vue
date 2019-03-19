@@ -8,21 +8,22 @@
                     <v-icon dark>notifications</v-icon>
                 </v-badge>
             </h3>
-            <span>{{date | moment('dddd - MMM, YYYY')}}</span>
+            <span>{{date | moment('dddd - MMM DD, YYYY')}}</span>
         </div>
 
         <div class="content-box-body">
             
             <div class="content-calendar">
-                <v-date-picker v-model="date" color="indigo lighten-1" header-color="indigo"></v-date-picker>
+                <v-date-picker v-model="date" color="my-blue lighten-1" :no-title="true"></v-date-picker>
             </div>
             
             <div class="content-tasks">
+                
                 <v-expansion-panel v-if="tasks.length>0" popout>
                     <v-expansion-panel-content v-for="task in tasks" :key="task.id">
                     <div slot="header"><h3>{{task.title}}</h3></div>
                     <v-card>
-                        <v-card-text>
+                        <v-card-text class="grey lighten-3">
                             <div v-html="task.description"></div>
                             <div class="grey lighten-2 pa-2">
                                 <div class="flex-row">
@@ -42,6 +43,7 @@
                     </v-expansion-panel-content>
                 </v-expansion-panel>
                 <task-app-sheeting v-else :elevation="6" message="Não foram encontradas tarefas nesta data" />
+
             </div>
         </div>
     </div>
@@ -82,7 +84,7 @@ export default {
 </script>
 <style>
     .content-box{
-        box-shadow: 0 2px 12px rgba(0, 0,0, 0.5);
+        box-shadow: 0 0 6px rgba(0, 0,0, 0.2);
         display: flex;
         flex-direction: column;
         border-radius: 3px;
@@ -95,17 +97,31 @@ export default {
         justify-content: space-between;
         align-items: flex-start;
     }
+    .content-tasks{
+        width: 80%;
+    }
     .content-box-body{
         display: flex;
-        background-color: #EFEFEF;
         justify-items: center;
         justify-content: space-between;
+        background-color: #EFEFEF;
         padding: 12px;
     }
-    .content-tasks{
-        width: 60%;
-    }
-    .content-calendar{
-        flex: 1;
+    @media (max-width: 640px) {
+        .content-tasks{
+            padding-top: 16px;
+            width: 100%;
+        }
+        .content-calendar{
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        .content-box-body{
+            padding: 0;
+            justify-content: center;
+            justify-items: center;
+            flex-direction: column;
+        }
     }
 </style>

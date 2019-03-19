@@ -45,13 +45,15 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="api in user.apis" :key="api.id">
+                                <tr v-for="api in user.apis" :key="api.id" :class="{'green lighten-2 white--text': isLoogedApi(api.id)}">
                                     <td><strong>{{api.name}}</strong></td>
                                     <td>{{api.version}}</td>
                                     <td>{{api.platform == 1 ? "web" : (api.platform==2 ? 'mobile' : 'outros') }}</td>
                                     <td>{{new Date(api.expires) | moment('DD/MM/YY HH:mm:ss')}}</td>
                                     <td>{{api.created_at | moment('DD/MM/YY HH:mm:ss')}}</td>
-                                    <td align="center"><v-icon class="red--text" small @click="openConfirmation(api.id)">delete</v-icon></td>
+                                    <td align="center">
+                                        <v-icon class="red--text" small @click="openConfirmation(api.id)">delete</v-icon>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -100,6 +102,9 @@ export default {
         }
     },
     methods: {
+        isLoogedApi(id){
+            return this.$store.state.auth.user.authToken.apiId == id
+        },
         hasApis(){
             return Array.isArray(this.user.apis) && this.user.apis.length > 0
         },

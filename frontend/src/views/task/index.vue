@@ -1,5 +1,7 @@
 <template>
     <div>
+        <task-app-breadground title="Lista de Tarefas"></task-app-breadground>
+
         <task-app-modal :dialog="dialog" @confirmDialog="deleteItem" title="Deletar Tarefa" content="Deseja realmente remover este registro?" />
 
         <v-card-title>
@@ -42,11 +44,12 @@
 
 <script>
 import TaskAppFormatterValue from '@/components/FormatterValue.vue'
+import TaskAppBreadground from '@/components/Breadground.vue'
 import TaskAppModal from '@/components/Modal.vue'
 import { situationData, priorityData, statusData, prepareError } from '@/utils/index'
 
 export default {
-    components: {TaskAppFormatterValue, TaskAppModal},
+    components: {TaskAppFormatterValue, TaskAppModal, TaskAppBreadground},
     data() {
         return {
             headers: [

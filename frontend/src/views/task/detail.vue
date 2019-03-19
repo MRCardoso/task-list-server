@@ -1,5 +1,5 @@
 <template>
-    <task-app-form-item title="Detalhes da Tarefa" inputClass="mt-4 mb-2 ml-4 mr-4">
+    <task-app-form-item title="Detalhes da Tarefa" :path="indexRoute" inputClass="mt-4 mb-2 ml-4 mr-4">
         <template slot="inputs">
             <div>
                 <v-expansion-panel>
@@ -69,9 +69,8 @@
                 Criado em {{ task.created_at | moment("DD(dddd), MM, YYYY") }}
             </div>
             <v-spacer></v-spacer>
-            <v-btn to="/tasks">Voltar</v-btn>
-            <v-btn class="blue lighten-3 white--text" :to="`/tasks/${id}/edit`">Editar</v-btn>
-            <v-btn class="my-blue darken-1 white--text" to="/tasks/new">Novo </v-btn>
+            <v-btn class="blue lighten-3 white--text" :to="`${indexRoute}/${id}/edit`">Editar</v-btn>
+            <v-btn class="my-blue darken-1 white--text" :to="`${indexRoute}/new`">Novo </v-btn>
         </template>
     </task-app-form-item>
 </template>
@@ -87,6 +86,7 @@ export default {
     data() {
         return {
             task: {},
+            indexRoute: '/tasks',
             situationData,
             priorityData,
             statusData

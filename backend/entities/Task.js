@@ -32,8 +32,8 @@ class Task extends Model {
 
     relations(alias) {
         let relations = {
-            "user": ["users", "userId", ["user.name", "user.email"]],
-            "integration": ["integrations_api", "integrationId"]
+            "user": ["users", "userId", ["user.name", "user.email"], false, true],
+            "integration": ["integrations_api", "integrationId", ['*'],false, true]
         };
         return relations[alias]
     }

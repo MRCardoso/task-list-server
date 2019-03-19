@@ -1,18 +1,17 @@
 <template>
-    <v-toolbar dark color="#6E9FDD" app>
+    <v-toolbar dark color="#6E9FDD" app height="45px">
         <v-toolbar-title class="headline text-uppercase mr-4">
             <router-link to="/">
-                <img v-bind:src="logoApp" alt="Banner" width="100" />
+                <img v-bind:src="logoApp" alt="Banner" width="80" />
             </router-link>
         </v-toolbar-title>
         
-
-        <v-toolbar-items v-if="user" class="hidden-sm-and-down">
+        <v-toolbar-items v-if="user">
             <v-btn flat to="/users" v-if="user.admin">Usuário</v-btn>
             <v-btn flat to="/tasks">Tarefa</v-btn>
         </v-toolbar-items>
 
-        <v-toolbar-items v-else class="hidden-sm-and-down">
+        <v-toolbar-items v-else>
             <v-btn flat to="/signup">Criar Conta</v-btn>
             <v-btn flat to="/signin">Login</v-btn>
         </v-toolbar-items>
@@ -22,19 +21,20 @@
         <v-menu transition="slide-x-transition" v-if="user">
             <v-toolbar-title slot="activator">
                 <div class="auth-box">
-                    <div class="auth-box-detail">
-                        <span>{{user.username}}</span>
-                        <i>
-                            Sessão expira em:
-                            {{new Date(user.authToken.exp*1000) | moment('DD/MM/YY HH:mm')}}
-                        </i>
-                    </div>
                     <img v-if="logo" :src="logo" alt="User logo" />
                     <img v-else src="@/assets/profile.png" alt="Logo" />
+                    <i class="fa fa-caret-down"></i>
                 </div>
-                <!-- <v-icon dark>more_vert</v-icon> -->
             </v-toolbar-title>
             <v-list>
+                <div class="auth-box-detail">
+                    <strong>{{user.username}}</strong>
+                    <i>
+                        Sessão expira em:
+                        {{new Date(user.authToken.exp*1000) | moment('DD/MM/YY HH:mm')}}
+                    </i>
+                </div>
+                <v-divider></v-divider>
                 <v-list-tile to="/logged">
                     <v-list-tile-title>Meus Dados</v-list-tile-title>
                 </v-list-tile>
@@ -91,7 +91,10 @@ export default {
 }
 .auth-box-detail{
     display: flex;
+    padding: 0 8px 8px 8px;
     flex-direction: column;
+    justify-content: center;
+    justify-items: flex-start;
 }
 .auth-box-detail span{
     display: flex;

@@ -74,9 +74,31 @@ class Model {
         }
         return fields.map(r => `${this.table}.${r}`)
     }
-
+    /**
+     * 
+     * @example
+     * relation = {
+     *  "job": ["jobs", "jobId", ["job.id"], true, true],
+     *  "picture": ["pictures", "pictureId", ["picture.id"], false, true],
+     *  "login": ["logins", "personId", ["login.id"], true, false]
+     * }
+     * this.table = person
+     * this.one = select job.id form jobs as job where job.id=person.jobId
+     * this.one = select picture.id form pictures as picture where picture.id=person.pictureId limit 1
+     * this.one = select login.id form logins as login where login.personId=person.id
+     */
     relations(alias) {
-        return {};
+        return {
+            /*
+            string alias: [
+                string table FK, 
+                string field FK,
+                array fields FK,
+                bool has many results,
+                bool field FK is in current model
+            ],
+            */
+        };
     }
 
     /**
@@ -201,19 +223,20 @@ class Model {
             relations.forEach(index => {
                 let rel = this.relations(index)
                 if (Array.isArray(rel)) {
-                    let [t, fk, f, many] = rel
+                    let [t, fk, f, many, parent] = rel
                     let condition, value
-                    if (base[fk]){
-                        condition = `${t}.${this.primaryKey}`
+                    
+                    if (parent){
+                        condition = `${index}.${this.primaryKey}`
                         value = base[fk]
                     } else{
-                        condition = `${t}.${fk}`
+                        condition = `${index}.${fk}`
                         value = base[this.primaryKey]
                     }
                     
                     promises.push(
                         new Promise(resolve => {
-                            let query = this.app.db(t)
+                            let query = this.app.db(`${t} as ${index}`)
                                 query.select(f || []).where(condition, value).orderBy(condition, 'desc')
                             
                                 if (!many) { query.first() }

@@ -1,5 +1,5 @@
 <template>
-    <task-app-form-item :title="title">
+    <task-app-form-item :title="title" :path="indexRoute">
         <template slot="inputs">
 
             <v-tabs fixed-tabs>
@@ -33,8 +33,7 @@
         </template>
         <template slot="buttons">
             <v-spacer></v-spacer>
-            <v-btn to="/tasks">Voltar</v-btn>
-            <v-btn v-if="id" class="blue lighten-3 white--text" :to="`/tasks/${id}/detail`">Visualizar</v-btn>
+            <v-btn v-if="id" class="blue lighten-3 white--text" :to="`${indexRoute}/${id}/detail`">Visualizar</v-btn>
             <v-btn class="my-blue darken-1 white--text" @click.prevent="save">Salvar</v-btn>
         </template>
     </task-app-form-item>
@@ -54,6 +53,7 @@ export default {
         return {
             task: {},
             rules: {},
+            indexRoute: '/tasks',
             situation: null,
             priority: null
         }

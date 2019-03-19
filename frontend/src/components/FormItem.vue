@@ -1,16 +1,6 @@
 <template>
     <div class="content">
-        <div class="content-header">
-            <router-link to="/" class="goto-link">
-                <i class="fa fa-home"></i>
-            </router-link>
-            <h3>{{title}}</h3>
-            <router-link v-if="path" :to="path" class="goto-link">
-                <i class="mr-1 fa fa-angle-left"></i>
-                Voltar
-            </router-link>
-            <span v-else></span>
-        </div>
+        <task-app-breadground :title="title" :path="path"></task-app-breadground>
         <div :class="inputClass">
             <slot name="inputs" />
         </div>
@@ -24,6 +14,7 @@
 </template>
 
 <script>
+import TaskAppBreadground from '@/components/Breadground.vue'
 export default {
     props: {
         title: String,
@@ -37,6 +28,7 @@ export default {
             default: true
         }
     },
+    components: {TaskAppBreadground}
 }
 </script>
 <style>
@@ -49,24 +41,10 @@ export default {
         display: flex;
         flex-direction: column;
     }
-    .content-header{
-        background-color: #6E9FDD;
-        color: #FFF;
-        padding: 8px;
-        text-align: center;
-        display: flex;
-        justify-content: space-between;
-    }
     .content-buttons{
         display: flex;
     }
     .buttons-colls{
         flex-direction: column;
-    }
-    .goto-link, .goto-link i{
-        color: #FDFDFD !important;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
     }
 </style>
