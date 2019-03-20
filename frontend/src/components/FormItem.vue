@@ -1,5 +1,5 @@
 <template>
-    <div class="content">
+    <div class="content my-container">
         <task-app-breadground :title="title" :path="path"></task-app-breadground>
         <div :class="inputClass">
             <slot name="inputs" />

@@ -1,5 +1,5 @@
 <template>
-    <div class="content-box">
+    <div class="content-box my-container">
         <div class="content-box-header">
             <h3>
                 Tarefa Agendadas

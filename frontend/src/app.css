@@ -27,6 +27,12 @@
     to { transform: rotateY(0deg); }
 }
 
+.my-container{
+    margin-top: 70px !important;
+    margin-left: 60px;
+    margin-right: 60px;
+}
+
 .flipY-enter-active {
     animation: flipY-in 0.3s ease;
 }

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="my-container">
         <task-app-breadground title="Lista de Usuários"></task-app-breadground>
 
         <task-app-modal :dialog="dialog" @confirmDialog="deleteItem" title="Deletar Usuário" content="Deseja realmente remover este registro?" />

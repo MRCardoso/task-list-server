@@ -1,11 +1,7 @@
 <template>
-    <v-content>
-        <v-container>
-            <transition name="fade" mode="out-in">
-                <router-view />
-            </transition>
-        </v-container>
-    </v-content>
+    <transition name="fade" mode="out-in">
+        <router-view />
+    </transition>
 </template>
 
 <script>

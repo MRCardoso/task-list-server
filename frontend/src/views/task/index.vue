@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="my-container">
         <task-app-breadground title="Lista de Tarefas"></task-app-breadground>
 
         <task-app-modal :dialog="dialog" @confirmDialog="deleteItem" title="Deletar Tarefa" content="Deseja realmente remover este registro?" />
