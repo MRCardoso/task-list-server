@@ -90,7 +90,7 @@ export default {
         border-radius: 3px;
     }
     .content-box-header{
-        background-color: #6E9FDD;
+        background-color: #5EBFFF;
         color: #FFF;
         padding: 8px;
         display: flex;

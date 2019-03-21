@@ -1,5 +1,5 @@
 <template>
-    <v-toolbar dark color="#6E9FDD" app height="45px">
+    <v-toolbar dark color="#2E9FEE" app height="45px">
         <v-toolbar-title class="headline text-uppercase mr-4">
             <router-link to="/">
                 <img v-bind:src="logoApp" alt="Banner" width="80" />

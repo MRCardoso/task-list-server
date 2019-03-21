@@ -65,8 +65,8 @@
                     Criado em {{ user.created_at | moment("DD(dddd), MM, YYYY") }}
                 </div>
                 <v-spacer></v-spacer>
-                <v-btn class="blue lighten-3 white--text" :to="`${indexRoute}/${id}/edit`">Editar</v-btn>
-                <v-btn class="my-blue darken-1 white--text" :to="`${indexRoute}/new`">Novo </v-btn>
+                <router-link :to="`${indexRoute}/${id}/edit`" class="mbtn mbtn-sht mbtn-blue-light mr-2">Editar</router-link>
+                <router-link :to="`${indexRoute}/new`" class="mbtn mbtn-sht mbtn-blue">Novo</router-link>
             </template>
         </task-app-form-item>
     </div>

@@ -1,5 +1,5 @@
 <template>
-    <task-app-form-item :title="title" :path="indexRouteMode" :inlineButtons="isChangesMode()" inputClass>
+    <task-app-form-item :title="title" :path="indexRouteMode" inputClass>
         <template slot="inputs">
             <v-tabs fixed-tabs>
                 <v-tab ripple>Dados Iniciais</v-tab>
@@ -29,13 +29,9 @@
             </v-tabs>
         </template>
         <template slot="buttons">
-            <template v-if="isChangesMode()">
-                <v-spacer></v-spacer>
-                <v-btn :to="indexRoute">Voltar</v-btn>
-                <v-btn v-if="id" class="blue lighten-3 white--text" :to="`${indexRoute}/${id}/detail`">Visualizar</v-btn>
-            </template>
-                
-            <v-btn class="my-blue darken-1 white--text" @click.prevent="save">Salvar</v-btn>
+            <v-spacer></v-spacer>
+            <router-link v-if="id && isChangesMode()" :to="`${indexRoute}/${id}/detail`" class="mbtn mbtn-sht mbtn-blue-light mr-2">Visualizar</router-link>
+            <a @click.prevent="save" :class="{'mbtn-sht': (id && isChangesMode())}" class="mbtn mbtn-blue">Salvar</a>
         </template>
     </task-app-form-item>
 </template>

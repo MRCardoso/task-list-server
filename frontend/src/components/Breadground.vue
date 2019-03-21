@@ -28,7 +28,7 @@ export default {
 
 <style>
 .content-header{
-    background-color: #6E9FDD;
+    background-color: #5EBFFF;
     color: #FFF;
     padding: 8px;
     text-align: center;

@@ -8,7 +8,7 @@
             <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details />
             <v-spacer></v-spacer>
             
-            <v-btn fab slot="activator" color="#6E9FDD" dark class="mb-2" to="/tasks/new">
+            <v-btn fab slot="activator" color="#2E9FEE" dark class="mb-2" to="/tasks/new">
                 <v-icon dark>add</v-icon>
             </v-btn>
         </v-card-title>

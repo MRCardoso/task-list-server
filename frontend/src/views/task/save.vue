@@ -33,8 +33,8 @@
         </template>
         <template slot="buttons">
             <v-spacer></v-spacer>
-            <v-btn v-if="id" class="blue lighten-3 white--text" :to="`${indexRoute}/${id}/detail`">Visualizar</v-btn>
-            <v-btn class="my-blue darken-1 white--text" @click.prevent="save">Salvar</v-btn>
+            <router-link v-if="id" :to="`${indexRoute}/${id}/detail`" class="mbtn mbtn-sht mbtn-blue-light mr-2">Visualizar</router-link>
+            <a @click.prevent="save" :class="{'mbtn-sht': id}" class="mbtn mbtn-blue">Salvar</a>
         </template>
     </task-app-form-item>
 </template>
