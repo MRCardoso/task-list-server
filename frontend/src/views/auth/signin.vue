@@ -6,16 +6,14 @@
             <v-switch v-model="user.keepLogin" label="Manter Login"></v-switch>
         </template>
         <template slot="buttons">
-            <v-btn @click="signin" class="my-blue darken-1 white--text">Acessar</v-btn>
+            <a @click.prevent="signin" class="mbtn mbtn-blue">Acessar</a>
 
-            <div class="mr-2 ml-2">
-                <div class="signin-item">
-                    <router-link to="/forgot" class="blue--text darken-5">Esqueceu a senha?</router-link>
-                </div>
-                <div class="signin-item">
-                    Novo por aqui?
-                    <router-link to="/signup" class="pl-1 blue--text darken-5">Crie uma conta</router-link>
-                </div>
+            <div class="mt-2 signin-item">
+                <router-link to="/forgot" class="blue--text darken-5">Esqueceu a senha?</router-link>
+            </div>
+            <div class="signin-item">
+                Novo por aqui?
+                <router-link to="/signup" class="pl-1 blue--text darken-5">Crie uma conta</router-link>
             </div>
         </template>
     </task-app-form-item>

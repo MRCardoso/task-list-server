@@ -43,6 +43,7 @@ export default {
     }
     .content-buttons{
         display: flex;
+        padding: 12px; 
     }
     .buttons-colls{
         flex-direction: column;

@@ -69,6 +69,34 @@
     color: #F4F4F4;
 }
 
+.mbtn{
+    text-decoration: none;
+    font-family: 'Raleway', sans-serif;
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 20px;
+    margin: auto;
+    text-align: center;
+    box-shadow: 0 0 2px rgba(0,0,0, 0.6);
+}
+.mbtn-blue{
+    /* background: #EFEFAE; */
+    background: #4E9FFF !important;
+    color: #FDFDFD;
+}
+.mbtn-blue:hover{
+    background: #2E9FEE !important;
+}
+
+.mbtn-grey{
+    background: #EDEDEF;
+    color: #6F6F6F;
+}
+.mbtn-grey:hover{
+    background: #DADADD;
+}
+
 /* Table styles */
 .table{
     width: 100%;

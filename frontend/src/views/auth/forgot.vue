@@ -4,7 +4,7 @@
             <v-text-field prepend-icon="fa fa-at" label="E-mail" type="text" v-model="email" :error-messages="rules.email"/>
         </template>
         <template slot="buttons">
-            <v-btn @click="forgot" class="my-blue darken-1 white--text">Enviar token</v-btn>
+            <a @click.prevent="forgot" class="mbtn mbtn-blue">Enviar token</a>
         </template>
     </task-app-form-item>
 </template>

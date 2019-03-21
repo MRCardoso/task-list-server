@@ -6,7 +6,7 @@
             <v-text-field prepend-icon="lock" label="confirmation" type="password" v-model="user.confirmation" :error-messages="rules.confirmation"/>
         </template>
         <template slot="buttons">
-            <v-btn @click="reset" class="my-blue darken-1 white--text">Restaurar Senha</v-btn>
+            <a @click.prevent="reset" class="mbtn mbtn-blue">Restaurar Senha</a>
         </template>
     </task-app-form-item>
 </template>

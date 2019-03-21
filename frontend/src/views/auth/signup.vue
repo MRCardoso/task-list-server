@@ -8,8 +8,8 @@
             <v-text-field prepend-icon="lock" label="confirmation" type="password" v-model="user.confirmation" :error-messages="rules.confirmation"/>
         </template>
         <template slot="buttons">
-            <v-btn class="my-blue darken-1 white--text" @click.prevent="signup">Criar Conta</v-btn>
-            <v-btn to="/signin">Fazer Login</v-btn>
+            <a @click.prevent="signup" class="mbtn mbtn-blue">Criar Conta</a>
+            <router-link to="/signin" class="mt-2 mbtn mbtn-grey">Fazer Login</router-link>
         </template>
     </task-app-form-item>
 </template>
