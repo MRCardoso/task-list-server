@@ -90,7 +90,7 @@ class Validator
                 let events = validate.split(':')
     
                 if (events[0] in this && typeof this[events[0]] === "function"){
-                    let argList = { field };
+                    let argList = { field: this.getLabel(field) };
                     if (events[1] != undefined) {
                         argList[events[0]] = events[1];
                     }
@@ -112,6 +112,9 @@ class Validator
         return true;
     }
 
+    getLabel(key){
+        return messages[key] || key
+    }
     /**
     | ----------------------------------------------------------------------------
     | Gets the message from method/validator called

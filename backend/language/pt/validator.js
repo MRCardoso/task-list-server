@@ -14,5 +14,25 @@ module.exports = {
     "uniqueValue"       : "Já existe um registro principal",
     "confirmation"      : "Senha e confirmação devem ser iguais!",
     "tokenExpired"      : "Este token expirou!",
-    "missingAttributes" : "Fornece atributos a este save"
+    "missingAttributes" : "Fornece atributos a este save",
+    // user labels
+    "name"              : "Nome",
+    "username"          : "Usuário",
+    "email"             : "E-mail",
+    "password"          : "Senha",
+    "status"            : "Status",
+    "admin"             : "Administrador",
+    "resetToken"        : "Token de recuperação",
+    "resetExpires"      : "Expiração de token",
+    "deleted_at"        : "Data de remoção",
+    "created_at"        : "Data de criação",
+    "updated_at"        : "Data de atualização",
+    // task labels
+    "userId"            : "Id Usuário",
+    "title"             : "Título",
+    "description"       : "Descrição",
+    "priority"          : "Prioridade",
+    "situation"         : "Situação",
+    "startDate"         : "Data de inicio",
+    "endDate"           : "Data Final",
 }
