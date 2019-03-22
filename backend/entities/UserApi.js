@@ -48,6 +48,9 @@ class UserApi extends Model {
             user.one({ username: post.username }, ["image"], true).then(logged => {
                 const bcrypt = require('bcrypt-nodejs')
                 const isMatch = bcrypt.compareSync(post.password, logged.password)
+                if(!logged.status){
+                    return reject({ Validator: { username: ["Usuário inativo"] } })
+                }
                 if (!isMatch) {
                     return reject({ Validator: { password: ["Senha inválida"] }})
                 }

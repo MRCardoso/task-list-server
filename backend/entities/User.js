@@ -31,6 +31,9 @@ class User extends Model {
         super(app, "users", rules, fillables, hiddens)
     }
 
+    static active(){ return 1; }
+    static inactive(){ return 0; }
+
     beforeSave() {
         return new Promise((resolve, reject) => {
             if (this.id && !this.password) {
@@ -79,16 +82,19 @@ class User extends Model {
     * validate of the email was informed
     * ----------------------------------------------------------------------------
     * @param {string} email the email to be find the user
+    * @param {bool} active validation to find user only active status
     * @returns {Promise}
     */
-    findByEmail(email){
+    findByEmail(email, active = true){
         let post = { email }
         this.validator = new Validator({ "email": this.rules.email })
 
         if (!this.validator.validate(post)) {
             return Promise.reject({ Validator: this.validator.getErrors() })
         }
-
+        if(active){
+            post.status = User.active();
+        }
         return this.one(post)
     }
 

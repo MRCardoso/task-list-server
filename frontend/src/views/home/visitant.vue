@@ -71,7 +71,7 @@ export default {
     background-repeat: no-repeat;
     background-size: 40%;
     background-position-y: bottom;
-    /* height: 400px; */
+    /* animation: slidebg 6s ease-out infinite */
 }
 .visitant-text{
     display: flex;
@@ -100,6 +100,16 @@ export default {
 .visitant-links{
     display: flex;
     justify-content: space-between;
+}
+@keyframes slidebg {
+    40%{
+        background-color: #1990FF;
+        background-image: url('../../assets/logo-label.png');
+    }
+    80%{
+        background-color: #2D2D2F;
+        background-image: url('../../assets/logo-floor-40.png');
+    }
 }
 
 @media (max-width: 720px) {
