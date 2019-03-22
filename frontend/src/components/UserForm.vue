@@ -82,6 +82,7 @@ export default {
             }
         },
         save(){
+            this.rules = {}
             let method = this.id ? 'put' : 'post'
             let endpoint = `users`+(this.id ? `/${this.id}` : '')
 

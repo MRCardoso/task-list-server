@@ -71,6 +71,7 @@ export default {
     },
     methods: {
         save(){
+            this.rules = {}
             this.task.situation = (this.situation ? this.situation.id : null);
             this.task.priority = (this.priority ? this.priority.id : null);
 
