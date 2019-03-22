@@ -90,7 +90,7 @@ class Validator
                 let events = validate.split(':')
     
                 if (events[0] in this && typeof this[events[0]] === "function"){
-                    let argList = { field: this.getLabel(field) };
+                    let argList = { field };
                     if (events[1] != undefined) {
                         argList[events[0]] = events[1];
                     }
@@ -98,6 +98,7 @@ class Validator
                     let output = this[events[0]](...(Object.values(argList)));
                     
                     if (!output) {
+                        argList.field = this.getLabel(argList.field);
                         this.setErrors(field, this.processMessages(events[0], argList));
                     }
                 }

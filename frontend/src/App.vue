@@ -4,6 +4,10 @@
 		<task-app-loading v-if="verifyToken || loading" />
 		<task-app-content />
 		<task-app-modal :dialog="dialog" @confirmDialog="redoLogin" title="Refazer o login" content="Deseja restaurar sua sessão?" />
+
+		<v-footer v-if="!user" color="#2E9FEE" class="white--text align-center">
+			<img src="@/assets/logo-label.png" width="60">
+		</v-footer>
 	</v-app>
 </template>
 
@@ -24,6 +28,11 @@ export default {
 			dialog: false,
 			loading: false,
 		}
+	},
+	computed: {
+		user(){
+            return this.$store.state.auth.user;
+        },
 	},
 	methods: {
 		async redoLogin(confimation){

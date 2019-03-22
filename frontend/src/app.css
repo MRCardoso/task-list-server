@@ -135,7 +135,11 @@
     box-shadow: 0 0 8px #000;
     margin: auto;
 }
-
+.align-center{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 /* flex boxes */
 .flex-row{
     display: flex;

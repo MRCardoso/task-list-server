@@ -1,7 +1,6 @@
 <template>
     <div class="visitant-container">
         <div class="visitant-text">
-            <img src="@/assets/logo-label.png" width="360">
             <h1>Controle as tarefas do dia-a-dia</h1>
             <p>
                 Gerencie suas atividades e organize-as conforme suas prioridades
@@ -9,6 +8,12 @@
                 seja pelo aplicativo mobile ou web
                 Trabalhe offline pelo applicativo e sincronize quando for conveniente
             </p>
+            <div class="flex-row">
+                <v-btn class="green white--text">
+                    <img src="@/assets/icon.png" alt="" width="40" class="pr-2">
+                    Baixe o applicativo
+                </v-btn>
+            </div>
         </div>
         <div class="visitant-login" v-if="showForm">
             <v-text-field label="Usuário" type="text" v-model="user.username" :error-messages="rules.username"/>
@@ -66,7 +71,7 @@ export default {
     padding: 70px;
     display: flex;
     justify-content: center;
-    background: #2D2D2F url('../../assets/logo-floor-40.png'); 
+    background: #2D2D2D url('../../assets/logo-floor-40.png');
     /* 1990FF */
     background-repeat: no-repeat;
     background-size: 40%;
