@@ -120,7 +120,12 @@ class User extends Model {
                     this.andWhere('resetExpires', '>', Date.now())
                 }
             }, [], ['id', 'name', 'resetToken', 'resetExpires'])
-            .then(res => resolve(res))
+            .then(res => {
+                if(!res.status){
+                    return reject({ Notfound: { message: "Usuário inativo"} })
+                }
+                resolve(res)
+            })
             .catch(err => reject(typeof err === 'string' ? { Notfound: err } : err))
         })
     }
