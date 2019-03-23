@@ -8,7 +8,7 @@
                 seja pelo aplicativo mobile ou web
                 Trabalhe offline pelo applicativo e sincronize quando for conveniente
             </p>
-            <div class="flex-row">
+            <div class="flex-row" v-if="false">
                 <v-btn class="green white--text">
                     <img src="@/assets/icon.png" alt="" width="40" class="pr-2">
                     Baixe o applicativo
@@ -31,11 +31,9 @@
 </template>
 
 <script>
-import TaskAppFormItem from '@/components/FormItem.vue'
 import { prepareError } from '@/utils/index'
 
 export default {
-    components: {TaskAppFormItem},
     data() {
         return {
             user: {},
@@ -45,7 +43,7 @@ export default {
     },
     methods: {
         handleResize() {
-            this.showForm = (window.innerWidth > 560);
+            this.showForm = (window.innerWidth > 620);
         },
         signin(){
             this.rules = {}
@@ -75,14 +73,14 @@ export default {
     /* 1990FF */
     background-repeat: no-repeat;
     background-size: 40%;
-    background-position-y: bottom;
+    background-position: left center;
+    height: 100vh;
     /* animation: slidebg 6s ease-out infinite */
 }
 .visitant-text{
     display: flex;
     width: 60%;
     flex-direction: column;
-    align-self: center;
     padding-right: 5%;
     color: rgb(212, 224, 228);
 }

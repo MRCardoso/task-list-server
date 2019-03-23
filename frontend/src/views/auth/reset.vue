@@ -13,11 +13,10 @@
 
 <script>
 import TaskAppFormItem from '@/components/FormItem.vue'
-import TaskAppSheeting from '@/components/Sheeting.vue'
 import { prepareError } from '@/utils/index'
 
 export default {
-    components: {TaskAppFormItem, TaskAppSheeting},
+    components: {TaskAppFormItem},
     props: ['token'],
     data(){
         return {
