@@ -1,5 +1,6 @@
 .env
 .DS_Store
+.tls-logs/
 node_modules/
 package-lock.json
 uploads/

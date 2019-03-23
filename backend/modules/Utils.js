@@ -62,6 +62,7 @@ exports.prepareError = error => {
             break
     }
     if(reason.status!=400){
+        exports.writeLog(error)
         console.log('\x1b[31m', error, '\x1b[0m')
     }
     return reason
@@ -122,4 +123,19 @@ exports.sendMail = (data, credentials) => {
             transporte.sendMail(email, (err, info) => (err ? reject(err) : resolve(info)));
         });
     })
+}
+
+exports.writeLog = (message) => {
+    let fs = require('fs')
+    let date = new Date()
+    let pathLog = `.tls-logs/`
+    let fileName = `${require('moment')().format('YYYY-MM-DD')}.log`;
+    message = `================START - ${date}\n${JSON.stringify(message)}\n================END - ${date}\n`;
+
+    if (!fs.existsSync(pathLog)) {
+        fs.mkdirSync(pathLog);
+    }
+    fs.writeFile(`${pathLog}/${fileName}`, message, { 'flag': 'a' }, (err, d) => {
+        console.log(err ? { "LOG-ERR:": err } : { "LOG-SUCCESS:": d })
+    });
 }
