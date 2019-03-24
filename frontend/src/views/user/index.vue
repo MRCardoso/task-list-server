@@ -7,10 +7,24 @@
         <v-card-title>
             <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details />
             <v-spacer></v-spacer>
-            
-            <v-btn fab slot="activator" color="#2E9FEE" dark class="mb-2" to="/users/new">
-                <v-icon dark>add</v-icon>
-            </v-btn>
+
+            <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                    <v-btn icon class="amber accent-2 white--text" :class="{'rotation': updating}" v-on="on" @click="find()">
+                        <v-icon>refresh</v-icon>
+                    </v-btn>
+                </template>
+                <span>Atualizar</span>
+            </v-tooltip>
+
+            <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                    <v-btn icon slot="activator" color="#2E9FEE" dark class="mb-2" v-on="on" to="/users/new">
+                        <v-icon dark>add</v-icon>
+                    </v-btn>
+                </template>
+                <span>Novo</span>
+            </v-tooltip>
         </v-card-title>
 
         <v-data-table :headers="headers" :items="users" :no-results-text="emptyFilter" :search="search" class="elevation-1">
@@ -55,6 +69,7 @@ export default {
             search: '',
             users: [],
             dialog: false,
+            updating: false,
             deletedId: null,
             situationData,
             statusData,
@@ -87,7 +102,15 @@ export default {
             }
         },
         find(){
-            this.$http(`users`).then(res => this.users = res.data).catch(err => prepareError(err, this))
+            this.updating = true
+            this.$store.dispatch('busNotifyLoading', true)
+            this.$http(`users`)
+            .then(res => this.users = res.data)
+            .catch(err => prepareError(err, this))
+            .finally(() => {
+                this.updating = false
+                this.$store.dispatch('busNotifyLoading', false)
+            })
         }
     },
     created() {
