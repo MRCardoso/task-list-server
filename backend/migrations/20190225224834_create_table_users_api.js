@@ -8,7 +8,6 @@ exports.up = function(knex, Promise) {
         table.integer('platform').notNull().defaultTo(1) // 1 - webtoken, 2 - mobile, 3 - third party
         table.text('token').notNull()
         table.bigInteger('expires').notNull()
-        table.boolean('keepLogin').notNull().defaultTo(false)
         table.timestamp('created_at')
     })
 };

@@ -14,9 +14,11 @@ export const prepareError = (e, vm) => {
             {
                 if (e.response.status == 401) {
                     let user = vm.$store.state.auth.user
-                    if (user && user.authToken.keepLogin) {
+                    if (user && user.status) {
                         return vm.$store.dispatch('busNotifyDialog', true)
                     }
+                    vm.$store.commit("addUser", null)
+                    return vm.$router.push('/')
                 }
 
                 let reason = e.response.data
@@ -72,6 +74,17 @@ export const browserData = () => {
     }
     return { name: M[0], version: M[1]}
 }
+
+export const defaultToolbar = [
+    [{ header: [false, 1, 2, 3, 4, 5, 6,] }],
+    ["bold", "italic", "underline",],
+    [{ 'color': [] }, { 'background': [] }],
+    [{ script: "sub" }, { script: "super" }],
+    [{ indent: "-1" }, { indent: "+1" }],
+    [{ align: "" }, { align: "justify" }, { align: "right" }],
+    [{ list: "ordered" }, { list: "bullet" }, { list: "check" }],
+    ["blockquote", "code-block"]
+]
 
 export const statusData = [
     { "id": "1", "name": "Ativo", "class": "green" },

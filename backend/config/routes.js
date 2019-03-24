@@ -18,6 +18,7 @@ module.exports = app => {
     app.post('/api/validateToken', app.api.auth.validateToken)
     /* request to redo login */
     app.post('/api/refrashToken', app.api.auth.refrashToken)
+    app.post('/api/feedback', app.api.help.feedback)
 
     /**
      * ----------------------------------------------------

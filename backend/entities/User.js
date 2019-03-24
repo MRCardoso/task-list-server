@@ -22,10 +22,10 @@ class User extends Model {
         const hiddens = ["password"]
         const rules = {
             "name"          : "required|max:80",
-            "username"      : "required|max:80",
-            "email"         : "required|email|max:120",
-            "password"      : "required:create|min:8|max:255|compare:confirmation",
-            "confirmation"  : "required:create|min:8|max:255",
+            "username"      : "required|min:5|max:80|vusername",
+            "email"         : "required|mail|max:120",
+            "password"      : "required:create|min:8|max:80",
+            "confirmation"  : "required:create|min:8|max:80|compare:password",
             "status"        : "number"
         }
         super(app, "users", rules, fillables, hiddens)
@@ -119,7 +119,7 @@ class User extends Model {
                 if (validateExpires){
                     this.andWhere('resetExpires', '>', Date.now())
                 }
-            }, [], ['id', 'name', 'resetToken', 'resetExpires'])
+            }, [], ['id', 'status', 'name', 'resetToken', 'resetExpires'])
             .then(res => {
                 if(!res.status){
                     return reject({ Notfound: { message: "Usuário inativo"} })

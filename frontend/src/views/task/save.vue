@@ -24,7 +24,7 @@
                 <v-tab-item>
                     <v-card flat>
                     <v-card-text>
-                        <vue-editor v-model="task.description" placeholder="Descrição..." />
+                        <vue-editor :editorToolbar="customToolbar" v-model="task.description" placeholder="Descrição..." />
                         <small class="red--text">{{rules.description}}</small>
                     </v-card-text>
                     </v-card>
@@ -44,7 +44,7 @@ import { VueEditor } from "vue2-editor"
 import TaskAppFormItem from '@/components/FormItem.vue'
 import TaskAppToggleStatus from '@/components/ToggleStatus.vue'
 import TaskAppInputDatepicker from '@/components/InputDatepicker.vue'
-import { situationData, priorityData, prepareError } from '@/utils/index'
+import { situationData, priorityData, prepareError, defaultToolbar } from '@/utils/index'
 
 export default {
     components: { TaskAppFormItem, TaskAppToggleStatus, TaskAppInputDatepicker, VueEditor },
@@ -53,6 +53,7 @@ export default {
         return {
             task: {},
             rules: {},
+            customToolbar: defaultToolbar,
             indexRoute: '/tasks',
             situation: null,
             priority: null

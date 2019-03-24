@@ -11,9 +11,14 @@ export default {
         },
     },
     mutations: {
-        refrashImage(state, payload){
+        refrashInfo(state, payload){
             if (state.user && (state.user.id == payload.id)){
-                state.user.image = payload.image
+                if (payload.image !== undefined){
+                    state.user.image = payload.image
+                }
+                if(payload.status !== undefined){
+                    state.user.status = ((payload.status == "1" || payload.status == "true") ? 1 : 0)
+                }
                 localStorage.setItem(userKey, JSON.stringify(state.user))
             }
         },
@@ -70,10 +75,7 @@ export default {
             try {
                 let user = state.user
 
-                let res = await axios.post('api/refrashToken', {
-                    id: user.id,
-                    keepLogin: user.authToken.keepLogin
-                })
+                let res = await axios.post('api/refrashToken', {id: user.id})
 
                 if (res.data.updated) {
                     return res.data.updated

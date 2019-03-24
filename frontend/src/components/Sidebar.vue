@@ -11,12 +11,14 @@
             <v-btn flat to="/tasks">Tarefa</v-btn>
         </v-toolbar-items>
 
-        <v-toolbar-items v-else>
+        <v-spacer></v-spacer>
+        
+        <v-toolbar-items v-if="!user">
             <v-btn flat to="/signup">Criar Conta</v-btn>
             <v-btn flat to="/signin">Login</v-btn>
+            <v-btn flat to="/feedback">Ajuda</v-btn>
         </v-toolbar-items>
         
-        <v-spacer></v-spacer>
 
         <v-menu transition="slide-x-transition" v-if="user">
             <v-toolbar-title slot="activator">
@@ -37,6 +39,9 @@
                 <v-divider></v-divider>
                 <v-list-tile to="/logged">
                     <v-list-tile-title>Meus Dados</v-list-tile-title>
+                </v-list-tile>
+                <v-list-tile to="/feedback">
+                    <v-list-tile-title>Ajuda</v-list-tile-title>
                 </v-list-tile>
                 
                 <v-list-tile @click.prevent="logout">

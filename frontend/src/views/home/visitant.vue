@@ -18,7 +18,6 @@
         <div class="visitant-login" v-if="showForm">
             <v-text-field label="Usuário" type="text" v-model="user.username" :error-messages="rules.username"/>
             <v-text-field label="Password" type="password" v-model="user.password" :error-messages="rules.password"/>
-            <v-switch v-model="user.keepLogin" label="Manter Login"></v-switch>
             <a @click.prevent="signin" class="mbtn mbtn-blue">Fazer login</a>
             
             <div class="visitant-links">

@@ -37,7 +37,7 @@ export default {
 				if(updated){
 					this.dialog = false
 					this.$store.commit("addUser", updated)
-					return window.location.reload()
+					return
 				}
 			}
 
@@ -54,9 +54,13 @@ export default {
 			
 			if(user) {
 				try {
-					await this.$store.dispatch("verifyToken", user.authToken.token)
+					let res = await this.$store.dispatch("verifyToken", user.authToken.token)
+					if(!res.data.user.status){
+						this.$store.commit("addUser", null)
+						this.$router.push('/')
+					}
 				} catch (e) {
-					if(user.authToken.keepLogin){
+					if(user.status){
 						this.dialog = true
 					} else{
 						this.$store.commit("addUser", null)

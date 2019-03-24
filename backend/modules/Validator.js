@@ -99,6 +99,7 @@ class Validator
                     
                     if (!output) {
                         argList.field = this.getLabel(argList.field);
+                        if (argList.compare) argList.compare = this.getLabel(argList.compare)
                         this.setErrors(field, this.processMessages(events[0], argList));
                     }
                 }
@@ -191,9 +192,13 @@ class Validator
     * @param string attribute the attribute validated
     * @return bool
     */
-    email(attribute) {
+    mail(attribute) {
         let regex = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return regex.test(this.post[attribute]) ? true : false;
+    }
+
+    vusername(attribute){
+        return /^[a-z]+[a-z0-9_]+[a-z0-9]$/i.test(this.post[attribute]) ? true : false
     }
 
     /**

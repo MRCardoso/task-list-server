@@ -3,7 +3,6 @@
         <template slot="inputs">
             <v-text-field prepend-icon="person" label="Usuário" type="text" v-model="user.username" :error-messages="rules.username"/>
             <v-text-field prepend-icon="lock" label="Password" type="password" v-model="user.password" :error-messages="rules.password"/>
-            <v-switch v-model="user.keepLogin" label="Manter Login"></v-switch>
         </template>
         <template slot="buttons">
             <a @click.prevent="signin" class="mbtn mbtn-blue">Acessar</a>

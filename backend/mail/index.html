@@ -3,48 +3,80 @@
 
 <head>
     <style>
+        body{
+            background: #4F4F4F;
+        }
         hr {
             background: #EFEFEF;
             color: #EFEFEF;
             border: 1px solid #EFEFEF;
         }
-
+        .line-blue{
+            background: #EFEFAE;
+            width: 100%;
+            height: 10px;
+        }
+        .container {
+            background: #FBFBFB;
+            width: 80%;
+            margin: auto;
+            border-radius: 5px;
+        }
         .footer,
         .header {
-            border: 1px solid #EFEFEF;
-            padding: 1%;
+            display: flex;
+            justify-self: center;
+            align-items: center;
+            background: #4E9FFF;
+            color: #EFEFEF;
+            padding: 8px 0 8px 8px; 
+        }
+        .footer {
+            justify-content: center;
         }
 
-        .footer {
-            text-align: center
+        .header img{
+            margin-right: 10px;
         }
 
         .content {
+            background-image: -webkit-radial-gradient(#FFF, rgba(222, 222, 223, 0.0));
             text-align: left;
+            color: #2A2A2a;
+            font-family: Arial, Helvetica, sans-serif;
             padding: 0.5% 2%;
-            width: 89%;
             word-wrap: break-word
         }
-
-        .container {
-            background: #FBFBFB;
-            border-radius: 5px;
+        .list-item{
+            display: flex;
+            justify-content: flex-start;
+            padding: 8px;
+            border:1px solid #E2E2E2;
+            margin-bottom: 6px;
+            border-radius: 4px;
+            text-align: center
+        }
+        .list-item strong,.list-item h3{
+            margin-right: 8px;
+        }
+        .list-item:hover{
+            background: #F4F4F4
         }
     </style>
 </head>
 
 <body>
     <div class="container">
+        <div class="line-blue"></div>
         <div class="header">
+            {logo1}
             <strong>{title}</strong>
         </div>
         <div class="content">
             {content}
         </div>
         <div class="footer">
-            <small>
-                &copy; Task - List app
-            </small>
+            <small>{logo2}</small>
         </div>
     </div>
 </body>

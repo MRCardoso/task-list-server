@@ -11,15 +11,21 @@ const User = require('./User')
  * @property {int} platform the platform of this model (1 - web, 2 - mobile, 3 third part)
  * @property {string} token the token generated in the login
  * @property {number} expires the expires timestamp of the token
- * @property {bool} keepLogin allow redo login after token expires
  * @property {Date} created_at the date of creation of user
  * @property {Date} updated_at the date of last update of data the user
  */
 class UserApi extends Model {
     constructor(app) {
-        const fillables = ["id", "userId", "name", "version", "platform", "token", "expires", "keepLogin", "created_at"]
+        const fillables = ["id", "userId", "name", "version", "platform", "token", "expires", "created_at"]
         super(app, "users_api", {}, fillables)
         this.timestamps = false
+    }
+
+    relations(alias) {
+        let relations = {
+            "user": ["users", "userId", ["user.name", "user.email", "user.status"], false, true],
+        };
+        return relations[alias]
     }
 
     /**
@@ -34,23 +40,19 @@ class UserApi extends Model {
      */
     login(post) {
         return new Promise((resolve, reject) => {
+            const user = new User(this.app)
             this.validator = new Validator({
-                "username": "required",
-                "password": "required|min:8|max:255",
+                "username": user.rules.username,
+                "password": user.rules.password,
             })
 
             if (!this.validator.validate(post)) {
                 return reject({ Validator: this.validator.getErrors() })
             }
 
-            const user = new User(this.app)
-
             user.one({ username: post.username }, ["image"], true).then(logged => {
                 const bcrypt = require('bcrypt-nodejs')
                 const isMatch = bcrypt.compareSync(post.password, logged.password)
-                if(!logged.status){
-                    return reject({ Validator: { username: ["Usuário inativo"] } })
-                }
                 if (!isMatch) {
                     return reject({ Validator: { password: ["Senha inválida"] }})
                 }
@@ -101,7 +103,7 @@ class UserApi extends Model {
             return Promise.reject({ Validator: this.validator.getErrors() })
         }
 
-        return this.one(post)
+        return this.one(post, ["user"])
     }
 
     /**
@@ -112,11 +114,13 @@ class UserApi extends Model {
      * @param {string} name the name of origin where the app was created
      * @param {string|int} version the version of origin where the app was created
      * @param {int} platform the platform where this api was created
-     * @param {bool} keepLogin allow in the frontend the confirmation to redo login where token expires
      * @returns {Promise}
      */
-    createApi(logged, name, version, platform = 1, keepLogin = false) {
+    createApi(logged, name, version, platform = 1) {
         return new Promise((resolve, reject) => {
+            if (!logged.status) {
+                return reject({ Notfound: { message: "Usuário inativo" } })
+            }
             this.validator = new Validator({
                 "userId": "required|number",
                 "name": "required|max:250",
@@ -126,8 +130,8 @@ class UserApi extends Model {
                 "expires": "required|number"
             })
             const { createTokenPayload } = require("../modules/Utils")
-            let { token, expires, payload } = createTokenPayload(logged, keepLogin, platform)
-            let post = { userId: logged.id, token, name, version, platform, expires, keepLogin, created_at: new Date()}
+            let { token, expires, payload } = createTokenPayload(logged, platform)
+            let post = { userId: logged.id, token, name, version, platform, expires, created_at: new Date()}
 
             if (!this.validator.validate(post)) {
                 return reject({ Validator: this.validator.getErrors()})
@@ -148,16 +152,15 @@ class UserApi extends Model {
      * @param {string} name the name of origin where the app was created
      * @param {string|int} version the version of origin where the app was created
      * @param {int} platform the platform where this api was created
-     * @param {bool} keepLogin allow in the frontend the confirmation to redo login where token expires
      * @returns {Promise}
      */
-    refrashLogin(id, name, version, platform = 1, keepLogin = false) {
+    refrashLogin(id, name, version, platform = 1) {
         return new Promise((resolve, reject) => {
             const user = new User(this.app)
 
             user.one({ id }, ["image"])
                 .then(logged => {
-                    this.createApi(logged, name, version, platform, keepLogin)
+                    this.createApi(logged, name, version, platform)
                         .then((apiData) => resolve(apiData))
                         .catch(err => reject(err))
                 })

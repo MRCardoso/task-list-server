@@ -10,6 +10,7 @@ const Signup = () => import(/* webpackChunkName: "auth" */'@/views/auth/signup.v
 const Forgot = () => import(/* webpackChunkName: "auth" */'@/views/auth/forgot.vue')
 const Reset = () => import(/* webpackChunkName: "auth" */'@/views/auth/reset.vue')
 const Logged = () => import(/* webpackChunkName: "user" */'@/views/auth/logged.vue')
+const Feedback = () => import(/* webpackChunkName: "feedback" */'@/views/help/feedback.vue')
 
 const Task = () => import(/* webpackChunkName: "task" */'@/views/task/index.vue')
 const TaskSave = () => import(/* webpackChunkName: "task" */'@/views/task/save.vue')
@@ -25,6 +26,7 @@ const router = new Router({
     routes: [
         { path: '*', redirect: '/' },
         { path: '/', component: Home },
+        { path: '/feedback', component: Feedback },
         { path: '/signin', component: Signin },
         { path: '/signup', component: Signup },
         { path: '/forgot', component: Forgot },

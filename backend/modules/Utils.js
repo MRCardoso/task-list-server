@@ -1,11 +1,3 @@
-function replaceCharacters(html, content, title) {
-    while (content.indexOf("{") != -1 || content.indexOf("}") != -1) {
-        content = content.replace(/\{/ig, '<').replace(/\}/ig, '>');
-    }
-    return html.replace("{title}", title)
-        .replace("{content}", content);
-}
-
 exports.generateFileString = name => {
     let hasName = require('crypto').createHash('md5').update(`${Date.now()}-${name}`).digest('hex')
     let ext = name.split('.').pop()
@@ -17,14 +9,13 @@ exports.datesExpires = (expires, def = 60) => {
     return { now, expires: (now + (expires || def))}
 }
 
-exports.createTokenPayload = (logged, keepLogin, platform) => {
+exports.createTokenPayload = (logged, platform) => {
     let { authSecret, authToken } = require('../.env')
     let { now, expires } = exports.datesExpires(authToken)
     let jwt = require('jwt-simple')
 
     let payload = {
         id: logged.id,
-        keepLogin,
         platform,
         iat: now,
         exp: expires
@@ -78,6 +69,19 @@ exports.responseErr = (response, error, defError = null) => {
 }
 
 exports.sendMail = (data, credentials) => {
+    function replaceCharacters(html, content, title) {
+        while (content.indexOf("{") != -1 || content.indexOf("}") != -1) {
+            content = content.replace(/\{/ig, '<').replace(/\}/ig, '>');
+        }
+        const { AWS, logoHeader, logoFooter } = require('../.env')
+        
+        
+        return html
+            .replace("{title}", title)
+            .replace("{logo1}", (logoHeader ? `<img src="${AWS.URL}${AWS.Bucket}/${logoHeader}" width="40">` : ''))
+            .replace("{logo2}", (logoFooter ? `<img src="${AWS.URL}${AWS.Bucket}/${logoFooter}" width="80">` : ''))
+            .replace("{content}", content);
+    }
     return new Promise((resolve, reject) => {
         if (!data) {
             return reject("Não há conteúdo para envio do email")

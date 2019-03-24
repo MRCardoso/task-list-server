@@ -19,12 +19,11 @@ module.exports = app => {
     const signin = async (req, res) => {
         try {
             auth.login(req.body).then(logged => {
-                let keepLogin = req.body.keepLogin || false
                 let PlatformName = req.query.PlatformName || '' 
                 let PlatformVersion = req.query.PlatformVersion || 0
                 let PlatformOrigin = req.query.PlatformOrigin || PLATFORM_WEB
 
-                auth.createApi(logged, PlatformName, PlatformVersion, PlatformOrigin,keepLogin)
+                auth.createApi(logged, PlatformName, PlatformVersion, PlatformOrigin)
                     .then((apiData) => res.json(apiData))
                     .catch(err => responseErr(res, err))
             }, err => responseErr(res, err))
@@ -113,11 +112,10 @@ module.exports = app => {
             return res.status(400).send("Usuário não fornecido")
         }
         
-        let keepLogin = req.body.keepLogin || false
         let PlatformName = req.query.PlatformName || ''
         let PlatformVersion = req.query.PlatformVersion || 0
         
-        auth.refrashLogin(req.body.id, PlatformName, PlatformVersion, 1, keepLogin)
+        auth.refrashLogin(req.body.id, PlatformName, PlatformVersion, 1)
             .then(updated => res.json({ updated }))
             .catch(err => responseErr(res, err))
     }

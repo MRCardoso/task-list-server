@@ -213,10 +213,10 @@ class Model {
     
     /**
      * ----------------------------------------------------------------------------
-     * Behavior to process the join relation
+     * Behavior to process the join relation select one
      * ----------------------------------------------------------------------------
      */
-    getRelations(relations, base) {
+    oneRelations(relations, base) {
         if (relations) {
             let promises = []
             
@@ -257,6 +257,26 @@ class Model {
     }
 
     /**
+     * ----------------------------------------------------------------------------
+     * Behavior to process the join relation for select all
+     * ----------------------------------------------------------------------------
+     */
+    allRelations(relations = [], query) {
+        let relFields = []
+        relations.forEach(index => {
+            let rel = this.relations(index)
+            if (Array.isArray(rel)) {
+                let [t, fk, f] = rel
+                relFields = relFields.concat(f || [])
+                query.innerJoin(`${t} as ${index}`, `${index}.${this.primaryKey}`, `${this.table}.${fk}`)
+                query.groupBy(`${this.table}.${this.primaryKey}`)
+            }
+        })
+
+        return relFields
+    }
+
+    /**
     | ----------------------------------------------------------------------------
     | Find by a specific record in db
     | ----------------------------------------------------------------------------
@@ -276,7 +296,7 @@ class Model {
                 .first()
                 .then(item => {
                     if(item){
-                        return this.getRelations(relations, item).then(results => {
+                        return this.oneRelations(relations, item).then(results => {
                             results.forEach(row => item[row.table] = row.items)
                             resolve(item)
                         })
@@ -290,27 +310,12 @@ class Model {
         })
     }
 
-    fieldsAndJoins(relations = [], query){
-        let relFields = []
-        relations.forEach(index => {
-            let rel = this.relations(index)
-            if (Array.isArray(rel)) {
-                let [t, fk, f] = rel
-                relFields = relFields.concat(f || [])
-                query.innerJoin(`${t} as ${index}`, `${index}.${this.primaryKey}`, `${this.table}.${fk}`)
-                query.groupBy(`${this.table}.${this.primaryKey}`)
-            }
-        })
-
-        return relFields
-    }
-
     all(relations = [], hiddenOrCustom = false){
         let query = this.app.db(this.table)
         let fields = (
             Array.isArray(hiddenOrCustom) 
             ? hiddenOrCustom 
-            : this.getFields(hiddenOrCustom).concat(this.fieldsAndJoins(relations, query))
+            : this.getFields(hiddenOrCustom).concat(this.allRelations(relations, query))
         )
 
         query.select(...fields)
