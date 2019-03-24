@@ -47,22 +47,17 @@ class UserApi extends Model {
             })
 
             if (!this.validator.validate(post)) {
-                return reject({ Validator: this.validator.getErrors() })
+                return reject(is400(this.validator.getErrors()))
             }
 
             user.one({ username: post.username }, ["image"], true).then(logged => {
                 const bcrypt = require('bcrypt-nodejs')
                 const isMatch = bcrypt.compareSync(post.password, logged.password)
                 if (!isMatch) {
-                    return reject({ Validator: { password: ["Senha inválida"] }})
+                    return reject(is400({ password: ["Senha inválida"] }))
                 }
                 resolve(logged)
-            }).catch(err => {
-                if(typeof err === "string") {
-                    err = { Unauthorized: { username: ["Usuário não encontrado"] } }
-                }
-                return reject(err)
-            })
+            }).catch(err => reject(err))
         })
     }
 
@@ -87,6 +82,18 @@ class UserApi extends Model {
                 .catch(error => reject(error))
         })
     }
+    /**
+     * ----------------------------------------------------------------------------
+     * Delete a api by your token
+     * ----------------------------------------------------------------------------
+     * @param {string} token the token to be delete the api
+     */
+    removeByToken(token){
+        if(!token){
+            return Promise.resolve()
+        }
+        return this.delete({token})
+    }
 
     /**
      * ----------------------------------------------------------------------------
@@ -100,7 +107,7 @@ class UserApi extends Model {
         this.validator = new Validator({"token": "required"})
 
         if (!this.validator.validate(post)) {
-            return Promise.reject({ Validator: this.validator.getErrors() })
+            return Promise.reject(is400(this.validator.getErrors()))
         }
 
         return this.one(post, ["user"])
@@ -119,7 +126,7 @@ class UserApi extends Model {
     createApi(logged, name, version, platform = 1) {
         return new Promise((resolve, reject) => {
             if (!logged.status) {
-                return reject({ Notfound: { message: "Usuário inativo" } })
+                return reject(is401("Usuário inativo"))
             }
             this.validator = new Validator({
                 "userId": "required|number",
@@ -134,7 +141,7 @@ class UserApi extends Model {
             let post = { userId: logged.id, token, name, version, platform, expires, created_at: new Date()}
 
             if (!this.validator.validate(post)) {
-                return reject({ Validator: this.validator.getErrors()})
+                return reject(is400(this.validator.getErrors()))
             }
             
             this.save(post)

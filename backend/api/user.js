@@ -40,7 +40,7 @@ module.exports = app => {
     const one = (req, res) => {
         user.one({ "users.id": req.params.id }, ["image", "apis"])
             .then(user => res.json(user))
-            .catch(error => responseErr(res,{ Notfound: error}, "Usuário não encontrado"))
+            .catch(error => responseErr(res, error, "Usuário não encontrado"))
     }
 
     const hasAuthorization = (req, res, next) => {

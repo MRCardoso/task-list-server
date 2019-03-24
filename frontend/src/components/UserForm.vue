@@ -95,14 +95,12 @@ export default {
                 .then(image => {
                     this.$toasted.global.defaultSuccess({message: `Usuário ao ${this.id ? 'atualizada' : 'criada'} com sucesso`})
                     this.$store.dispatch('busNotifyLoading', false)
-                    let updateInfo = {id: savedId, status: this.user.status}
-                    console.log(image);
+                    
                     if(image != null){
                         this.user.image = image
-                        updateInfo.image = image
                     }
                     
-                    this.$store.commit('refrashInfo', updateInfo)
+                    this.$store.commit('refrashInfo', this.user)
                     
                     if(this.isChangesMode()){
                         this.$router.push(`/users/${savedId}/detail`)

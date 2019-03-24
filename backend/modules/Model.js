@@ -27,6 +27,11 @@ class Model {
         this.resertFields()
     }
 
+    /**
+     * ----------------------------------------------------------------------------
+     * Clean to default value the properties allowed of the model
+     * ----------------------------------------------------------------------------
+     */
     resertFields()
     {
         let fields = this.fillables.concat(this.hiddens)
@@ -37,11 +42,11 @@ class Model {
     }
 
     /**
-    | ----------------------------------------------------------------------------
-    | Fill the properties of the class, according the post sent that exists in fillables
-    | ----------------------------------------------------------------------------
+    * ----------------------------------------------------------------------------
+    * Fill the properties of the class, according the post sent that exists in fillables
+    * ----------------------------------------------------------------------------
     * @param object data the data sent
-    * @return array||bool
+    * @return array|bool
     */
     bindFillables(data) {
         for (let field in data) {
@@ -64,6 +69,14 @@ class Model {
         }
     }
 
+    /**
+     * ----------------------------------------------------------------------------
+     * get the allowed properties of the model, to use in queries of CRUD
+     * set the alias with base in table name
+     * add the hidden fillables and timestamps fields when they are active respectively
+     * ----------------------------------------------------------------------------
+     * @param {bool} useHidden when true add the hidden fillables in the list
+     */
     getFields(useHidden = true){
         let fields = this.fillables;
         if (useHidden){
@@ -74,8 +87,24 @@ class Model {
         }
         return fields.map(r => `${this.table}.${r}`)
     }
+
     /**
-     * 
+     * ----------------------------------------------------------------------------
+     * the current error running in the query
+     * ----------------------------------------------------------------------------
+     * @param {*} err 
+     * @return bool
+     */
+    isQueryErr(err) {
+        if (typeof err === "object") {
+            return (err.sqlMessage && err.sql ? true : false)
+        }
+        return false
+    }
+    /**
+     * ----------------------------------------------------------------------------
+     * definitions of relations in current model
+     * ----------------------------------------------------------------------------
      * @example
      * relation = {
      *  "job": ["jobs", "jobId", ["job.id"], true, true],
@@ -102,9 +131,9 @@ class Model {
     }
 
     /**
-    | ----------------------------------------------------------------------------
-    | INSERT Record
-    | ----------------------------------------------------------------------------
+    * ----------------------------------------------------------------------------
+    * INSERT Record
+    * ----------------------------------------------------------------------------
     * @param object data the fields to be inserting
     * @return Promise
     */
@@ -124,9 +153,9 @@ class Model {
     }
 
     /**
-    | ----------------------------------------------------------------------------
-    | UPDATE Record
-    | ----------------------------------------------------------------------------
+    * ----------------------------------------------------------------------------
+    * UPDATE Record
+    * ----------------------------------------------------------------------------
     * @param object data the fields to be updated
     * @return Promise
     */
@@ -155,10 +184,10 @@ class Model {
         return this.app.db(this.table).where(params).del()
     }
     /**
-    | ----------------------------------------------------------------------------
-    | CREATE OR UPDATE a Record
-    | validate the fields sent in $data and check in fillables to set the data
-    | ----------------------------------------------------------------------------
+    * ----------------------------------------------------------------------------
+    * CREATE OR UPDATE a Record
+    * validate the fields sent in $data and check in fillables to set the data
+    * ----------------------------------------------------------------------------
     * @param object data the fields to be updated
     * @param int|null the id of the record to update
     * @return bool
@@ -171,7 +200,7 @@ class Model {
             this.bindFillables(data)
 
             if(!this.validator.validate(data)){
-                return reject({ Validator: this.validator.getErrors()});
+                return reject(is400(this.validator.getErrors()));
             }
 
             this.beforeSave().then(() => {
@@ -210,11 +239,13 @@ class Model {
      * ----------------------------------------------------------------------------
      */
     afterSave() { return Promise.resolve() }
-    
+
     /**
      * ----------------------------------------------------------------------------
      * Behavior to process the join relation select one
      * ----------------------------------------------------------------------------
+     * @param {array} relations the alias list of the pre-defined relations of the model
+     * @param {object} base the data of the current data of loaded model
      */
     oneRelations(relations, base) {
         if (relations) {
@@ -260,6 +291,8 @@ class Model {
      * ----------------------------------------------------------------------------
      * Behavior to process the join relation for select all
      * ----------------------------------------------------------------------------
+     * @param {array} relations the alias list of the pre-defined relations of the model
+     * @param {*} query the select query base
      */
     allRelations(relations = [], query) {
         let relFields = []
@@ -277,12 +310,14 @@ class Model {
     }
 
     /**
-    | ----------------------------------------------------------------------------
-    | Find by a specific record in db
-    | ----------------------------------------------------------------------------
+    * ----------------------------------------------------------------------------
+    * standard query to make select of one result in database
+    * add the fields in query with base in the fillables of the model and other rules
+    * attach relations in a custom object create with the same name of alias
+    * ----------------------------------------------------------------------------
     * @param {object} params of the filter data
-    * @param {array} relations thie joins with the foreign tables
-    * @param {bool|array} hiddenOrCustom the custom field or use the hidden field
+    * @param {array} relations the joins with the foreign tables
+    * @param {bool|array} hiddenOrCustom when bool add the hidden fillable, when array use their as fields in query
     * @return Promise
     */
     one(params, relations = [], hiddenOrCustom = false){
@@ -301,7 +336,7 @@ class Model {
                             resolve(item)
                         })
                     }
-                    return reject(`nenhum resultado encontrado em '${this.table}'`)
+                    return reject(is404(`Registro em ${this.validator.getLabel(this.table)} não encontrado`))
                 })
                 .catch(err => {
                     console.log(err)
@@ -310,6 +345,14 @@ class Model {
         })
     }
 
+    /**
+     * ----------------------------------------------------------------------------
+     * standard query to make select of many results in database
+     * ----------------------------------------------------------------------------
+     * @param {array} relations the joins with the foreign tables
+     * @param {bool|array} hiddenOrCustom when bool add the hidden fillable, when array use their as fields in query
+     * @return Promise
+     */
     all(relations = [], hiddenOrCustom = false){
         let query = this.app.db(this.table)
         let fields = (

@@ -30,42 +30,43 @@ exports.prepareError = error => {
     switch (typeof error) {
         case "object":
             if (error.sqlMessage && error.sql) {
-                reason = { status: 500, message: "Código #0001 não foi possível persistir dados" }
+                reason = { status: 500, err: "Código #0001 não foi possível persistir dados" }
             } else if (error.message && error.stack) {
-                reason = { status: 500, message: "Código #0002 não foi possível processar sua ação" }
+                reason = { status: 500, err: "Código #0002 não foi possível processar sua ação" }
             } else if (error.Validator) {
-                reason = { status: 400, message: { validations: error.Validator } }
+                reason = { status: 400, err: { validations: error.Validator } }
             } else if (error.Unauthorized) {
-                reason = { status: 401, message: { validations: error.Unauthorized } }
+                reason = { status: 401, err: error.Unauthorized }
             } else if (error.Forbbiden) {
-                reason = { status: 403, message: error.Forbbiden }
+                reason = { status: 403, err: error.Forbbiden }
             } else if (error.Notfound) {
-                reason = { status: 404, message: error.Notfound }
+                reason = { status: 404, err: error.Notfound }
             } else{
-                reason = { status: 500, message: "Código #0004 erro desconhecido" }
+                reason = { status: 500, err: "Código #0004 erro desconhecido" }
             }
             break
         case "string": 
-            reason = { status: 400, message: error }
+            reason = { status: 400, err: error }
             break
         default:
-            reason = { status: 500, message: "Código #0005 desconhecido" }
+            reason = { status: 500, err: "Código #0005 desconhecido" }
             break
     }
     if(reason.status!=400){
-        exports.writeLog(error)
+        if(reason.status==500){
+            exports.writeLog(error)
+        }
         console.log('\x1b[31m', error, '\x1b[0m')
     }
     return reason
 }
 
 exports.responseErr = (response, error, defError = null) => {
-    let { status, message } = exports.prepareError(error)
-    let params = message
-    if (typeof message === "string"){
-        params = { message: (defError || message) }
+    let { status, err } = exports.prepareError(error)
+    if (typeof err === "string"){
+        err = { message: (defError || err)}
     }
-    return response.status(status).send(params)
+    return response.status(status).send(err)
 }
 
 exports.sendMail = (data, credentials) => {

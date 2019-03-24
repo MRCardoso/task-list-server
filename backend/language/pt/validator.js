@@ -13,6 +13,12 @@ module.exports = {
     "unknownUser"       : "Usuário ':field' não encontrado.",
     "tokenExpired"      : "Este token expirou!",
     "missingAttributes" : "Fornece atributos a este save",
+    // tables
+    "users"             : "Usuários",
+    "tasks"             : "Tarefas",
+    "images"            : "Imagens",
+    "users_api"         : "Apis de Usuário",
+    "integrations_api"  : "Apis de Integração",
     // user labels
     "name"              : "Nome",
     "username"          : "Usuário",

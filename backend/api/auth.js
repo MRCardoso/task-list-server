@@ -17,19 +17,15 @@ module.exports = app => {
      * @param {object} res the object with response information(output)
      */
     const signin = async (req, res) => {
-        try {
-            auth.login(req.body).then(logged => {
-                let PlatformName = req.query.PlatformName || '' 
-                let PlatformVersion = req.query.PlatformVersion || 0
-                let PlatformOrigin = req.query.PlatformOrigin || PLATFORM_WEB
+        auth.login(req.body).then(logged => {
+            let PlatformName = req.query.PlatformName || '' 
+            let PlatformVersion = req.query.PlatformVersion || 0
+            let PlatformOrigin = req.query.PlatformOrigin || PLATFORM_WEB
 
-                auth.createApi(logged, PlatformName, PlatformVersion, PlatformOrigin)
-                    .then((apiData) => res.json(apiData))
-                    .catch(err => responseErr(res, err))
-            }, err => responseErr(res, err))
-        } catch (error) {
-            responseErr(res, error, "Não foi possível fazer login")
-        }
+            auth.createApi(logged, PlatformName, PlatformVersion, PlatformOrigin)
+                .then((apiData) => res.json(apiData))
+                .catch(err => responseErr(res, err))
+        }, err => responseErr(res, err, "Usuário não encontrado"))
     }
 
     /**
@@ -111,13 +107,18 @@ module.exports = app => {
         if (!req.body.id){
             return res.status(400).send("Usuário não fornecido")
         }
+
+        auth
+        .removeByToken(req.body.token || '')
+        .finally(_ => {
+            let PlatformName = req.query.PlatformName || ''
+            let PlatformVersion = req.query.PlatformVersion || 0
+            
+            auth.refrashLogin(req.body.id, PlatformName, PlatformVersion, 1)
+                .then(updated => res.json({ updated }))
+                .catch(err => responseErr(res, err))
+        })
         
-        let PlatformName = req.query.PlatformName || ''
-        let PlatformVersion = req.query.PlatformVersion || 0
-        
-        auth.refrashLogin(req.body.id, PlatformName, PlatformVersion, 1)
-            .then(updated => res.json({ updated }))
-            .catch(err => responseErr(res, err))
     }
 
     /**

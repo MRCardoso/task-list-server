@@ -44,7 +44,7 @@ module.exports = app => {
     const one = (req, res) => {
         task.one(paramsChanges(req), ["user", "integration"])
             .then(task => res.json(task))
-            .catch(error => responseErr(res, error))
+            .catch(error => responseErr(res, error, "Tarefa não encontrada"))
     }
 
     const hasAuthorization = (req, res, next) => {

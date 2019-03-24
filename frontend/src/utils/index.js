@@ -14,11 +14,13 @@ export const prepareError = (e, vm) => {
             {
                 if (e.response.status == 401) {
                     let user = vm.$store.state.auth.user
-                    if (user && user.status) {
-                        return vm.$store.dispatch('busNotifyDialog', true)
+                    if (user){
+                        if(user.status) {
+                            return vm.$store.dispatch('busNotifyDialog', true)
+                        }
+                        vm.$store.commit("addUser", null)
+                        return vm.$router.push('/')
                     }
-                    vm.$store.commit("addUser", null)
-                    return vm.$router.push('/')
                 }
 
                 let reason = e.response.data

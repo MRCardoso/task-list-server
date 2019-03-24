@@ -55,7 +55,7 @@ class User extends Model {
             
             this.uniqueUser()
                 .then(_ => reject(this.validator.processMessages("unique", { field: "username/email" })))
-                .catch(err => (typeof err === "string" ? resolve() : reject(err)))
+                .catch(err => (this.isQueryErr(err) ? reject(err) : resolve()))
         })
     }
 
@@ -90,7 +90,7 @@ class User extends Model {
         this.validator = new Validator({ "email": this.rules.email })
 
         if (!this.validator.validate(post)) {
-            return Promise.reject({ Validator: this.validator.getErrors() })
+            return Promise.reject(is400(this.validator.getErrors()))
         }
         if(active){
             post.status = User.active();
@@ -110,7 +110,7 @@ class User extends Model {
         this.validator = new Validator({"resetToken": "required"})
 
         if (!this.validator.validate({ resetToken })) {
-            return Promise.reject({ Validator: this.validator.getErrors() })
+            return Promise.reject(is400(this.validator.getErrors()))
         }
 
         return new Promise( (resolve, reject) => {
@@ -122,11 +122,10 @@ class User extends Model {
             }, [], ['id', 'status', 'name', 'resetToken', 'resetExpires'])
             .then(res => {
                 if(!res.status){
-                    return reject({ Notfound: { message: "Usuário inativo"} })
+                    return reject(is401("Usuário inativo"))
                 }
                 resolve(res)
-            })
-            .catch(err => reject(typeof err === 'string' ? { Notfound: err } : err))
+            }).catch(err => reject(err))
         })
     }
 
@@ -193,7 +192,7 @@ class User extends Model {
         })
 
         if (!this.validator.validate(post)) {
-            return Promise.reject({ Validator: this.validator.getErrors() })
+            return Promise.reject(is400(this.validator.getErrors()))
         }
         
         return this.update({

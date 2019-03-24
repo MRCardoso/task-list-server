@@ -13,12 +13,12 @@ export default {
     mutations: {
         refrashInfo(state, payload){
             if (state.user && (state.user.id == payload.id)){
-                if (payload.image !== undefined){
-                    state.user.image = payload.image
-                }
-                if(payload.status !== undefined){
-                    state.user.status = ((payload.status == "1" || payload.status == "true") ? 1 : 0)
-                }
+                state.user.name = payload.name
+                state.user.username = payload.username
+                state.user.email = payload.email
+                state.user.status = ((payload.status == "1" || payload.status == "true") ? 1 : 0)
+                state.user.admin = payload.admin
+                state.user.image = payload.image
                 localStorage.setItem(userKey, JSON.stringify(state.user))
             }
         },
@@ -75,7 +75,10 @@ export default {
             try {
                 let user = state.user
 
-                let res = await axios.post('api/refrashToken', {id: user.id})
+                let res = await axios.post('api/refrashToken', {
+                    id: user.id,
+                    token: user.authToken.token
+                })
 
                 if (res.data.updated) {
                     return res.data.updated
