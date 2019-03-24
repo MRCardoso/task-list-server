@@ -58,6 +58,8 @@ export default {
 					if(!res.data.user.status){
 						this.$store.commit("addUser", null)
 						this.$router.push('/')
+					} else{
+						this.$store.commit('refrashInfo', {id: user.id, admin: res.data.user.admin})
 					}
 				} catch (e) {
 					if(user.status){

@@ -13,12 +13,24 @@ export default {
     mutations: {
         refrashInfo(state, payload){
             if (state.user && (state.user.id == payload.id)){
-                state.user.name = payload.name
-                state.user.username = payload.username
-                state.user.email = payload.email
-                state.user.status = ((payload.status == "1" || payload.status == "true") ? 1 : 0)
-                state.user.admin = payload.admin
-                state.user.image = payload.image
+                if(payload.name != undefined){
+                    state.user.name = payload.name
+                }
+                if(payload.username != undefined){
+                    state.user.username = payload.username
+                }
+                if(payload.email != undefined){
+                    state.user.email = payload.email
+                }
+                if (payload.status != undefined){
+                    state.user.status = ((payload.status == "1" || payload.status == "true") ? 1 : 0)
+                }
+                if(payload.admin != undefined){
+                    state.user.admin = ((payload.admin == "1" || payload.admin == "true") ? 1 : 0)
+                }
+                if(payload.image != undefined){
+                    state.user.image = payload.image
+                }
                 localStorage.setItem(userKey, JSON.stringify(state.user))
             }
         },

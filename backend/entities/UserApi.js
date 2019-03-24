@@ -23,7 +23,7 @@ class UserApi extends Model {
 
     relations(alias) {
         let relations = {
-            "user": ["users", "userId", ["user.name", "user.email", "user.status"], false, true],
+            "user": ["users", "userId", ["user.name", "user.email", "user.status", "user.admin"], false, true],
         };
         return relations[alias]
     }
