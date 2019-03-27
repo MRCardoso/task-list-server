@@ -34,7 +34,7 @@ export default {
             let user = this.$store.state.auth.user;
             let params = {user, ...this.feed}
             this.$store.dispatch('busNotifyLoading', true)
-            this.$http.post(`api/feedback`, params).then(res => {
+            this.$http.post(`api/feedback`, params).then(() => {
                 this.$toasted.global.defaultSuccess({message: "Sucesso ao enviar sua mensagem"})
                 this.$router.push("/")
             }).catch(err => prepareError(err,this))
