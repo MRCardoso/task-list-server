@@ -14,10 +14,17 @@ module.exports = app => {
     * @param {Object} req the data of request app
     * @param {Object} res the data of response app
     */
-    const tasks = (req, res) => {
-        task.all(['integration'])
-            .whereNotNull('integrationId')
-            .andWhere({ userId: req.user.id, "integration.platform": PLATFORM_MOBILE})
+    const tasks = async (req, res) => {
+        let total = 0;
+        try {
+            let size = await task.count({ userId: req.user.id})
+            total = size.total
+        } catch (error) { }
+
+        task.all()
+            .andWhere({ userId: req.user.id })
+            .limit(req.query.limit || 10)
+            .offset(parseInt(req.query.offset || 0))
             .then(tasks => {
                 var result = tasks
                     .map(r => {
@@ -33,8 +40,7 @@ module.exports = app => {
                             end_date: r.endDate
                         };
                     });
-
-                return res.json(result);
+                return res.json({items: result, total});
             })
             .catch(err => responseErr(res, err))
     }

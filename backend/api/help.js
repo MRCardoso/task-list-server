@@ -23,8 +23,8 @@ module.exports = app => {
 
         sendMail({
             mail: MAIL.adminMail,
-            title: 'Formuário de Contato',
-            subject: "Formuário de Contato",
+            title: 'Formulário de Contato',
+            subject: "Formulário de Contato",
             content: `
                 {div class="list-item"}{strong}Nome:{/strong} ${post.name}{/div}
                 {div class="list-item"}{strong}E-mail:{/strong} ${post.email}{/div}

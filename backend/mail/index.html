@@ -4,48 +4,58 @@
 <head>
     <style>
         body{
-            background: #4F4F4F;
-        }
-        hr {
-            background: #EFEFEF;
-            color: #EFEFEF;
-            border: 1px solid #EFEFEF;
+            padding: 0;
+            margin: 0;
+            background: #2D2D2D;
         }
         .line-blue{
             background: #EFEFAE;
             width: 100%;
             height: 10px;
         }
-        .container {
-            background: #FBFBFB;
-            width: 80%;
-            margin: auto;
-            border-radius: 5px;
-        }
-        .footer,
-        .header {
+        .header{
             display: flex;
             justify-self: center;
             align-items: center;
             background: #4E9FFF;
-            color: #EFEFEF;
-            padding: 8px 0 8px 8px; 
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.8);
+            color: #FFF;
+            width: 100%;
+            height: 50px;
+            padding-left: 20px;
         }
-        .footer {
+        .header a{
+            margin-right: 20px;
+        }
+        .footer{
+            position: absolute;
+            display: flex;
             justify-content: center;
+            align-items: center;
+            box-shadow: 0 -1px 1px rgba(0, 0, 0, 0.8);
+            background: #4E9FFF;
+            width: 100%;
+            height: 50px;
+            bottom: 0;
         }
-
-        .header img{
-            margin-right: 10px;
-        }
-
         .content {
-            background-image: -webkit-radial-gradient(#FFF, rgba(222, 222, 223, 0.0));
+            background: #FFF;
+            margin: 30px auto;
+            width: 80%;
             text-align: left;
             color: #2A2A2a;
             font-family: Arial, Helvetica, sans-serif;
-            padding: 0.5% 2%;
+            padding: 4% 2%;
             word-wrap: break-word
+        }
+        .title{
+            display: flex;
+            font-size: 22px;
+            font-weight: bold;
+            justify-content: center;
+        }
+        .pb{
+            padding-bottom: 24px;
         }
         .list-item{
             display: flex;
@@ -66,18 +76,16 @@
 </head>
 
 <body>
-    <div class="container">
-        <div class="line-blue"></div>
-        <div class="header">
-            {logo1}
-            <strong>{title}</strong>
-        </div>
-        <div class="content">
-            {content}
-        </div>
-        <div class="footer">
-            <small>{logo2}</small>
-        </div>
+    <div class="header">
+        <a href="{appURL}">{logo1}</a>
+        <div class="title">{title}</div>
+    </div>
+    <div class="content">
+        <div class="title pb">{title}</div>
+        {content}
+    </div>
+    <div class="footer">
+        <small>{logo2}</small>
     </div>
 </body>
 

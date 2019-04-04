@@ -97,7 +97,7 @@ export default {
         display: none;
     }
     .input-options > .radio-blue{
-        background: #4E7FBE;
+        background: #3DAF3D;
         color: #FEFEFE;
     }
 </style>

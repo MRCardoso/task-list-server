@@ -142,6 +142,20 @@
     align-items: center;
     justify-content: center;
 }
+
+.circle-search{
+    padding: 12px;
+    background-color: #FFF;
+    outline: none;
+    /* box-shadow: 0 0 2px rgba(0,0,0, 0.2); */
+    border: 1px solid #ADADAD;
+    border-radius: 24px;
+    width: 50%;
+}
+.circle-search:focus{
+    border: 1px solid #4E9FFF;
+}
+
 /* flex boxes */
 .flex-row{
     display: flex;

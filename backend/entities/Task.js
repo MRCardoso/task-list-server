@@ -33,7 +33,7 @@ class Task extends Model {
     relations(alias) {
         let relations = {
             "user": ["users", "userId", ["user.name", "user.email"], false, true],
-            "integration": ["integrations_api", "integrationId", ['*'],false, true]
+            "integration": ["integrations_api", "integrationId", ['integration.*'],false, true]
         };
         return relations[alias]
     }
@@ -68,7 +68,7 @@ class Task extends Model {
                 .then(resolve)
                 .catch(reject)
             })
-            .catch(reject)
+            .catch(() => resolve(null))
         })
     }
 }

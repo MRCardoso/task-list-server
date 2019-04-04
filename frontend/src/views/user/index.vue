@@ -5,7 +5,7 @@
         <task-app-modal :dialog="dialog" @confirmDialog="deleteItem" title="Deletar Usuário" content="Deseja realmente remover este registro?" />
 
         <v-card-title>
-            <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details />
+            <input type="text" v-model="search" class="circle-search" placeholder="Buscar Tarefa" />
             <v-spacer></v-spacer>
 
             <v-tooltip bottom>

@@ -74,14 +74,15 @@ exports.sendMail = (data, credentials) => {
         while (content.indexOf("{") != -1 || content.indexOf("}") != -1) {
             content = content.replace(/\{/ig, '<').replace(/\}/ig, '>');
         }
-        const { AWS, logoHeader, logoFooter } = require('../.env')
-        
+        const { AWS, logoHeader, logoFooter, endpoint } = require('../.env')
+
         
         return html
-            .replace("{title}", title)
-            .replace("{logo1}", (logoHeader ? `<img src="${AWS.URL}${AWS.Bucket}/${logoHeader}" width="40">` : ''))
-            .replace("{logo2}", (logoFooter ? `<img src="${AWS.URL}${AWS.Bucket}/${logoFooter}" width="80">` : ''))
-            .replace("{content}", content);
+            .replace(/\{title\}/ig, title)
+            .replace(/\{appURL\}/ig, endpoint)
+            .replace(/\{logo1\}/ig, (logoHeader ? `<img src="${AWS.URL}${AWS.Bucket}/${logoHeader}" width="40">` : ''))
+            .replace(/\{logo2\}/ig, (logoFooter ? `<img src="${AWS.URL}${AWS.Bucket}/${logoFooter}" width="80">` : ''))
+            .replace(/\{content\}/ig, content);
     }
     return new Promise((resolve, reject) => {
         if (!data) {

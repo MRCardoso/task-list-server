@@ -345,6 +345,10 @@ class Model {
         })
     }
 
+    count(params){
+        return this.app.db(this.table).where(params).first().count('id as total')
+    }
+
     /**
      * ----------------------------------------------------------------------------
      * standard query to make select of many results in database

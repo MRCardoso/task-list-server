@@ -5,7 +5,7 @@
         <task-app-modal :dialog="dialog" @confirmDialog="deleteItem" title="Deletar Tarefa" content="Deseja realmente remover este registro?" />
 
         <v-card-title>
-            <v-text-field v-model="search" append-icon="search" label="Search" single-line hide-details />
+            <input type="text" v-model="search" class="circle-search" placeholder="Buscar Tarefa" />
             <v-spacer></v-spacer>
 
             <v-tooltip bottom>
@@ -25,7 +25,6 @@
                 </template>
                 <span>Novo</span>
             </v-tooltip>
-
         </v-card-title>
 
         <v-data-table :headers="headers" :items="tasks" :no-results-text="emptyFilter" :search="search" class="elevation-1">
