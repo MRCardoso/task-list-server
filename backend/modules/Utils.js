@@ -107,13 +107,14 @@ exports.sendMail = (data, credentials) => {
             console.log('sending-mail');
 
             let nodemailer = require('nodemailer')
-            let transporte = nodemailer.createTransport({
-                service: credentials.serviceMail,
-                auth: {
-                    user: credentials.loginMail,
-                    pass: credentials.passMail
-                }
-            })
+            let sgTransport = require('nodemailer-sendgrid-transport');
+            let transporte = nodemailer.createTransport(
+                sgTransport({auth: {
+                    api_key: credentials.apiKey
+                    // api_user: 'SENDGRID_USERNAME',
+                    // api_key: 'SENDGRID_PASSWORD'
+                }})
+            )
             let email = {
                 from: ['Task-List App', " <", credentials.loginMail, ">"].join(''),
                 to: data.mail,
