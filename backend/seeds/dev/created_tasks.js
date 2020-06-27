@@ -24,7 +24,7 @@ exports.seed = function(knex, Promise) {
       		var issues = [];
       		for (let i = 0; i < 80; i++) {
 				issues.push({
-					"userId": 2,
+					"userId": 1,
 					"title": getPhase(2, 6),
 					"description": getPhase(20, 140),
 					"priority": gRand(1,3),
