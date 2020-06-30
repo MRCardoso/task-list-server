@@ -1,0 +1,35 @@
+version: '3'
+services:
+    db:
+        image: mysql:5.7
+        ports:
+            - "33061:3306"
+        volumes:
+            - ./dev.sql:/data/application/init.sql
+        environment:
+            MYSQL_ROOT_USER: dev_mc_task
+            MYSQL_ROOT_PASSWORD: dev_mc_task
+            MYSQL_DATABASE: dev_task_list
+        command: 
+            --init-file /data/application/init.sql
+            --skip-name-resolve
+    backend:
+        image: node:10.20.1
+        depends_on:
+            - db
+        environment:
+            - DATABASE_HOST=db
+        volumes:
+            - ./backend:/backend
+        ports: 
+            - 3000:3000
+        command: bash -c "cd /backend && chmod u+x start.sh && ./start.sh && npm start"
+    frontend:
+        image: node:10.20.1
+        depends_on: 
+            - backend
+        volumes: 
+            - ./frontend:/frontend
+        ports: 
+            - 8080:8080
+        command: bash -c "cd /frontend && chmod u+x start.sh && ./start.sh && npm run serve"

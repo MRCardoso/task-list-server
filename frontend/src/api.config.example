@@ -1,1 +1,1 @@
-export const endpointURL = ''
+export const endpointURL = 'ENDPOINT_URL'

@@ -38,7 +38,7 @@ DB: {
         directory: 'DB_SEED_PATH'
     },
     migrations: {
-        tableName: 'DB_MIGRATION_NAME'
+        tableName: 'DB_MIGRATION'
     }
 }
 ```
@@ -47,8 +47,8 @@ DB: {
 ```javascript
 AWS: {
     Bucket: 'BUCKET_NAME',
-    accessKeyId: 'BUCKET_PUBLIC_KEY',
-    secretAccessKey: 'BUCKET_SECRET_KEY',
+    accessKeyId: 'BUCKET_PUBLIC',
+    secretAccessKey: 'BUCKET_SECRET',
     uploadFolder: 'BUCKET_LOCAL_FOLDER',
     URL: 'BUCKET_URL'
 }

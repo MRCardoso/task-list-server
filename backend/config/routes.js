@@ -1,4 +1,5 @@
 module.exports = app => {
+    app.get('/', (_,res) => res.send('Back-end working...'))
     /**
      * ----------------------------------------------------
      * Auth routes
