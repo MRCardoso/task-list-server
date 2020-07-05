@@ -1,18 +1,4 @@
 module.exports = {
-    "required"          : "O campo ':field' é obrigatório",
-    "min"               : "O campo ':field' de ter pelo menus :min caracteres.",
-    "max"               : "O campo ':field' deve ter no máximo :max caracteres.",
-    "unique"            : "O campo ':field' já existe e não pode se repetir.",
-    "number"            : "O campo ':field' deve ser um número.",
-    "mail"              : "O campo ':field' deve ter um endereço de email válido.",
-    "vusername"         : "O campo ':field' deve ter caracteres alfanuméricos com underline no lugar dos espaços",
-    "enum"              : "O campo ':field' deve ter o valor entre ':enum'.",
-    "compare"           : "O campo ':field' deve ser igual a ':compare'.",
-    "date"              : "O campo ':field' deve ter uma data válida",
-    "unknownMethod"     : "Validação desconhecida chamada em :field.",
-    "unknownUser"       : "Usuário ':field' não encontrado.",
-    "tokenExpired"      : "Este token expirou!",
-    "missingAttributes" : "Fornece atributos a este save",
     // tables
     "users"             : "Usuários",
     "tasks"             : "Tarefas",

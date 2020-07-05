@@ -1,18 +1,14 @@
 require('./config/globlaConstant')
 
-const app = require('express')()
-const consign = require('consign')
-const db = require('./config/db')
+const DB = require('./knexfile') 
+const validationLabel = require('./config/validator')
+const { Validatorus, server } = require('mcarz-back-utils')
 
-app.db = db
+Validatorus.addMessage(validationLabel)
 
-consign()
-    .then('./config/passport.js')
-    .then('./config/middlewares.js')
-    .then('./api')
-    .then('./config/routes.js')
-    .into(app)
-
-app.listen(3000, () => {
-    console.log(`backend executando ${require('moment')().format('DD/MM/YY HH:mm:ss')}`)
-})
+server(DB, 3000, ...[
+    './config/passport.js',
+    './config/middlewares.js',
+    './api',
+    './config/routes.js'
+])

@@ -1,4 +1,4 @@
-const Model = require('../modules/Model');
+const {Modelus: Model} = require('mcarz-back-utils')
 
 /**
  * @author Marlon R. Cardoso
@@ -21,7 +21,7 @@ class Image extends Model {
         let { AWS } = require('../.env')
         return {
             ...i,
-            url: `${AWS.URL}${AWS.Bucket}/${AWS.uploadFolder}/${i.userId}/${i.name}`
+            url: `https://${AWS.Bucket}.${AWS.URL}/${AWS.uploadFolder}/${i.userId}/${i.name}`
         }
     }
 }

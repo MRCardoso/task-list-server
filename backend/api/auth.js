@@ -1,5 +1,5 @@
 const { authSecret, endpoint, MAIL } = require('../.env')
-const { responseErr, sendMail } = require("../modules/Utils")
+const { prepareResponse, sendMail } = require('mcarz-back-utils')
 const jwt = require('jwt-simple')
 
 module.exports = app => {
@@ -24,8 +24,8 @@ module.exports = app => {
 
             auth.createApi(logged, PlatformName, PlatformVersion, PlatformOrigin)
                 .then((apiData) => res.json(apiData))
-                .catch(err => responseErr(res, err))
-        }, err => responseErr(res, err, "Usuário não encontrado"))
+                .catch(err => prepareResponse(res, err))
+        }, err => prepareResponse(res, err, "Usuário não encontrado"))
     }
 
     /**
@@ -38,7 +38,7 @@ module.exports = app => {
     const signout = (req, res) => {
         auth.logout(req.params.apiId, req.params.id)
             .then((deleted) => res.json({ deleted}))
-            .catch(err => responseErr(res, err))
+            .catch(err => prepareResponse(res, err))
     }
 
     /**
@@ -72,11 +72,11 @@ module.exports = app => {
                     `
                 }, MAIL)
                 .then(_ => res.json({ success: "Token enviado com sucesso" }))
-                .catch(err => responseErr(res, err))
+                .catch(err => prepareResponse(res, err))
             })
-            .catch(err => responseErr(res, err))
+            .catch(err => prepareResponse(res, err))
         })
-        .catch(err => responseErr(res, err, "E-mail não encontrado"))
+        .catch(err => prepareResponse(res, err, "E-mail não encontrado"))
     }
     
     /**
@@ -91,9 +91,9 @@ module.exports = app => {
             .then(u => {
                 user.updatePassword(req.body, u.id)
                     .then(updated => res.json({ updated }))
-                    .catch(err => responseErr(res, err))
+                    .catch(err => prepareResponse(res, err))
             })
-            .catch(err => responseErr(res, err, "Token não encontrado ou expirado"))
+            .catch(err => prepareResponse(res, err, "Token não encontrado ou expirado"))
     }
 
     /**
@@ -116,7 +116,7 @@ module.exports = app => {
             
             auth.refrashLogin(req.body.id, PlatformName, PlatformVersion, 1)
                 .then(updated => res.json({ updated }))
-                .catch(err => responseErr(res, err))
+                .catch(err => prepareResponse(res, err))
         })
         
     }
@@ -153,7 +153,7 @@ module.exports = app => {
             console.log({e})
             auth.logout(apiData.id, apiData.userId)
                 .then(() => res.status(401).send({ message: 'Token expirado, por favor faça o login novamente'}))
-                .catch(err => responseErr(res, err))
+                .catch(err => prepareResponse(res, err))
         }
     }
 

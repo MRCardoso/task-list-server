@@ -1,5 +1,5 @@
 module.exports = app => {
-    const { responseErr } = require("../modules/Utils")
+    const { prepareResponse } = require('mcarz-back-utils')
 
     const Task = require('../entities/Task')
     const task = new Task(app)
@@ -11,7 +11,7 @@ module.exports = app => {
         }
             
         query.then(tasks => res.json(tasks))
-            .catch(error => responseErr(res, error))
+            .catch(error => prepareResponse(res, error))
     }
 
     const dailyTask = (req, res) => {
@@ -22,7 +22,7 @@ module.exports = app => {
         task.all()
             .where({ userId: req.user.id, startDate:  currentDay })
             .then(tasks => res.json(tasks))
-            .catch(error => responseErr(res, error))
+            .catch(error => prepareResponse(res, error))
     }
 
     const save = (req,res) => {
@@ -32,19 +32,19 @@ module.exports = app => {
         
         task.save(data)
             .then(id => res.json({ id }) )
-            .catch(error => responseErr(res, error))
+            .catch(error => prepareResponse(res, error))
     }
 
     const remove = (req, res) => {
         task.delete(paramsChanges(req))
             .then(deleted => res.json({deleted}))
-            .catch(error => responseErr(res, error))
+            .catch(error => prepareResponse(res, error))
     }
 
     const one = (req, res) => {
         task.one(paramsChanges(req), ["user", "integration"])
             .then(task => res.json(task))
-            .catch(error => responseErr(res, error, "Tarefa não encontrada"))
+            .catch(error => prepareResponse(res, error, "Tarefa não encontrada"))
     }
 
     const hasAuthorization = (req, res, next) => {

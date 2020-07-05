@@ -1,4 +1,4 @@
-const Model = require('../modules/Model');
+const {Modelus: Model} = require('mcarz-back-utils')
 
 /**
  * @author Marlon R. Cardoso

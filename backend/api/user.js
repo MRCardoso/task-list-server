@@ -1,5 +1,5 @@
 module.exports = app => {
-    const { responseErr } = require("../modules/Utils")
+    const { prepareResponse } = require('mcarz-back-utils')
     
     const User = require('../entities/User')
     const user = new User(app)
@@ -8,7 +8,7 @@ module.exports = app => {
         user.all()
             .orderBy('id', 'desc')
             .then(users => res.json(users))
-            .catch(error => responseErr(res, error))
+            .catch(error => prepareResponse(res, error))
     }
 
     const save = (req,res) => {
@@ -19,13 +19,13 @@ module.exports = app => {
         user
         .save(data)
         .then(id => res.json({ id }) )
-        .catch(error => responseErr(res, error))
+        .catch(error => prepareResponse(res, error))
     }
 
     const remove = (req, res) => {
         return user.update({ id: req.params.id, deleted_at: new Date() })
             .then(deleted => res.json({deleted}))
-            .catch(error => responseErr(res, error))
+            .catch(error => prepareResponse(res, error))
     }
 
     const removeToken = (req, res) => {
@@ -34,13 +34,13 @@ module.exports = app => {
 
         return api.delete({ id: req.params.apiId, userId: req.params.id })
             .then(deleted => res.json({ deleted }))
-            .catch(error => responseErr(res, error))
+            .catch(error => prepareResponse(res, error))
     }
 
     const one = (req, res) => {
         user.one({ "users.id": req.params.id }, ["image", "apis"])
             .then(user => res.json(user))
-            .catch(error => responseErr(res, error, "Usuário não encontrado"))
+            .catch(error => prepareResponse(res, error, "Usuário não encontrado"))
     }
 
     const hasAuthorization = (req, res, next) => {

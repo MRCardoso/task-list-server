@@ -1,5 +1,4 @@
-const Validator = require('../modules/Validator')
-const Model = require('../modules/Model')
+const { Validatorus: Validator, Modelus: Model } = require('mcarz-back-utils')
 
 /**
  * @author Marlon R. Cardoso
@@ -68,7 +67,7 @@ class User extends Model {
                 "userId", // FK column
                 [ // fk fields
                     "id", "userId", "name", 
-                    this.app.db.raw(`CONCAT("${AWS.URL}${AWS.Bucket}/${AWS.uploadFolder}", "/", userId, "/",name) as url`)
+                    this.app.db.raw(`CONCAT("https://${AWS.Bucket}.${AWS.URL}/${AWS.uploadFolder}", "/", userId, "/",name) as url`)
                 ]
             ],
             "apis": ["users_api", "userId", "*", true]

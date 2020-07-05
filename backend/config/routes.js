@@ -2,22 +2,45 @@ module.exports = app => {
     app.get('/', (_,res) => res.send('Back-end working...'))
     /**
      * ----------------------------------------------------
-     * Auth routes
+     * Request to create a new user
      * ----------------------------------------------------
      */
-    /* Request to create a new user */
     app.post('/api/signup', app.api.user.save)
-    /* Request to make login JWT from app by web and mobile */
+    /**
+     * ----------------------------------------------------
+     * Request to make login JWT from app by web and mobile
+     * ----------------------------------------------------
+     */
     app.post('/api/signin', app.api.auth.signin)
-    /* Request to make logout JWT from app by web and mobile */
+    /**
+     * ----------------------------------------------------
+     * Request to make logout JWT from app by web and mobile
+     * ----------------------------------------------------
+     */
     app.get('/api/signout/:id/:apiId', app.api.auth.signout)
-    /* Request to send email to user with link to recovery password */
+    /**
+     * ----------------------------------------------------
+     * Request to send email to user with link to recovery password
+     * ----------------------------------------------------
+     */
     app.post('/api/forgot', app.api.auth.forgot)
-    /* Request to reset password with token generated in forgot route */
+    /**
+     * ----------------------------------------------------
+     * Request to reset password with token generated in forgot route
+     * ----------------------------------------------------
+     */
     app.patch('/api/reset/:token', app.api.auth.reset)
-    /* Request to validate the token for logged user */
+    /**
+     * ----------------------------------------------------
+     * Request to validate the token for logged user
+     * ----------------------------------------------------
+     */
     app.post('/api/validateToken', app.api.auth.validateToken)
-    /* request to redo login */
+    /**
+     * ----------------------------------------------------
+     * request to redo login
+     * ----------------------------------------------------
+     */
     app.post('/api/refrashToken', app.api.auth.refrashToken)
     app.post('/api/feedback', app.api.help.feedback)
 

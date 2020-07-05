@@ -5,7 +5,7 @@ services:
         ports:
             - "33061:3306"
         volumes:
-            - ./dev.sql:/data/application/init.sql
+            - ./backend/scripts/development/init.sql:/data/application/init.sql
         environment:
             MYSQL_ROOT_USER: dev_mc_task
             MYSQL_ROOT_PASSWORD: dev_mc_task
@@ -23,7 +23,8 @@ services:
             - ./backend:/backend
         ports: 
             - 3000:3000
-        command: bash -c "cd /backend && chmod u+x start.sh && ./start.sh && npm start"
+        working_dir: /backend
+        command: bash -c "./start.sh && npm start"
     frontend:
         image: node:10.20.1
         depends_on: 
@@ -32,4 +33,5 @@ services:
             - ./frontend:/frontend
         ports: 
             - 8080:8080
-        command: bash -c "cd /frontend && chmod u+x start.sh && ./start.sh && npm run serve"
+        working_dir: /frontend
+        command: bash -c "./start.sh && npm run serve"

@@ -1,7 +1,7 @@
 module.exports = app => {
     let uploader = require('uploader-go-bucket')
     let { AWS } = require('../.env')
-    let { responseErr } = require("../modules/Utils")
+    let { prepareResponse } = require('mcarz-back-utils')
 
     let Image = require('../entities/Image')
     let image = new Image(app);
@@ -19,9 +19,9 @@ module.exports = app => {
                         console.log(`Success upload and send s3 ${imageData.hashString}`);
                         res.json(Image.imageAsObject({ id, userId, name: imageData.hashString }))
                     })
-                    .catch(error => responseErr(res, error))
-            }, err => responseErr(res, err))
-        }, err => responseErr(res, err))
+                    .catch(error => prepareResponse(res, error))
+            }, err => prepareResponse(res, err))
+        }, err => prepareResponse(res, err))
     }
 
     /**
@@ -46,7 +46,7 @@ module.exports = app => {
                     this.whereIn('id', items.id)
                 })
                 .then(deleted => res.json({ message: "Arquivo Removido Com Sucesso!" }))
-                .catch(error => responseErr(res, error))
+                .catch(error => prepareResponse(res, error))
             }, err => {
                 let defaultMessage = 'Não foi possível remover o arquivo!'
                 return res.status(500).send((err != null ? (err.message || defaultMessage) : defaultMessage))
@@ -89,8 +89,8 @@ module.exports = app => {
      * ---------------------------------------------------------------------------
      */
     const sendToBucket = (fileInstance, userId) => {
-        let { generateFileString } = require("../modules/Utils")
-        let hashString = generateFileString(fileInstance.name)
+        let { createFilenameHash } = require('mcarz-back-utils')
+        let hashString = createFilenameHash(fileInstance.name)
         let path = `${AWS.uploadFolder}/${userId}/${hashString}`
 
         return new Promise( (resolve,reject) => {

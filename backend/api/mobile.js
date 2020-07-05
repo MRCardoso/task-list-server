@@ -1,5 +1,5 @@
 module.exports = app => {
-    const { responseErr } = require("../modules/Utils")
+    const { prepareResponse } = require('mcarz-back-utils')
 
     const Task = require('../entities/Task')
     const task = new Task(app)
@@ -42,7 +42,7 @@ module.exports = app => {
                     });
                 return res.json({items: result, total});
             })
-            .catch(err => responseErr(res, err))
+            .catch(err => prepareResponse(res, err))
     }
 
     /**
@@ -72,7 +72,7 @@ module.exports = app => {
             }).catch(trx.rollback)
         })
         .then(id => res.json({ id }))
-        .catch(error => responseErr(res, error))
+        .catch(error => prepareResponse(res, error))
     }
 
     /**
@@ -85,7 +85,7 @@ module.exports = app => {
     const inactivate = (req, res) => {
         task.updateFromApi(req.params.id, false, { deleted_at: new Date()})
             .then(id => res.json({ id }))
-            .catch(error => responseErr(res, error))
+            .catch(error => prepareResponse(res, error))
     }
 
     return { tasks, sync, inactivate }

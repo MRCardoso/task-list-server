@@ -1,5 +1,4 @@
-const Validator = require('../modules/Validator')
-const Model = require('../modules/Model')
+const { Validatorus: Validator, Modelus: Model } = require('mcarz-back-utils')
 const User = require('./User')
 
 /**
@@ -136,7 +135,7 @@ class UserApi extends Model {
                 "token": "required",
                 "expires": "required|number"
             })
-            const { createTokenPayload } = require("../modules/Utils")
+            const createTokenPayload = require("../config/tokenPayload")
             let { token, expires, payload } = createTokenPayload(logged, platform)
             let post = { userId: logged.id, token, name, version, platform, expires, created_at: new Date()}
 

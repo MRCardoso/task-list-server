@@ -1,8 +1,7 @@
 module.exports = app => {
     const feedback = (req, res) =>{ 
         const { MAIL } = require('../.env')
-        const { responseErr, sendMail } = require("../modules/Utils")
-        const Validator = require('../modules/Validator')
+        const { prepareResponse, sendMail, Validatorus: Validator } = require('mcarz-back-utils')
         const moment = require('moment')
         let validator = new Validator({
             "name": "required|max:250",
@@ -38,7 +37,7 @@ module.exports = app => {
             `
         }, MAIL)
         .then(_ => res.json({ success: "Sucesso" }))
-        .catch(err => responseErr(res, err))
+        .catch(err => prepareResponse(res, err))
     }
     return {feedback}
 }
