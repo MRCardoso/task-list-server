@@ -1,7 +1,7 @@
 module.exports = app => {
     const feedback = (req, res) =>{ 
         const { MAIL } = require('../.env')
-        const { prepareResponse, sendMail, Validatorus: Validator } = require('mcarz-back-utils')
+        const { prepareResponse, sendMail, Validator } = require('mcarz-back-utils')
         const moment = require('moment')
         let validator = new Validator({
             "name": "required|max:250",

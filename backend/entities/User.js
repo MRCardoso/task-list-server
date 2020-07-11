@@ -1,4 +1,4 @@
-const { Validatorus: Validator, Modelus: Model } = require('mcarz-back-utils')
+const { Validator, Model } = require('mcarz-back-utils')
 
 /**
  * @author Marlon R. Cardoso
@@ -73,6 +73,26 @@ class User extends Model {
             "apis": ["users_api", "userId", "*", true]
         };
         return relations[alias]
+    }
+
+    login(post){
+        return new Promise((resolve, reject) => {
+            this.validator = new Validator({
+                "username": this.rules.username,
+                "password": this.rules.password,
+            })
+    
+            if (!this.validator.validate(post)) {
+                return reject(is400(this.validator.getErrors()))
+            }
+    
+            this.one({ username: post.username }, ["image"], true).then(logged => {
+                if (!require('bcrypt-nodejs').compareSync(post.password, logged.password)) {
+                    return reject(is400({ password: ["Senha inválida"] }))
+                }
+                resolve(logged)
+            }).catch(err => reject(err))
+        })
     }
 
     /**

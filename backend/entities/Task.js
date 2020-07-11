@@ -1,4 +1,4 @@
-const {Modelus: Model} = require('mcarz-back-utils')
+const { Model } = require('mcarz-back-utils')
 
 /**
  * @author Marlon R. Cardoso

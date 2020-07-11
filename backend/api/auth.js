@@ -1,6 +1,5 @@
 const { authSecret, endpoint, MAIL } = require('../.env')
-const { prepareResponse, sendMail } = require('mcarz-back-utils')
-const jwt = require('jwt-simple')
+const { prepareResponse, sendMail, cleanToken, expiredToken } = require('mcarz-back-utils')
 
 module.exports = app => {
     const Auth = require('../entities/UserApi')
@@ -10,6 +9,56 @@ module.exports = app => {
     const user = new User(app)
 
     /**
+    * ----------------------------------------------------------------------------
+    * Endpoint to verify if the token of current web browser is valid and not expires
+    * ----------------------------------------------------------------------------
+    * @param {object} req the object with request information(input)
+    * @param {object} res the object with response information(output)
+    */
+    const validateToken = async (req, res) => {
+        let apiData
+
+        try {
+            const next = (p) => auth.one(p, ["user"])
+            apiData = await auth.api.getByToken(next, req.body.token || '')
+        } catch (error) {
+            return res.status(401).send("token não encontrado")
+        }
+
+        try {
+            expiredToken(req.body.token, authSecret)
+            res.send(apiData)
+        } catch (e) {
+            console.log({ e })
+            auth.logout(apiData.id, apiData.userId)
+                .then(() => res.status(401).send({ message: 'Token expirado, por favor faça o login novamente' }))
+                .catch(err => prepareResponse(res, err))
+        }
+    }
+
+    /**
+    * ----------------------------------------------------------------------------
+    * Endpoint to recreate the api token and redo the login
+    * ----------------------------------------------------------------------------
+    * @param {object} req the object with request information(input)
+    * @param {object} res the object with response information(output)
+    */
+    const refrashToken = (req, res) => {
+        if (!req.body.id) {
+            return res.status(400).send("Usuário não fornecido")
+        }
+
+        auth.api
+            .removeByToken(req.body.token || '')
+            .finally(_ => {
+                const next = () => user.one({ id: req.body.id }, ["image"])
+                auth.createApi(next, req.query)
+                    .then(updated => res.json({ updated }))
+                    .catch(err => prepareResponse(res, err))
+            })
+    }
+
+    /**
      * ----------------------------------------------------------------------------
      * Endpoint to make login by JWT, and register the users_api to request user
      * ----------------------------------------------------------------------------
@@ -17,15 +66,9 @@ module.exports = app => {
      * @param {object} res the object with response information(output)
      */
     const signin = async (req, res) => {
-        auth.login(req.body).then(logged => {
-            let PlatformName = req.query.PlatformName || '' 
-            let PlatformVersion = req.query.PlatformVersion || 0
-            let PlatformOrigin = req.query.PlatformOrigin || PLATFORM_WEB
-
-            auth.createApi(logged, PlatformName, PlatformVersion, PlatformOrigin)
-                .then((apiData) => res.json(apiData))
-                .catch(err => prepareResponse(res, err))
-        }, err => prepareResponse(res, err, "Usuário não encontrado"))
+        auth.createApi(() => user.login(req.body), req.query)
+            .then(apiData => res.json(apiData))
+            .catch(err => prepareResponse(res, err))
     }
 
     /**
@@ -36,8 +79,9 @@ module.exports = app => {
      * @param {object} res the object with response information(output)
     */
     const signout = (req, res) => {
-        auth.logout(req.params.apiId, req.params.id)
-            .then((deleted) => res.json({ deleted}))
+        auth.api
+            .remove(req.params.apiId, req.params.id, () => cleanToken({ authSecret }))
+            .then(deleted => res.json({ deleted }))
             .catch(err => prepareResponse(res, err))
     }
 
@@ -94,67 +138,6 @@ module.exports = app => {
                     .catch(err => prepareResponse(res, err))
             })
             .catch(err => prepareResponse(res, err, "Token não encontrado ou expirado"))
-    }
-
-    /**
-    * ----------------------------------------------------------------------------
-    * Endpoint to recreate the api token and redo the login
-    * ----------------------------------------------------------------------------
-    * @param {object} req the object with request information(input)
-    * @param {object} res the object with response information(output)
-    */
-    const refrashToken = (req, res) => {
-        if (!req.body.id){
-            return res.status(400).send("Usuário não fornecido")
-        }
-
-        auth
-        .removeByToken(req.body.token || '')
-        .finally(_ => {
-            let PlatformName = req.query.PlatformName || ''
-            let PlatformVersion = req.query.PlatformVersion || 0
-            
-            auth.refrashLogin(req.body.id, PlatformName, PlatformVersion, 1)
-                .then(updated => res.json({ updated }))
-                .catch(err => prepareResponse(res, err))
-        })
-        
-    }
-
-    /**
-    * ----------------------------------------------------------------------------
-    * Endpoint to verify if the token of current web browser is valid and not expires
-    * ----------------------------------------------------------------------------
-    * @param {object} req the object with request information(input)
-    * @param {object} res the object with response information(output)
-    */
-    const validateToken = async (req, res) => {
-        let apiData
-
-        try {
-            apiData = await auth.getApiByToken(req.body.token || '')
-        } catch (error) {
-            return res.status(401).send("token não encontrado")
-        }
-
-        try {
-            const token = jwt.decode(req.body.token, authSecret)
-            let now = new Date()
-            let expires = new Date(token.exp * 1000)
-
-            console.log(`date: ${now} - expires: ${expires}`)
-            
-            if (expires < now) {
-                throw "Token expirado"
-            }
-
-            res.send(apiData)
-        } catch (e) {
-            console.log({e})
-            auth.logout(apiData.id, apiData.userId)
-                .then(() => res.status(401).send({ message: 'Token expirado, por favor faça o login novamente'}))
-                .catch(err => prepareResponse(res, err))
-        }
     }
 
     /**

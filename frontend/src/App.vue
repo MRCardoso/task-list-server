@@ -33,6 +33,8 @@ export default {
 	methods: {
 		async redoLogin(confimation){
 			if(confimation){
+				this.loading = false
+				this.verifyToken = false
 				let updated = await this.$store.dispatch('redoLogin')
 				if(updated){
 					this.dialog = false
@@ -44,6 +46,8 @@ export default {
 			this.$store.commit("addUser", null)
 			this.$router.push('/')
 			this.dialog = false
+			this.loading = false
+			this.verifyToken = false
 		},
 		async validateToken() {
 			this.verifyToken = true

@@ -2,9 +2,9 @@ require('./config/globlaConstant')
 
 const DB = require('./knexfile') 
 const validationLabel = require('./config/validator')
-const { Validatorus, server } = require('mcarz-back-utils')
+const { Validator, server } = require('mcarz-back-utils')
 
-Validatorus.addMessage(validationLabel)
+Validator.addMessage(validationLabel)
 
 server(DB, 3000, ...[
     './config/passport.js',

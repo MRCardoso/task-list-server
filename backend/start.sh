@@ -3,22 +3,29 @@ cp env.example .env
 
 dbname="dev_task_list"
 dbuser="dev_mc_task"
+dbhost="db"
+
+if [[ -n $1 ]]
+then
+    dbhost='127.0.0.1'
+    mysql -h$MC_DB_HOST -u$MC_DB_USER -p$MC_DB_PASSWORD < ./scripts/development/init.sql
+fi
 
 #change auth credentials
-sed -i "s/AUTH_SECRET_KEY/theworldismyne/" .env
+sed -i "" -e "s/AUTH_SECRET_KEY/theworldismyne/" .env
 #change database credentials
-sed -i "s/DB_CLIENT/mysql/" .env
-sed -i "s/DB_HOST/db/" .env
-sed -i "s/DB_NAME/$dbname/" .env
-sed -i "s/DB_USER/$dbuser/" .env
-sed -i "s/DB_PASS/$dbuser/" .env
-sed -i "s/DB_MIGRATION/migrations/" .env
+sed -i "" -e "s/DB_CLIENT/mysql/" .env
+sed -i "" -e "s/DB_HOST/$dbhost/" .env
+sed -i "" -e "s/DB_NAME/$dbname/" .env
+sed -i "" -e "s/DB_USER/$dbuser/" .env
+sed -i "" -e "s/DB_PASS/$dbuser/" .env
+sed -i "" -e "s/DB_MIGRATION/migrations/" .env
 #change AWS configurations
-sed -i "s/BUCKET_NAME/task-list-development/" .env
-sed -i "s/BUCKET_PUBLIC/AKIAVU52HV6F7QVKYSEZ/" .env
-sed -i "s/BUCKET_SECRET/fhx3XJYOas7QZSdA\/41CRh+IuwOGrZ08RJNW8BHR/" .env
-sed -i "s/BUCKET_FOLDER/images/" .env
-sed -i "s/BUCKET_URL/s3\.amazonaws\.com/" .env
+sed -i "" -e "s/BUCKET_NAME/task-list-development/" .env
+sed -i "" -e "s/BUCKET_PUBLIC/AKIAVU52HV6F7QVKYSEZ/" .env
+sed -i "" -e "s/BUCKET_SECRET/fhx3XJYOas7QZSdA\/41CRh+IuwOGrZ08RJNW8BHR/" .env
+sed -i "" -e "s/BUCKET_FOLDER/images/" .env
+sed -i "" -e "s/BUCKET_URL/s3\.amazonaws\.com/" .env
 
 #install dependencies
 npm install
