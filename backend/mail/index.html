@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <style>
+        body{
+            padding: 0;
+            margin: 0;
+            background: #2D2D2D;
+        }
+        .line-blue{
+            background: #EFEFAE;
+            width: 100%;
+            height: 10px;
+        }
+        .header{
+            display: flex;
+            justify-self: center;
+            align-items: center;
+            text-align: center;
+            background: #4E9FFF;
+            box-shadow: 0 1px 1px rgba(0, 0, 0, 0.8);
+            color: #FFF;
+            width: 100%;
+            height: 50px;
+            padding-left: 20px;
+        }
+        .header a{
+            margin-right: 20px;
+        }
+        .footer{
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 -1px 1px rgba(0, 0, 0, 0.8);
+            background: #4E9FFF;
+            width: 100%;
+            height: 50px;
+            bottom: 0;
+        }
+        .content {
+            background: #FFF;
+            margin: 30px auto;
+            width: 80%;
+            text-align: left;
+            color: #2A2A2a;
+            font-family: Arial, Helvetica, sans-serif;
+            padding: 4% 2%;
+            word-wrap: break-word
+        }
+        .title{
+            display: flex;
+            font-size: 22px;
+            font-weight: bold;
+            justify-content: center;
+        }
+        .pb{
+            padding-bottom: 24px;
+        }
+        .list-item{
+            display: flex;
+            justify-content: flex-start;
+            padding: 8px;
+            border:1px solid #E2E2E2;
+            margin-bottom: 6px;
+            border-radius: 4px;
+            text-align: center
+        }
+        .list-item strong,.list-item h3{
+            margin-right: 8px;
+        }
+        .list-item:hover{
+            background: #F4F4F4
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <a href="{appURL}">{logo1}</a>
+        <div class="title">{title}</div>
+    </div>
+    <div class="content">
+        <div class="title pb">{title}</div>
+        {content}
+    </div>
+    <div class="footer">
+        <small>{logo2}</small>
+    </div>
+</body>
+
+</html>

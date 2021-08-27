@@ -1,6 +1,9 @@
 .env
 .DS_Store
+.tls-logs/
 node_modules/
 package-lock.json
-dev.sql
-prod.sql
+uploads/
+start.sh
+seeds/
+scripts/
