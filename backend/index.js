@@ -2,7 +2,7 @@ require('./config/globlaConstant')
 
 const DB = require('./knexfile') 
 const validationLabel = require('./config/validator')
-const { Validator, server } = require('mcarz-back-utils')
+const { Validator, server } = require('nodeevel')
 
 Validator.addMessage(validationLabel)
 

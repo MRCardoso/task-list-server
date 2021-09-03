@@ -1,5 +1,5 @@
 module.exports = app => {
-    const { prepareResponse } = require('mcarz-back-utils')
+    const { prepareResponse } = require('nodeevel')
     
     const User = require('../entities/User')
     const user = new User(app)

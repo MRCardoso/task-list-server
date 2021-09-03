@@ -1,4 +1,4 @@
-const { Model } = require('mcarz-back-utils')
+const { Model } = require('nodeevel')
 
 /**
  * @author Marlon R. Cardoso

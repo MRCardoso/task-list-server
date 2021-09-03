@@ -1,7 +1,7 @@
 module.exports = app => {
     let uploader = require('uploader-go-bucket')
     let { AWS } = require('../.env')
-    let { prepareResponse } = require('mcarz-back-utils')
+    let { prepareResponse } = require('nodeevel')
 
     let Image = require('../entities/Image')
     let image = new Image(app);
@@ -89,7 +89,7 @@ module.exports = app => {
      * ---------------------------------------------------------------------------
      */
     const sendToBucket = (fileInstance, userId) => {
-        let { createFilenameHash } = require('mcarz-back-utils')
+        let { createFilenameHash } = require('nodeevel')
         let hashString = createFilenameHash(fileInstance.name)
         let path = `${AWS.uploadFolder}/${userId}/${hashString}`
 

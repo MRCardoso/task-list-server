@@ -1,4 +1,4 @@
-const { Model, Api, createToken } = require('mcarz-back-utils')
+const { Model, Api, createToken } = require('nodeevel')
 
 /**
  * @author Marlon R. Cardoso

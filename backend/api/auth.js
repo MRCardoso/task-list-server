@@ -1,5 +1,5 @@
-const { authSecret, endpoint, MAIL } = require('../.env')
-const { prepareResponse, sendMail, cleanToken, expiredToken } = require('mcarz-back-utils')
+const { authSecret, resetToken, endpoint, MAIL, AWS, logoHeader, logoFooter } = require('../.env')
+const { prepareResponse, sendMail, cleanToken, expiredToken } = require('nodeevel')
 
 module.exports = app => {
     const Auth = require('../entities/UserApi')
@@ -66,7 +66,7 @@ module.exports = app => {
      * @param {object} res the object with response information(output)
      */
     const signin = async (req, res) => {
-        auth.createApi(() => user.login(req.body), req.query)
+        auth.createApi(() => user.login(req.body, ["image"]), req.query)
             .then(apiData => res.json(apiData))
             .catch(err => prepareResponse(res, err))
     }
@@ -92,35 +92,35 @@ module.exports = app => {
      * @param {object} req the object with request information(input)
      * @param {object} res the object with response information(output)
     */
-    const forgot = (req, res) => {
-        user.findByEmail(req.body.email)
-        .then(data => {
-            user.updateResetToken(data.id)
-            .then(reseted => {
-                let url = `${endpoint}reset/${reseted.token}`;
-                let moment = require('moment')
+    const forgot = async (req, res) => {
+        try {
+            const data = await user.findByEmail(req.body.email)
+            const reseted = await user.updateResetToken(data.id, resetToken)
 
-                sendMail({
-                    mail: data.email,
-                    title: 'Token de Recuperação de senha',
-                    subject: "Token de Recuperação de senha.",
-                    content: `
-                        {strong}Token:{/strong}{br}
-                        {a href="${url}" title="token"}Clique aqui{/a}{br}
-                        ou cole este link em seu navegador: ${url}
-                        {br}
-                        {p}
-                            {strong}Token expira em: {/strong}
-                            {i}${moment(reseted.expires).format('DD/MM/YY HH:mm:ss')}{/i}
-                        {/p}
-                    `
-                }, MAIL)
-                .then(_ => res.json({ success: "Token enviado com sucesso" }))
+            const url = `${endpoint}reset/${reseted.token}`;
+            const moment = require('moment')
+            const title = 'Token de Recuperação de senha'
+            const content = `
+                {strong}Token:{/strong}{br}
+                {a href="${url}" title="token"}Clique aqui{/a}{br}
+                ou cole este link em seu navegador: ${url}
+                {br}
+                {p}
+                    {strong}Token expira em: {/strong}
+                    {i}${moment(reseted.expires).format('DD/MM/YY HH:mm:ss')}{/i}
+                {/p}
+            `
+            const params = {
+                mail: data.email,
+                subject: "Token de Recuperação de senha.",
+                content: await require('../config/mail')(title, content)
+            }
+            sendMail(params, MAIL.adminMail, MAIL.apiKey)
+                .then(info => res.json({ success: "Token enviado com sucesso", info }))
                 .catch(err => prepareResponse(res, err))
-            })
-            .catch(err => prepareResponse(res, err))
-        })
-        .catch(err => prepareResponse(res, err, "E-mail não encontrado"))
+        } catch (err) {
+            prepareResponse(res, err)
+        }
     }
     
     /**
